@@ -1,19 +1,29 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from django.utils.text import slugify
 from datetime import datetime
 
 # Create your models here.
 
 
+class User(AbstractUser):
+    email = models.EmailField(unique=True)
+
+
+# region core models
+
+
+class CourseCategory(models.Model):
+    # ('programming', 'Programming'),
+    # ('data analysis', 'Data Analysis'),
+    # ('ui/ux with figma', 'UI/UX with Figma'),
+    # ('kids coding', 'Kids Coding'),
+    title = models.CharField(max_length=150)
+
+
 class Course(models.Model):
-
-    COURSE_TYPE = [
-        ('programming', 'Programming'),
-        ('data analysis', 'Data Analysis'),
-        ('ui/ux with figma', 'UI/UX with Figma'),
-        ('kids coding', 'Kids Coding'),
-    ]
-
+    coursecategory = models.ForeignKey(
+        CourseCategory, on_delete=models.DO_NOTHING)
     ordering = models.IntegerField(null=True, blank=True)
     title = models.CharField(max_length=300)
     frontpage_featured = models.BooleanField(default=False)
@@ -30,9 +40,6 @@ class Course(models.Model):
     tech_subs = models.CharField(max_length=100, null=True)
     audience = models.CharField(max_length=100, null=True, blank=True)
     audience_description = models.TextField(null=True, blank=True)
-    # programming, data science etc
-    course_type = models.CharField(
-        max_length=30, blank=True, choices=COURSE_TYPE)
     description = models.TextField()
     course_outline = models.TextField()
     what_you_will_learn = models.TextField()
@@ -66,14 +73,29 @@ class Teacher(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     courses_taking = models.ManyToManyField(Course)
+    when_joined = models.DateField()
 
     def __str__(self):
         return self.fullname
 
 
+class Student(models.Model):
+    student_id = models.CharField(max_length=50, null=True, blank=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    mobile_numbers = models.CharField(max_length=250)
+    email_addresses = models.CharField(max_length=250)
+    profile_pic = models.ImageField(upload_to='students_profilepix/')
+    residential_address = models.CharField(max_length=250)
+    contact_address = models.CharField(max_length=250)
+    next_of_kin_fullname = models.CharField(max_length=150)
+    next_of_kin_contact_address = models.CharField(max_length=250)
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
+
 class Schedule(models.Model):
-    teacher = models.OneToOneField(
-        Teacher, on_delete=models.DO_NOTHING, null=True, blank=True)
     active = models.BooleanField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     teacher = models.ForeignKey(
@@ -89,13 +111,76 @@ class Schedule(models.Model):
         return f'{self.teacher} - {self.course}'
 
 
-class Enrollment(models.Model):
-    fullname = models.CharField(max_length=150)
-    email = models.CharField(max_length=100)
-    mobile = models.CharField(max_length=30)
-    course = models.ForeignKey(Course, on_delete=models.DO_NOTHING)
-    date_enrolled = models.DateTimeField(default=datetime.now())
-    course_startdate = models.CharField(max_length=50)
+class Batch(models.Model):
+    title = models.CharField(max_length=150)
+    teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    students = models.ManyToManyField(Student)
 
     def __str__(self):
-        return f'{self.fullname} - {self.mobile}'
+        return f'{self.title} - {self.start_date}'
+
+# endregion
+
+# region other models
+
+
+class TopBanner(models.Model):
+    title = models.CharField(max_length=150)
+    banner_src = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+
+class SectionBanner(models.Model):
+    title = models.CharField(max_length=150)
+    banner_src = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+
+class Testimonial(models.Model):
+    student_name = models.CharField(max_length=250)
+    student_pic = models.ImageField(upload_to='testimonial_pic/')
+    batch = models.DateField()
+    course_taken = models.CharField(max_length=150)
+    published = models.BooleanField(default=False)
+    body = models.TextField()
+
+    def __str__(self):
+        return self.student_name
+
+
+class TechIcon(models.Model):
+    tech_name = models.CharField(max_length=150)
+    icon_img = models.ImageField(upload_to='techicons/')
+    popup_src = models.TextField()
+
+    def __str__(self):
+        return self.tech_name
+
+
+class FeaturedProject(models.Model):
+    title = models.CharField(max_length=350)
+    student_name = models.CharField(max_length=150)
+    course_taken = models.CharField(max_length=150)
+    batch = models.DateField()
+    project_img = models.ImageField()
+    body = models.TextField()
+
+    project_url = models.CharField(max_length=250)
+
+    def __str__(self):
+        return self.title
+
+
+class ComponentDump(models.Model):
+    title = models.CharField(max_length=150)
+    body = models.TextField()
+
+    def __str__(self):
+        return self.title
+# endregion
