@@ -134,3 +134,9 @@ AUTH_USER_MODEL = 'api.User'
 REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False
 }
+
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
