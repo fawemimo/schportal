@@ -1,0 +1,29 @@
+from django.urls import path, include
+from rest_framework_nested import routers
+from . import views
+
+
+router = routers.DefaultRouter()
+router.register('topbars', views.TopBarViewSet)
+router.register('mainbanners', views.MainBannerViewSet)
+router.register('sectionbanners', views.SectionBannerViewSet)
+router.register('testimonials', views.TestimonialViewSet)
+router.register('techicons', views.TechIconViewSet)
+router.register('featuredprojects', views.FeaturedProjectViewSet)
+router.register('componentdumps', views.ComponentDumpViewSet)
+router.register('coursecategories', views.CourseCategoryViewSet)
+router.register('courses', views.CourseViewSet)
+router.register('teachers', views.TeacherViewSet)
+router.register('students', views.StudentViewSet)
+
+# Nested routes
+courses_router = routers.NestedDefaultRouter(
+    router, 'courses', lookup='course')
+courses_router.register('schedules', views.ScheduleViewSet,
+                        basename='course-schedules')
+
+
+urlpatterns = [
+    path('', include(router.urls)),
+    path('', include(courses_router.urls)),
+]

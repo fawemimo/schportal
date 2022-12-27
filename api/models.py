@@ -14,11 +14,10 @@ class User(AbstractUser):
 
 
 class CourseCategory(models.Model):
-    # ('programming', 'Programming'),
-    # ('data analysis', 'Data Analysis'),
-    # ('ui/ux with figma', 'UI/UX with Figma'),
-    # ('kids coding', 'Kids Coding'),
     title = models.CharField(max_length=150)
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class Course(models.Model):
@@ -31,21 +30,20 @@ class Course(models.Model):
     delisted = models.BooleanField(default=False)
     slug = models.CharField(max_length=150, null=True, blank=True)
     extra_note = models.TextField(null=True, blank=True)
-    course_level_code = models.CharField(max_length=20, null=True, blank=True)
+    course_code = models.CharField(max_length=20, null=True, blank=True)
     location_state = models.CharField(
         max_length=50, null=True, blank=True)  # Lagos, Abuja etc
     location_state_area = models.CharField(
         max_length=50, null=True, blank=True)  # Lekki, ikeja etc
     card_title = models.CharField(max_length=100, null=True, blank=True)
-    tech_subs = models.CharField(max_length=100, null=True)
+    tech_subs = models.CharField(max_length=100, null=True, blank=True)
     audience = models.CharField(max_length=100, null=True, blank=True)
     audience_description = models.TextField(null=True, blank=True)
     description = models.TextField()
-    course_outline = models.TextField()
-    what_you_will_learn = models.TextField()
-    requirements = models.CharField(max_length=450)
-    prerequisites = models.CharField(max_length=450)
-    last_updated = models.DateTimeField()
+    course_outline = models.TextField(null=True, blank=True)
+    what_you_will_learn = models.TextField(null=True, blank=True)
+    requirements = models.CharField(max_length=450, null=True, blank=True)
+    prerequisites = models.CharField(max_length=450, null=True, blank=True)
     card_thumb = models.ImageField(
         null=True, blank=True, upload_to='courseimg')
     pic1 = models.ImageField(null=True, blank=True, upload_to='courseimg')
@@ -63,7 +61,7 @@ class Course(models.Model):
         super(Course, self).save(args, kwargs)
 
     def __str__(self):
-        return f'{self.course_level_code} - {self.title}'
+        return f'{self.course_code} - {self.title}'
 
     def get_absolute_url(self):
         return f'/{self.location_state}/{self.location_state_area}/{self.slug}/'
@@ -76,7 +74,7 @@ class Teacher(models.Model):
     when_joined = models.DateField()
 
     def __str__(self):
-        return self.fullname
+        return f'{self.first_name} {self.last_name}'
 
 
 class Student(models.Model):
@@ -96,7 +94,7 @@ class Student(models.Model):
 
 
 class Schedule(models.Model):
-    active = models.BooleanField()
+    active = models.BooleanField(default=False)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     teacher = models.ForeignKey(
         Teacher, on_delete=models.CASCADE, null=True, blank=True)
@@ -126,7 +124,15 @@ class Batch(models.Model):
 # region other models
 
 
-class TopBanner(models.Model):
+class TopBar(models.Model):
+    title = models.CharField(max_length=150)
+    bar_src = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+
+class MainBanner(models.Model):
     title = models.CharField(max_length=150)
     banner_src = models.TextField()
 
@@ -177,6 +183,8 @@ class FeaturedProject(models.Model):
         return self.title
 
 
+# For any section that just requires a content dump
+# like the footer etc
 class ComponentDump(models.Model):
     title = models.CharField(max_length=150)
     body = models.TextField()
