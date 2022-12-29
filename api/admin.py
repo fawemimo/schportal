@@ -66,6 +66,21 @@ class ScheduleAdmin(admin.ModelAdmin):
         return f'{teacher.first_name} {teacher.last_name}'
 
 
+@admin.register(NavLink)
+class NavlinkAdmin(admin.ModelAdmin):
+
+    list_display = ['id', 'title']
+
+
+@admin.register(NavLinkItem)
+class NavLinkItemAdmin(admin.ModelAdmin):
+
+    list_display = ['id', 'item', 'item_url', 'navlink_header']
+
+    def navlink_header(self, item: NavLinkItem):
+        return item.navlink.title
+
+
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
 
