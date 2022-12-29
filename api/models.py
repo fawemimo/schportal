@@ -167,6 +167,7 @@ class TechIcon(models.Model):
     tech_name = models.CharField(max_length=150)
     icon_img_src = models.TextField(null=True)
     popup_src = models.TextField()
+    published = models.BooleanField(default=False)
 
     def __str__(self):
         return self.tech_name
