@@ -74,19 +74,19 @@ class AddScheduleSerializer(serializers.ModelSerializer):
 class TopBarSerializer(serializers.ModelSerializer):
     class Meta:
         model = TopBar
-        fields = ['id', 'title', 'bar_src']
+        fields = '__all__'
 
 
 class MainBannerSerializer(serializers.ModelSerializer):
     class Meta:
         model = MainBanner
-        fields = ['id', 'title', 'banner_src']
+        fields = '__all__'
 
 
 class SectionBannerSerializer(serializers.ModelSerializer):
     class Meta:
         model = SectionBanner
-        fields = ['id', 'title', 'banner_src']
+        fields = '__all__'
 
 
 class TestimonialSerializer(serializers.ModelSerializer):
@@ -111,3 +111,29 @@ class ComponentDumpSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComponentDump
         fields = '__all__'
+
+
+class NavLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NavLink
+        fields = '__all__'
+
+
+class NavLinkItemSerializer(serializers.ModelSerializer):
+    navlink = NavLinkSerializer()
+
+    class Meta:
+        model = NavLinkItem
+        fields = ['id', 'item', 'item_url', 'navlink']
+
+
+class AddNavLinkItemSerializer(serializers.ModelSerializer):
+    # navlink_id = serializers.IntegerField()
+
+    class Meta:
+        model = NavLinkItem
+        fields = ['id', 'item', 'item_url']
+
+    def create(self, validated_data):
+        navlinkid = self.context['navlink_id']
+        return NavLinkItem.objects.create(navlink_id=navlinkid, **validated_data)

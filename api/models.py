@@ -126,6 +126,7 @@ class Batch(models.Model):
 
 class TopBar(models.Model):
     title = models.CharField(max_length=150)
+    published = models.BooleanField(default=False)
     bar_src = models.TextField()
 
     def __str__(self):
@@ -134,6 +135,7 @@ class TopBar(models.Model):
 
 class MainBanner(models.Model):
     title = models.CharField(max_length=150)
+    published = models.BooleanField(default=False)
     banner_src = models.TextField()
 
     def __str__(self):
@@ -142,6 +144,7 @@ class MainBanner(models.Model):
 
 class SectionBanner(models.Model):
     title = models.CharField(max_length=150)
+    published = models.BooleanField(default=False)
     banner_src = models.TextField()
 
     def __str__(self):
@@ -162,7 +165,7 @@ class Testimonial(models.Model):
 
 class TechIcon(models.Model):
     tech_name = models.CharField(max_length=150)
-    icon_img = models.ImageField(upload_to='techicons/')
+    icon_img_src = models.TextField(null=True)
     popup_src = models.TextField()
 
     def __str__(self):
@@ -172,6 +175,8 @@ class TechIcon(models.Model):
 class FeaturedProject(models.Model):
     title = models.CharField(max_length=350)
     student_name = models.CharField(max_length=150)
+    student_pic = models.ImageField(
+        upload_to='studentprojectpic/', null=True, blank=True)
     course_taken = models.CharField(max_length=150)
     batch = models.DateField()
     project_img = models.ImageField()
@@ -183,8 +188,25 @@ class FeaturedProject(models.Model):
         return self.title
 
 
+class NavLink(models.Model):
+    title = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.title
+
+
+class NavLinkItem(models.Model):
+    navlink = models.ForeignKey(NavLink, on_delete=models.CASCADE)
+    item = models.CharField(max_length=250)
+    item_url = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.item
+
 # For any section that just requires a content dump
 # like the footer etc
+
+
 class ComponentDump(models.Model):
     title = models.CharField(max_length=150)
     body = models.TextField()

@@ -92,3 +92,27 @@ class ComponentDumpViewSet(viewsets.ModelViewSet):
     queryset = ComponentDump.objects.all()
     serializer_class = ComponentDumpSerializer
     permission_classes = []
+
+
+class NavLinkViewSet(viewsets.ModelViewSet):
+    queryset = NavLink.objects.all()
+    serializer_class = NavLinkSerializer
+    permission_classes = []
+
+
+class NavLinkItemViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    def get_queryset(self):
+        return NavLinkItem.objects.filter(navlink_id=self.kwargs['navlink_pk']).all()
+
+    def get_serializer_class(self):
+        if self.request.method in ['POST', 'PATCH']:
+            return AddNavLinkItemSerializer
+        return NavLinkItemSerializer
+
+    def get_serializer_context(self):
+        return {
+            'navlink_id': self.kwargs['navlink_pk']
+        }
+    permission_classes = []
