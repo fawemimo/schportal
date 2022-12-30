@@ -116,3 +116,19 @@ class NavLinkItemViewSet(viewsets.ModelViewSet):
             'navlink_id': self.kwargs['navlink_pk']
         }
     permission_classes = []
+
+
+class ShortQuizViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    queryset = ShortQuiz.objects.all()
+    serializer_class = ShortQuizSerializer
+    permission_classes = []
+
+
+class InquiryViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    queryset = Inquiry.objects.all()
+    serializer_class = InquirySerializer
+    permission_classes = []

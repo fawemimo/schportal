@@ -16,6 +16,8 @@ router.register('courses', views.CourseViewSet)
 router.register('teachers', views.TeacherViewSet)
 router.register('students', views.StudentViewSet)
 router.register('navlinks', views.NavLinkViewSet)
+router.register('shortquizes', views.ShortQuizViewSet)
+router.register('inquiries', views.InquiryViewSet)
 
 
 # Nested routes

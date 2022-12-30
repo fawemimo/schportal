@@ -85,3 +85,15 @@ class NavLinkItemAdmin(admin.ModelAdmin):
 class TeacherAdmin(admin.ModelAdmin):
 
     list_display = ['id', 'first_name', 'last_name']
+
+
+@admin.register(ShortQuiz)
+class ShortQuizAdmin(admin.ModelAdmin):
+
+    list_display = ['id', 'fullname', 'mobile', 'email']
+
+
+@admin.register(Inquiry)
+class InquiryAdmin(admin.ModelAdmin):
+
+    list_display = ['id', 'fullname', 'mobile', 'email']

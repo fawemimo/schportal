@@ -214,4 +214,25 @@ class ComponentDump(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class ShortQuiz(models.Model):
+    fullname = models.CharField(max_length=250)
+    email = models.EmailField(max_length=254)
+    mobile = models.CharField(max_length=50)
+    tartiary_education = models.CharField(max_length=50)
+    tartiary_studied = models.CharField(max_length=150)
+    secondary_sch = models.CharField(max_length=150)
+    secondary_studied = models.CharField(max_length=150)
+    tech_interest = models.CharField(max_length=150)
+    more_about_you = models.TextField()
+
+
+class Inquiry(models.Model):
+    fullname = models.CharField(max_length=250)
+    email = models.EmailField(max_length=254)
+    mobile = models.CharField(max_length=50)
+    message = models.TextField()
+
+
 # endregion

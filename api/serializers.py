@@ -137,3 +137,15 @@ class AddNavLinkItemSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         navlinkid = self.context['navlink_id']
         return NavLinkItem.objects.create(navlink_id=navlinkid, **validated_data)
+
+
+class ShortQuizSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShortQuiz
+        fields = '__all__'
+
+
+class InquirySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inquiry
+        fields = '__all__'
