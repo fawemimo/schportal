@@ -15,7 +15,7 @@ class CourseCategoryViewSet(viewsets.ModelViewSet):
 
 class CourseViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'patch', 'post', 'delete']
-    queryset = Course.objects.all()
+    queryset = Course.objects.order_by('ordering').filter(active=True).all()
     serializer_class = CourseSerializer
 
     def get_serializer_class(self):
@@ -71,13 +71,13 @@ class SectionBannerViewSet(viewsets.ModelViewSet):
 
 
 class TestimonialViewSet(viewsets.ModelViewSet):
-    queryset = Testimonial.objects.all()
+    queryset = Testimonial.objects.filter(published=True).all()
     serializer_class = TestimonialSerializer
     permission_classes = []
 
 
 class TechIconViewSet(viewsets.ModelViewSet):
-    queryset = TechIcon.objects.all()
+    queryset = TechIcon.objects.filter(published=True).all()
     serializer_class = TechIconSerializer
     permission_classes = []
 

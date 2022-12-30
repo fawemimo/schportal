@@ -182,7 +182,7 @@ class FeaturedProject(models.Model):
     batch = models.DateField()
     project_img = models.ImageField()
     body = models.TextField()
-
+    published = models.BooleanField(default=False)
     project_url = models.CharField(max_length=250)
 
     def __str__(self):
