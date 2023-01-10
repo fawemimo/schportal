@@ -10,7 +10,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
 
 
-# region core models
+# region core models - mainsite
 
 
 class CourseCategory(models.Model):
@@ -118,10 +118,6 @@ class Batch(models.Model):
 
     def __str__(self):
         return f'{self.title} - {self.start_date}'
-
-# endregion
-
-# region other models
 
 
 class TopBar(models.Model):
@@ -233,6 +229,11 @@ class Inquiry(models.Model):
     email = models.EmailField(max_length=254)
     mobile = models.CharField(max_length=50)
     message = models.TextField()
+
+# endregion
+
+
+# region student portal
 
 
 # endregion
