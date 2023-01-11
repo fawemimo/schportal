@@ -15,7 +15,7 @@ class CourseCategoryViewSet(viewsets.ModelViewSet):
 
 class CourseViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'patch', 'post', 'delete']
-    queryset = Course.objects.order_by('ordering').filter(active=True).all()
+    queryset = Course.objects.order_by('ordering').all()
     serializer_class = CourseSerializer
 
     def get_serializer_class(self):
