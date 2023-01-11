@@ -95,6 +95,7 @@ class Student(models.Model):
 
 class Schedule(models.Model):
     active = models.BooleanField(default=False)
+    registration_status = models.BooleanField(default=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     teacher = models.ForeignKey(
         Teacher, on_delete=models.CASCADE, null=True, blank=True)

@@ -56,8 +56,8 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Schedule
-        fields = ['id', 'course', 'teacher', 'fee', 'discounted_fee',
-                  'startdate', 'duration', 'timing']
+        fields = ['id', 'course', 'registration_status', 'teacher',
+                  'fee', 'discounted_fee', 'startdate', 'duration', 'timing']
 
 
 class AddScheduleSerializer(serializers.ModelSerializer):
