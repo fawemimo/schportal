@@ -162,7 +162,7 @@ class Testimonial(models.Model):
 
 class TechIcon(models.Model):
     tech_name = models.CharField(max_length=150)
-    icon_img_src = models.TextField(null=True)
+    icon_img = models.ImageField(upload_to='techicons/', null=True)
     popup_src = models.TextField()
     published = models.BooleanField(default=False)
 
