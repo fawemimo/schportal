@@ -68,8 +68,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'schportaldb',
-        'USER': '',
-        'PASSWORD': '',
+        'USER': 'syllabus',
+        'PASSWORD': 'SUNday@247',
         'HOST': 'localhost',
         'PORT': 5432
     }

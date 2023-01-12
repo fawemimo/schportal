@@ -183,6 +183,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return [permissions.IsAuthenticated()]    
 
 
+class CourseCardViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+    
+    queryset = Course.objects.all()
+    serializer_class = CourseCardSerializer
+
+    def get_serializer_context(self):
+        return {'course_id': self.kwargs.get('course_pk')}
+
+
 class CoursesViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
 
@@ -190,7 +200,7 @@ class CoursesViewSet(viewsets.ModelViewSet):
         return Course.objects.prefetch_related('coursemanual_set').all()
 
     serializer_class = EnrollCourseSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated()]
 
 
 class CourseManualViewSet(viewsets.ModelViewSet):
