@@ -19,7 +19,13 @@ router.register('navlinks', views.NavLinkViewSet)
 router.register('shortquizes', views.ShortQuizViewSet)
 router.register('inquiries', views.InquiryViewSet)
 
-
+# new viewset implemented
+router.register('enrollment',views.EnrollmentViewSet)
+router.register('assignment',views.AssignmentViewSet, basename='assignment')
+router.register('resource',views.ResourceViewSet, basename='resource')
+router.register('project',views.ProjectViewSet, basename='project')
+router.register('coursemanual',views.CourseManualViewSet, basename='coursemanual')
+router.register('coursesview', views.CoursesViewSet,basename='coursesview')
 # Nested routes
 courses_router = routers.NestedDefaultRouter(
     router, 'courses', lookup='course')
@@ -31,9 +37,12 @@ navlink_router = routers.NestedDefaultRouter(
 navlink_router.register(
     'items', views.NavLinkItemViewSet, basename='navlink-items')
 
+coursemanual_router = routers.NestedDefaultRouter(router,'coursemanual', lookup='coursemanual')
+coursemanual_router.register('coursesview',views.CoursesViewSet, basename='course')
 
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(courses_router.urls)),
     path('', include(navlink_router.urls)),
+    path('', include(coursemanual_router.urls))
 ]

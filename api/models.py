@@ -237,4 +237,64 @@ class Inquiry(models.Model):
 # region student portal
 
 
+class Enrollment(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.PROTECT)
+    course = models.ForeignKey(Course, on_delete=models.PROTECT)
+    batch = models.ForeignKey(Batch, on_delete=models.PROTECT)
+    enrolled = models.BooleanField(default=True)
+    training_date = models.DateTimeField()
+
+    def __str__(self):
+        return f'{self.student} - {self.course}'
+
+
+class Assignment(models.Model):
+    batch = models.ForeignKey(Batch, on_delete=models.SET_NULL, null=True, blank=True)
+    name = models.CharField(max_length=255)
+    assignment_file = models.FileField(upload_to="assignment/%Y%M%d")
+    assignment_given = models.BooleanField(default=False)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class Project(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.PROTECT)
+    name = models.CharField(max_length=255)
+    project_docs = models.FileField(upload_to="project/%Y%M%d")
+    project_assigned = models.BooleanField(default=True)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.student} - {self.name}'
+
+
+class CourseManual(models.Model):
+    course = models.ManyToManyField(Course)
+    manual = models.FileField(upload_to="coursemanual/")
+    date_posted = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+
+class ResourceType(models.Model):
+    name = models.CharField(max_length=250)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Resource(models.Model): 
+    resource_type = models.ForeignKey(ResourceType, on_delete=models.CASCADE)
+    primer = models.FileField(upload_to='free/primer',blank=True, null=True)
+    cheat_sheat = models.FileField(upload_to='free/cheat_sheat',blank=True, null=True)
+    published = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.resource_type.name}' 
+
+
 # endregion

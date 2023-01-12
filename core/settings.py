@@ -68,8 +68,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'schportaldb',
-        'USER': 'postgres',
-        'PASSWORD': 'dove24',
+        'USER': 'syllabus',
+        'PASSWORD': 'SUNday@247',
+        'HOST': 'localhost',
         'PORT': 5432
     }
 }
@@ -161,7 +162,7 @@ LOGGING = {
 }
 
 
-try:
-    from .prod_settings import *
-except ImportError:
-    pass
+# try:
+#     from .prod_settings import *
+# except ImportError:
+#     pass

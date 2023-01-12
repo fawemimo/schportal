@@ -148,3 +148,56 @@ class InquirySerializer(serializers.ModelSerializer):
     class Meta:
         model = Inquiry
         fields = '__all__'
+
+
+class EnrollBatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Batch
+        fields = ('id','title','start_date','end_date')
+
+
+class EnrollStudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ('student_id','first_name','last_name','mobile_numbers','email_addresses','profile_pic')
+
+class EnrollCourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ('id','title')
+
+
+class EnrollmentSerializer(serializers.ModelSerializer):
+    student = EnrollStudentSerializer(read_only=True)
+    course = EnrollCourseSerializer(read_only=True)
+    batch = EnrollBatchSerializer(read_only=True)
+    class Meta:
+        model = Enrollment
+        fields = ['id','student','course','batch','enrolled','training_date']
+
+
+
+class AssignmentSerializer(serializers.ModelSerializer):
+    batch = serializers.StringRelatedField(read_only=True)
+    class Meta:
+        model = Assignment
+        fields = ('id','batch','name','assignment_file','date_posted')
+
+class ResourceSerializer(serializers.ModelSerializer):
+    resource_type = serializers.StringRelatedField(read_only=True)
+    class Meta:
+        model = Resource
+        fields = ('id','resource_type','primer','cheat_sheat','published')
+             
+
+class ProjectSerializer(serializers.ModelSerializer):
+    student = serializers.StringRelatedField()
+    class Meta:
+        model = Project
+        fields = ['id','student','name','project_docs','date_posted']
+
+class CourseManualSerializer(serializers.ModelSerializer):
+    course = EnrollCourseSerializer(many=True)
+    class Meta:
+        model = CourseManual
+        fields = ['id','course','manual','date_posted']        

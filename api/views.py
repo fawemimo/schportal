@@ -3,7 +3,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
-
+from rest_framework import permissions  
+from rest_framework.response import Response
+from rest_framework.decorators import action
 # Create your views here.
 
 
@@ -131,4 +133,81 @@ class InquiryViewSet(viewsets.ModelViewSet):
 
     queryset = Inquiry.objects.all()
     serializer_class = InquirySerializer
+    permission_classes = []
+
+
+class EnrollmentViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    queryset = Enrollment.objects.all()
+    serializer_class = EnrollmentSerializer
+
+    def get_permissions(self):
+        if self.request.method in ['PATCH','POST','DELETE']:
+            return [permissions.IsAdminUser()]
+        return [permissions.AllowAny()]    
+
+
+class AssignmentViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get','post','patch','delete']
+
+    serializer_class = AssignmentSerializer
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Assignment.objects.all()
+        return Assignment.objects.filter(assignment_given=True)
+
+    def get_permissions(self):
+        if self.request.method in ['PATCH','POST','DELETE']:
+            return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticated()]    
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get','post','patch','delete']
+
+    serializer_class = ProjectSerializer
+
+    def get_serializer_context(self):
+        return {'student_id': self.kwargs.get('student_pk')}
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Project.objects.all()
+        return Project.objects.filter(student=self.kwargs.get('student_id')).filter(project_assigned=True)    
+     
+    def get_permissions(self):
+        if self.request.method in ['POST','PATCH','DELETE']:
+            return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticated()]    
+
+
+class CoursesViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        return Course.objects.prefetch_related('coursemanual_set').all()
+
+    serializer_class = EnrollCourseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class CourseManualViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get','post','patch','delete']
+
+    queryset = CourseManual.objects.prefetch_related('course').all()
+    serializer_class = CourseManualSerializer
+
+    def get_permissions(self):
+        if self.request.method in ['POST','PATCH','DELETE']:
+            return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticated()]   
+    
+
+class ResourceViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+
+    queryset = Resource.objects.all()
+    serializer_class = ResourceSerializer       
     permission_classes = []
