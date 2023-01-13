@@ -136,6 +136,21 @@ class InquiryViewSet(viewsets.ModelViewSet):
     permission_classes = []
 
 
+class InterestedFormViewSet(viewsets.ModelViewSet):
+    http_method_names = ['post','get']    
+    
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return InterestedFormSerializer
+        return InterestedFormSerializer    
+
+    def get_serializer_context(self):
+        return {'course_id': self.kwargs.get('course_pk')}        
+
+    def get_queryset(self):
+        return InterestedForm.objects.filter(course_id=self.kwargs.get('course_id')).select_related('course')
+
+
 class EnrollmentViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
 

@@ -9,8 +9,8 @@ class UserAdmin(BaseUserAdmin):
         (
             None,
             {
-                "classes": ("wide",),
-                "fields": ("username", "email", "password1", "password2", "first_name", "last_name"),
+                'classes': ('wide',),
+                'fields': ('username', 'email', 'password1', 'password2', 'first_name', 'last_name'),
             },
         ),
     )
@@ -97,3 +97,12 @@ class ShortQuizAdmin(admin.ModelAdmin):
 class InquiryAdmin(admin.ModelAdmin):
 
     list_display = ['id', 'fullname', 'mobile', 'email']
+
+
+@admin.register(InterestedForm)
+class InterestsAdmin(admin.ModelAdmin):
+
+    list_display = ['course_title','full_name','mobile','email']
+
+    def course_title(self, obj):
+        return obj.course.title

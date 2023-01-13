@@ -237,6 +237,17 @@ class Inquiry(models.Model):
 # region student portal
 
 
+class InterestedForm(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=155)
+    email = models.EmailField(max_length=155)
+    mobile = models.CharField(max_length=50)
+    date_submitted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.full_name} - {self.course.title}'
+
+
 class Enrollment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.PROTECT)
     course = models.ForeignKey(Course, on_delete=models.PROTECT)
@@ -251,7 +262,7 @@ class Enrollment(models.Model):
 class Assignment(models.Model):
     batch = models.ForeignKey(Batch, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255)
-    assignment_file = models.FileField(upload_to="assignment/%Y%M%d")
+    assignment_file = models.FileField(upload_to='assignment/%Y%M%d')
     assignment_given = models.BooleanField(default=False)
     date_posted = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
@@ -263,7 +274,7 @@ class Assignment(models.Model):
 class Project(models.Model):
     student = models.ForeignKey(Student, on_delete=models.PROTECT)
     name = models.CharField(max_length=255)
-    project_docs = models.FileField(upload_to="project/%Y%M%d")
+    project_docs = models.FileField(upload_to='project/%Y%M%d')
     project_assigned = models.BooleanField(default=True)
     date_posted = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
@@ -274,7 +285,7 @@ class Project(models.Model):
 
 class CourseManual(models.Model):
     course = models.ManyToManyField(Course)
-    manual = models.FileField(upload_to="coursemanual/")
+    manual = models.FileField(upload_to='coursemanual/')
     date_posted = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 

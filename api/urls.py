@@ -27,6 +27,8 @@ router.register('project',views.ProjectViewSet, basename='project')
 router.register('coursemanual',views.CourseManualViewSet, basename='coursemanual')
 router.register('coursesview', views.CoursesViewSet,basename='coursesview')
 router.register('coursescard',views.CourseCardViewSet,basename='coursescard')
+router.register('interestedform',views.InterestedFormViewSet,basename='interestedform')
+
 # Nested routes
 courses_router = routers.NestedDefaultRouter(
     router, 'courses', lookup='course')
