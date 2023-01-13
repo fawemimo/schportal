@@ -33,7 +33,8 @@ class SectionBannerAdmin(admin.ModelAdmin):
 
 @admin.register(TechIcon)
 class TechIconAdmin(admin.ModelAdmin):
-    list_display = ['id', 'tech_name', 'icon_img', 'popup_src']
+    list_display = ['id', 'tech_name', 'published', 'icon_img', 'popup_src']
+    list_editable = ['published']
 
 
 @admin.register(CourseCategory)
