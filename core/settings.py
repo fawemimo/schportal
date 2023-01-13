@@ -1,4 +1,5 @@
 import os
+from decouple import config
 from pathlib import Path
 
 
@@ -68,8 +69,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'schportaldb',
-        'USER': 'syllabus',
-        'PASSWORD': 'SUNday@247',
+        'USER': config('DBUSER'),
+        'PASSWORD': config('DBPWD'),
         'HOST': 'localhost',
         'PORT': 5432
     }
@@ -162,7 +163,9 @@ LOGGING = {
 }
 
 
-# try:
-#     from .prod_settings import *
-# except ImportError:
-#     pass
+try:
+    from .prod_settings import *
+    from .test_settings import *
+    from .staging_settings import *
+except ImportError:
+    pass
