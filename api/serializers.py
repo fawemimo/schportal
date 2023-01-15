@@ -264,10 +264,18 @@ class CourseCardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee']
+        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','card_thumb','audience','audience_description','frontpage_featured','active','slug']
 
     def get_the_url(self, obj):
         return f'/{obj.location_state_area}/{obj.card_title}/{obj.location_state}/'
 
     def get_fee(self, obj):
         return obj.schedule_set.only('id').values('fee').first()
+
+
+class StudentAttendanceSerializer(serializers.ModelSerializer):
+    teacher = serializers.StringRelatedField()
+    student = serializers.StringRelatedField()
+    class Meta:
+        model = StudentAttendance
+        fields = ['id','teacher','student','attendance_status','timestamp','attendance_comment','raise_warning']

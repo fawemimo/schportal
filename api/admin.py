@@ -107,3 +107,16 @@ class InterestsAdmin(admin.ModelAdmin):
 
     def course_title(self, obj):
         return obj.course.title
+
+@admin.register(StudentAttendance)        
+class StudentAttendanceAdmin(admin.ModelAdmin):
+    list_display = ['teacher','student','batch','attendance_status','timestamp']
+
+    def teacher(self, obj):
+        return f'{obj.teacher.first_name} {obj.teacher.last_name}'
+
+    def student(self, obj):
+        return f'{obj.student.first_name} {obj.student.last_name}'
+
+    def batch(self, obj):
+        return obj.batch.title

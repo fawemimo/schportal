@@ -236,3 +236,15 @@ class ResourceViewSet(viewsets.ModelViewSet):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer       
     permission_classes = []
+
+
+class StudentAttendanceViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+
+    
+    serializer_class = StudentAttendanceSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        if self.request.user.is_active:
+            return StudentAttendance.objects.filter(student=self.context['student_pk'])

@@ -308,4 +308,24 @@ class Resource(models.Model):
         return f'{self.resource_type.name}' 
 
 
+class StudentAttendance(models.Model):
+   teacher = models.ForeignKey(Teacher, on_delete=models.PROTECT)
+   student = models.ForeignKey(Student, on_delete=models.PROTECT)
+   batch = models.ForeignKey(Batch, on_delete=models.PROTECT)
+   ABSENT = 'Absent'
+   PRESENT = 'Present'
+   attendance_choices = (
+      (ABSENT, 'Absent'),
+      (PRESENT, 'Present'),
+   )
+   attendance_status = models.CharField(max_length=50, choices=attendance_choices, default=ABSENT)
+   timestamp = models.DateTimeField(blank=True, null=True)
+   attendance_comment = models.CharField(max_length=255)
+   raise_warning = models.BooleanField(default=False)
+
+   def __str__(self):
+        return f'{self.teacher} -{self.student}'
+
+   
+
 # endregion
