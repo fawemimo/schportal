@@ -32,9 +32,9 @@ class Course(models.Model):
     extra_note = models.TextField(null=True, blank=True)
     course_code = models.CharField(max_length=20, null=True, blank=True)
     location_state = models.CharField(
-        max_length=50, null=True, blank=True)  # Lagos, Abuja etc
+        max_length=50, null=True, blank=True, default='Lagos')  # Lagos, Abuja etc
     location_state_area = models.CharField(
-        max_length=50, null=True, blank=True)  # Lekki, ikeja etc
+        max_length=50, null=True, blank=True, default='Ikeja')  # Lekki, ikeja etc
     card_title = models.CharField(max_length=100, null=True, blank=True)
     tech_subs = models.CharField(max_length=100, null=True, blank=True)
     audience = models.CharField(max_length=100, null=True, blank=True)
@@ -309,22 +309,23 @@ class Resource(models.Model):
 
 
 class StudentAttendance(models.Model):
-   teacher = models.ForeignKey(Teacher, on_delete=models.PROTECT)
-   student = models.ForeignKey(Student, on_delete=models.PROTECT)
-   batch = models.ForeignKey(Batch, on_delete=models.PROTECT)
+
    ABSENT = 'Absent'
    PRESENT = 'Present'
    attendance_choices = (
       (ABSENT, 'Absent'),
       (PRESENT, 'Present'),
    )
+
+   student = models.ForeignKey(Student, on_delete=models.PROTECT)
+   batch = models.ForeignKey(Batch, on_delete=models.PROTECT)   
    attendance_status = models.CharField(max_length=50, choices=attendance_choices, default=ABSENT)
    timestamp = models.DateTimeField(blank=True, null=True)
    attendance_comment = models.CharField(max_length=255)
    raise_warning = models.BooleanField(default=False)
 
    def __str__(self):
-        return f'{self.teacher} -{self.student}'
+        return f'{self.student}'
 
    
 

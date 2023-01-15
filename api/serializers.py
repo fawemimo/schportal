@@ -258,24 +258,36 @@ class CourseManualSerializer(serializers.ModelSerializer):
         fields = ['id', 'course', 'manual', 'date_posted']
 
 
+class AddCourseCardSerializer(serializers.ModelSerializer):
+   
+    class Meta:
+        model = Course
+        fields = '__all__'
+
+    def create(self, validated_data):
+        coursecard = Course(**validated_data)      
+        coursecard.save()
+        return coursecard    
+
+
 class CourseCardSerializer(serializers.ModelSerializer):
     the_url = serializers.SerializerMethodField(read_only=True)
     fee = serializers.SerializerMethodField(source='schedule_set')
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','card_thumb','audience','audience_description','frontpage_featured','active','slug']
+        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','card_thumb','audience','audience_description','frontpage_featured','active','slug','location_state','location_state_area']
 
     def get_the_url(self, obj):
-        return f'/{obj.location_state_area}/{obj.card_title}/{obj.location_state}/'
+        return f'/{obj.location_state_area}/{obj.location_state}/{obj.card_title}/'
 
     def get_fee(self, obj):
         return obj.schedule_set.only('id').values('fee').first()
 
 
 class StudentAttendanceSerializer(serializers.ModelSerializer):
-    teacher = serializers.StringRelatedField()
+    batch = serializers.StringRelatedField()
     student = serializers.StringRelatedField()
     class Meta:
         model = StudentAttendance
-        fields = ['id','teacher','student','attendance_status','timestamp','attendance_comment','raise_warning']
+        fields = ['id','student','batch','attendance_status','timestamp','attendance_comment','raise_warning']

@@ -199,13 +199,25 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 
 class CourseCardViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get']
+    http_method_names = ['get','post','patch','delete']
     
-    queryset = Course.objects.all()
-    serializer_class = CourseCardSerializer
+    queryset = Course.objects.filter(frontpage_featured=True)
+
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return CourseCardSerializer
+        elif self.request.method == 'POST':
+            return AddCourseCardSerializer
+        return CourseCardSerializer
 
     def get_serializer_context(self):
         return {'course_id': self.kwargs.get('course_pk')}
+
+    def get_permissions(self):
+        if self.request.method in ['POST','DELETE','PATCH']:
+            return [permissions.IsAdminUser()]
+        return [permissions.AllowAny()]    
 
 
 class CoursesViewSet(viewsets.ModelViewSet):
