@@ -48,5 +48,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('', include(courses_router.urls)),
     path('', include(navlink_router.urls)),
-    path('', include(coursemanual_router.urls))
+    path('', include(coursemanual_router.urls)),
+    path('auth/',include('djoser.urls')),
+    path('auth/', include('djoser.urls.jwt')),
 ]

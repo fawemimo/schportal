@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'django_filters',
     'api',
     'mainsite',
+    'djoser',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -132,7 +134,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'api.User'
 
 REST_FRAMEWORK = {
-    'COERCE_DECIMAL_TO_STRING': False
+    'COERCE_DECIMAL_TO_STRING': False,
+    'DEFAULT_AUTHENTICATION_CLASSES': ( 
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+SIMPLE_JWT = { 
+    'AUTH_HEADER_TYPES': ('JWT',),
+}
+
+DJOSER = {
+'SERIALIZERS':{
+    'user_create':'api.serializers.UserCreateSerializer'
+}
+
 }
 
 LOGGING = {

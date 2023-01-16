@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 
 
 class CourseCategorySerializer(serializers.ModelSerializer):
@@ -41,7 +42,7 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = '__all__'
-
+        lookup_field = 'slug'
 
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
@@ -273,13 +274,14 @@ class AddCourseCardSerializer(serializers.ModelSerializer):
 class CourseCardSerializer(serializers.ModelSerializer):
     the_url = serializers.SerializerMethodField(read_only=True)
     fee = serializers.SerializerMethodField(source='schedule_set')
-
+    
     class Meta:
         model = Course
         fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','card_thumb','audience','audience_description','frontpage_featured','active','slug','location_state','location_state_area']
+        lookup_field = 'slug'
 
     def get_the_url(self, obj):
-        return f'/{obj.location_state}/{obj.location_state_area}/{obj.slug}'
+        return f'{obj.location_state}/{obj.location_state_area}/{obj.slug}'
 
     def get_fee(self, obj):
         return obj.schedule_set.only('id').values('fee').first()
@@ -291,3 +293,8 @@ class StudentAttendanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentAttendance
         fields = ['id','student','batch','attendance_status','timestamp','attendance_comment','raise_warning']
+
+
+class UserCreateSerializer(BaseUserCreateSerializer):
+    class Meta(BaseUserCreateSerializer.Meta):
+        fields = ['id', 'username', 'email','password', 'first_name', 'last_name']

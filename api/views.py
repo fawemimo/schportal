@@ -19,6 +19,8 @@ class CourseViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'patch', 'post', 'delete']
     queryset = Course.objects.order_by('ordering').all()
     serializer_class = CourseSerializer
+    lookup_field = 'slug'
+    lookup_value_regex = '[^/]+'
 
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PATCH']:
@@ -202,7 +204,8 @@ class CourseCardViewSet(viewsets.ModelViewSet):
     http_method_names = ['get','post','patch','delete']
     
     queryset = Course.objects.filter(active=True)
-
+    lookup_field = 'slug'
+    lookup_value_regex = '[^/]+'
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -266,4 +269,6 @@ class CourseHomepageFeatured(viewsets.ModelViewSet):
 
     queryset = Course.objects.filter(frontpage_featured=True).filter(active=True)
     serializer_class = CourseCardSerializer
+    lookup_field = 'slug'
+    lookup_value_regex = '[^/]+'
 
