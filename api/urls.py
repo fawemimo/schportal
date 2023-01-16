@@ -20,15 +20,15 @@ router.register('shortquizes', views.ShortQuizViewSet)
 router.register('inquiries', views.InquiryViewSet)
 
 # new viewset implemented
-router.register('enrollment',views.EnrollmentViewSet)
-router.register('assignment',views.AssignmentViewSet, basename='assignment')
-router.register('resource',views.ResourceViewSet, basename='resource')
-router.register('project',views.ProjectViewSet, basename='project')
-router.register('coursemanual',views.CourseManualViewSet, basename='coursemanual')
-router.register('coursesview', views.CoursesViewSet,basename='coursesview')
-router.register('coursescard',views.CourseCardViewSet,basename='coursescard')
-router.register('interestedform',views.InterestedFormViewSet,basename='interestedform')
-router.register('studentattendance',views.StudentAttendanceViewSet,basename='studentattendance')
+router.register('enrollments',views.EnrollmentViewSet)
+router.register('assignments',views.AssignmentViewSet, basename='assignment')
+router.register('resources',views.ResourceViewSet, basename='resource')
+router.register('projects',views.ProjectViewSet, basename='project')
+router.register('coursemanuals',views.CourseManualViewSet, basename='coursemanual')
+router.register('coursescards',views.CourseCardViewSet,basename='coursescard')
+router.register('interestedforms',views.InterestedFormViewSet,basename='interestedform')
+router.register('studentattendances',views.StudentAttendanceViewSet,basename='studentattendance')
+router.register('coursehomepagefeatures', views.CourseHomepageFeatured,basename='homepagefeatured')
 
 # Nested routes
 courses_router = routers.NestedDefaultRouter(
@@ -41,7 +41,7 @@ navlink_router = routers.NestedDefaultRouter(
 navlink_router.register(
     'items', views.NavLinkItemViewSet, basename='navlink-items')
 
-coursemanual_router = routers.NestedDefaultRouter(router,'coursemanual', lookup='coursemanual')
+coursemanual_router = routers.NestedDefaultRouter(router,'coursemanuals', lookup='coursemanuals')
 coursemanual_router.register('coursesview',views.CoursesViewSet, basename='course')
 
 urlpatterns = [

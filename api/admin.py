@@ -45,9 +45,10 @@ class CourseCategoryAdmin(admin.ModelAdmin):
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
 
-    list_display = ['id', 'title', 'description', 'course_category']
+    list_display = ['id', 'title', 'description', 'course_category','slug']
     list_editable = ['title']
     list_select_related = ['coursecategory']
+    prepopulated_fields = {'slug':('title',)}
 
     def course_category(self, course):
         return course.coursecategory.title

@@ -279,7 +279,7 @@ class CourseCardSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','card_thumb','audience','audience_description','frontpage_featured','active','slug','location_state','location_state_area']
 
     def get_the_url(self, obj):
-        return f'/{obj.location_state_area}/{obj.location_state}/{obj.card_title}/'
+        return f'/{obj.location_state}/{obj.location_state_area}/{obj.slug}'
 
     def get_fee(self, obj):
         return obj.schedule_set.only('id').values('fee').first()

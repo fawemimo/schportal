@@ -201,7 +201,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class CourseCardViewSet(viewsets.ModelViewSet):
     http_method_names = ['get','post','patch','delete']
     
-    queryset = Course.objects.filter(frontpage_featured=True)
+    queryset = Course.objects.filter(active=True)
 
 
     def get_serializer_class(self):
@@ -260,3 +260,10 @@ class StudentAttendanceViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_active:
             return StudentAttendance.objects.filter(student=self.context['student_pk'])
+
+class CourseHomepageFeatured(viewsets.ModelViewSet):
+    http_method_names = ['get']
+
+    queryset = Course.objects.filter(frontpage_featured=True).filter(active=True)
+    serializer_class = CourseCardSerializer
+
