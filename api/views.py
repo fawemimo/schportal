@@ -201,10 +201,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 
 class CourseCardViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get', 'post', 'patch', 'delete']
 
+    http_method_names = ['get','post','patch','delete']
+    
     queryset = Course.objects.filter(active=True)
-
+    lookup_field = 'slug'
+    lookup_value_regex = '[^/]+'
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -269,5 +271,9 @@ class CourseHomepageFeatured(viewsets.ModelViewSet):
     queryset = Course.objects.filter(
         frontpage_featured=True).filter(active=True)
     serializer_class = CourseCardSerializer
+<<<<<<< HEAD
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
+
+=======
+>>>>>>> 4ba48f1387872548e315f69c352b3dab513e635d
