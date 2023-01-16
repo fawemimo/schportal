@@ -271,9 +271,8 @@ class CourseHomepageFeatured(viewsets.ModelViewSet):
     queryset = Course.objects.filter(
         frontpage_featured=True).filter(active=True)
     serializer_class = CourseCardSerializer
-<<<<<<< HEAD
+
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
 
-=======
->>>>>>> 4ba48f1387872548e315f69c352b3dab513e635d
+
