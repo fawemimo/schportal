@@ -51,7 +51,7 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         return ScheduleSerializer
 
     def get_queryset(self):
-        return Schedule.objects.filter(course_id=self.kwargs['course_pk']).filter(active=True).all()
+        return Schedule.objects.filter(course_id__slug=self.kwargs['course_slug']).filter(active=True).all()
 
     permission_classes = []
 

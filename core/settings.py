@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 from decouple import config
 from pathlib import Path
@@ -137,16 +138,20 @@ REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False,
     'DEFAULT_AUTHENTICATION_CLASSES': ( 
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    # 'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAdmin']
 }
 
 SIMPLE_JWT = { 
     'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7), 
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
 
 DJOSER = {
 'SERIALIZERS':{
-    'user_create':'api.serializers.UserCreateSerializer'
+    'user_create':'api.serializers.UserCreateSerializer',
+    'current_user': 'api.serializers.UserSerializer',
 }
 
 }
