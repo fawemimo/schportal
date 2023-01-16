@@ -26,7 +26,8 @@ class AddCourseSerializer(serializers.ModelSerializer):
 
     def validate_coursecategory_id(self, value):
         if not CourseCategory.objects.filter(pk=value).exists():
-            raise serializers.ValidationError('Invalid Course Category ID supplied')
+            raise serializers.ValidationError(
+                'Invalid Course Category ID supplied')
         return value
 
     def create(self, validated_data):
@@ -64,6 +65,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'course',
+            'active',
             'registration_status',
             'teacher',
             'fee',
@@ -174,9 +176,10 @@ class InquirySerializer(serializers.ModelSerializer):
 
 class InterestedFormSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
+
     class Meta:
         model = InterestedForm
-        fields = ['id','course_id','full_name','email','mobile']
+        fields = ['id', 'course_id', 'full_name', 'email', 'mobile']
 
     def validate_course_id(self, value):
         if not Course.objects.filter(pk=value).exists():
@@ -184,11 +187,9 @@ class InterestedFormSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        interestedform = InterestedForm(**validated_data)      
+        interestedform = InterestedForm(**validated_data)
         interestedform.save()
         return interestedform
-
-
 
 
 class EnrollBatchSerializer(serializers.ModelSerializer):
@@ -223,7 +224,8 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Enrollment
-        fields = ['id', 'student', 'course', 'batch', 'enrolled', 'training_date']
+        fields = ['id', 'student', 'course',
+                  'batch', 'enrolled', 'training_date']
 
 
 class AssignmentSerializer(serializers.ModelSerializer):
@@ -259,15 +261,15 @@ class CourseManualSerializer(serializers.ModelSerializer):
 
 
 class AddCourseCardSerializer(serializers.ModelSerializer):
-   
+
     class Meta:
         model = Course
         fields = '__all__'
 
     def create(self, validated_data):
-        coursecard = Course(**validated_data)      
+        coursecard = Course(**validated_data)
         coursecard.save()
-        return coursecard    
+        return coursecard
 
 
 class CourseCardSerializer(serializers.ModelSerializer):
@@ -276,7 +278,8 @@ class CourseCardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','card_thumb','audience','audience_description','frontpage_featured','active','slug','location_state','location_state_area']
+        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee', 'card_thumb', 'audience',
+                  'audience_description', 'frontpage_featured', 'active', 'slug', 'location_state', 'location_state_area']
 
     def get_the_url(self, obj):
         return f'/{obj.location_state}/{obj.location_state_area}/{obj.slug}'
@@ -288,6 +291,8 @@ class CourseCardSerializer(serializers.ModelSerializer):
 class StudentAttendanceSerializer(serializers.ModelSerializer):
     batch = serializers.StringRelatedField()
     student = serializers.StringRelatedField()
+
     class Meta:
         model = StudentAttendance
-        fields = ['id','student','batch','attendance_status','timestamp','attendance_comment','raise_warning']
+        fields = ['id', 'student', 'batch', 'attendance_status',
+                  'timestamp', 'attendance_comment', 'raise_warning']
