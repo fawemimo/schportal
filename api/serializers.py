@@ -293,8 +293,3 @@ class StudentAttendanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentAttendance
         fields = ['id','student','batch','attendance_status','timestamp','attendance_comment','raise_warning']
-
-
-class UserCreateSerializer(BaseUserCreateSerializer):
-    class Meta(BaseUserCreateSerializer.Meta):
-        fields = ['id', 'username', 'email','password', 'first_name', 'last_name']
