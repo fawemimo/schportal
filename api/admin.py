@@ -86,7 +86,10 @@ class NavLinkItemAdmin(admin.ModelAdmin):
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
 
-    list_display = ['id', 'first_name', 'last_name']
+    list_display = ['id','name']
+
+    def name(self, obj):
+        return f'{obj.user.first_name} {obj.user.last_name}'
 
 
 @admin.register(ShortQuiz)
@@ -111,13 +114,80 @@ class InterestsAdmin(admin.ModelAdmin):
 
 @admin.register(StudentAttendance)        
 class StudentAttendanceAdmin(admin.ModelAdmin):
-    list_display = ['teacher','student','batch','attendance_status','timestamp']
-
-    def teacher(self, obj):
-        return f'{obj.teacher.first_name} {obj.teacher.last_name}'
+    list_display = ['student','batch','attendance_status','timestamp']
 
     def student(self, obj):
         return f'{obj.student.first_name} {obj.student.last_name}'
 
     def batch(self, obj):
         return obj.batch.title
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)    
+
+        if request.user.is_superuser:
+            return queryset
+        return queryset.filter(batch__teacher__user=request.user.id)
+
+
+@admin.register(Student)        
+class StudentAdmin(admin.ModelAdmin):
+    list_display = ['user','student_idcard_id']
+
+    
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ['student','course','batch','training_date']
+
+    def student(self, obj):
+        return obj.student.user
+
+    def course(self,obj):
+        return obj.course.title
+
+    def batch(self,obj):
+        return obj.batch.title    
+
+
+@admin.register(Assignment)        
+class AssignmentAdmin(admin.ModelAdmin):
+    list_display = ['batch', 'name','assignment_file','date_posted']
+
+    def batch(self,obj):
+        return obj.batch.title
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        
+        if request.user.is_superuser:
+            return queryset           
+        return queryset.filter(batch__teacher__user_id=request.user.id)   
+
+    def save_model(self, request, obj, form, change):
+        obj.batch.teacher.user = request.user
+        return super().save_model(request, obj, form, change) 
+
+    def save_formset(self, request, form, formset, change):
+        formset.save() 
+        form.instance.save()        
+
+
+@admin.register(Project)           
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = ['student', 'name','project_docs','date_posted']
+
+    def student(self, obj):
+        return obj.student.user
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+
+        if request.user.is_superuser:
+            return queryset        
+        teacher = Teacher.objects.get(user=request.user.id)            
+        return queryset.filter(student__batch__teacher=teacher)      
+
+
+@admin.register(Batch)        
+class BatchAdmin(admin.ModelAdmin):
+    list_display = ['title','start_date','end_date']

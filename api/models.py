@@ -1,7 +1,8 @@
-from django.db import models
-from django.contrib.auth.models import AbstractUser
-from django.utils.text import slugify
 from datetime import datetime
+
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.utils.text import slugify
 
 # Create your models here.
 
@@ -68,8 +69,8 @@ class Course(models.Model):
 
 
 class Teacher(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,blank=True, null=True)
+    teacher_idcard_id = models.CharField(max_length=50, blank=True,null=True)
     courses_taking = models.ManyToManyField(Course)
     when_joined = models.DateField()
 
@@ -78,11 +79,9 @@ class Teacher(models.Model):
 
 
 class Student(models.Model):
-    student_id = models.CharField(max_length=50, null=True, blank=True)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,blank=True,null=True)
+    student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
     mobile_numbers = models.CharField(max_length=250)
-    email_addresses = models.CharField(max_length=250)
     profile_pic = models.ImageField(upload_to='students_profilepix/')
     residential_address = models.CharField(max_length=250)
     contact_address = models.CharField(max_length=250)
@@ -90,7 +89,7 @@ class Student(models.Model):
     next_of_kin_contact_address = models.CharField(max_length=250)
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return f'{self.user} {self.student_idcard_id}'
 
 
 class Schedule(models.Model):

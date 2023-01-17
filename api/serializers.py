@@ -51,9 +51,10 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
     class Meta:
         model = Student
-        fields = '__all__'
+        fields = ['id','user','student_idcard_id','first_name','mobile_numbers','profile_pic','residential_address','contact_address','next_of_kin_fullname','next_of_kin_contact_address']
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
@@ -202,11 +203,8 @@ class EnrollStudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = (
-            'student_id',
-            'first_name',
-            'last_name',
+            'student_idcard_id',
             'mobile_numbers',
-            'email_addresses',
             'profile_pic',
         )
 

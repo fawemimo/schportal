@@ -32,13 +32,23 @@ class CourseViewSet(viewsets.ModelViewSet):
 class TeacherViewSet(viewsets.ModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
-    permission_classes = []
+    permission_classes = [permissions.IsAdminUser]
 
 
 class StudentViewSet(viewsets.ModelViewSet):
-    queryset = Student.objects.all()
+    http_method_names = ['get','post','patch','delete']
+
     serializer_class = StudentSerializer
     permission_classes = []
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Student.objects.filter(user_id=self.request.user.id)
+
+    def get_permissions(self):
+        if self.request.method in ['PATCH', 'POST', 'GET']:
+            return [permissions.IsAuthenticated()]
+        return [permissions.IsAdminUser()]
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
@@ -173,7 +183,7 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_staff:
             return Assignment.objects.all()
-        return Assignment.objects.filter(assignment_given=True)
+        return Assignment.objects.filter(batch__students__user_id=self.request.user.id).filter(assignment_given=True)
 
     def get_permissions(self):
         if self.request.method in ['PATCH', 'POST', 'DELETE']:
@@ -192,7 +202,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_staff:
             return Project.objects.all()
-        return Project.objects.filter(student=self.kwargs.get('student_id')).filter(project_assigned=True)
+        return Project.objects.filter(student__user_id=self.request.user.id).filter(project_assigned=True)
 
     def get_permissions(self):
         if self.request.method in ['POST', 'PATCH', 'DELETE']:
@@ -245,6 +255,10 @@ class CourseManualViewSet(viewsets.ModelViewSet):
             return [permissions.IsAdminUser()]
         return [permissions.IsAuthenticated()]
 
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return CourseManual.objects.prefetch_related('course').all()            
+
 
 class ResourceViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
@@ -262,7 +276,7 @@ class StudentAttendanceViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_active:
-            return StudentAttendance.objects.filter(student=self.context['student_pk'])
+            return StudentAttendance.objects.filter(student__user_id=self.request.user.id)
 
 
 class CourseHomepageFeatured(viewsets.ModelViewSet):
