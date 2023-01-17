@@ -283,6 +283,7 @@ class Project(models.Model):
 
 
 class CourseManual(models.Model):
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE,blank=True, null=True)
     course = models.ManyToManyField(Course)
     manual = models.FileField(upload_to='coursemanual/')
     date_posted = models.DateTimeField(auto_now_add=True)

@@ -65,7 +65,7 @@ class ScheduleAdmin(admin.ModelAdmin):
         return schedule.course.title
 
     def teacher(self, teacher: Teacher):
-        return f'{teacher.first_name} {teacher.last_name}'
+        return f'{teacher.user.first_name} {teacher.user.last_name}'
 
 
 @admin.register(NavLink)
@@ -117,7 +117,7 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
     list_display = ['student','batch','attendance_status','timestamp']
 
     def student(self, obj):
-        return f'{obj.student.first_name} {obj.student.last_name}'
+        return f'{obj.student.user.first_name} {obj.student.user.last_name}'
 
     def batch(self, obj):
         return obj.batch.title

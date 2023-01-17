@@ -54,7 +54,7 @@ class StudentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
     class Meta:
         model = Student
-        fields = ['id','user','student_idcard_id','first_name','mobile_numbers','profile_pic','residential_address','contact_address','next_of_kin_fullname','next_of_kin_contact_address']
+        fields = ['id','user','student_idcard_id','mobile_numbers','profile_pic','residential_address','contact_address','next_of_kin_fullname','next_of_kin_contact_address']
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
@@ -250,7 +250,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class CourseManualSerializer(serializers.ModelSerializer):
-    course = EnrollCourseSerializer(many=True)
+    course = EnrollCourseSerializer(many=True,read_only=True)
 
     class Meta:
         model = CourseManual

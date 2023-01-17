@@ -257,7 +257,13 @@ class CourseManualViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return CourseManual.objects.prefetch_related('course').all()            
+            return CourseManual.objects.prefetch_related('course').all()
+        elif self.request.user.is_staff:
+            return CourseManual.objects.filter(batch__teacher__user=self.request.user).prefetch_related('course').all()
+        else:           
+            pass
+            student = Student.objects.get(user=self.request.user)
+            return CourseManual.objects.filter(enrollment__student=student).prefetch_related('course').all()
 
 
 class ResourceViewSet(viewsets.ModelViewSet):
