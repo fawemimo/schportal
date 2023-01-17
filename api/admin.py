@@ -65,7 +65,7 @@ class ScheduleAdmin(admin.ModelAdmin):
         return schedule.course.title
 
     def teacher(self, teacher: Teacher):
-        return f'{teacher.user.first_name} {teacher.user.last_name}'
+        return f'{teacher.user}'
 
 
 @admin.register(NavLink)
