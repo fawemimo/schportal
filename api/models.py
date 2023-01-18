@@ -44,7 +44,7 @@ class Course(models.Model):
     course_outline = models.TextField(null=True, blank=True)
     what_you_will_learn = models.TextField(null=True, blank=True)
     requirements = models.CharField(max_length=450, null=True, blank=True)
-    prerequisites = models.CharField(max_length=450, null=True, blank=True)
+    prerequisites = models.TextField(max_length=450, null=True, blank=True)
     card_thumb = models.ImageField(
         null=True, blank=True, upload_to='courseimg')
     pic1 = models.ImageField(null=True, blank=True, upload_to='courseimg')
