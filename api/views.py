@@ -178,12 +178,12 @@ class EnrollmentViewSet(viewsets.ModelViewSet):
 class AssignmentViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
 
-    serializer_class = AssignmentSerializer
+    serializer_class = AssignmentAllocationSerializer
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return Assignment.objects.all()
-        return Assignment.objects.filter(batch__students__user_id=self.request.user.id).filter(assignment_given=True)
+            return AssignmentAllocation.objects.all()
+        return AssignmentAllocation.objects.filter(student__user_id=self.request.user.id).filter(assignment__assignment_given=True)
 
     def get_permissions(self):
         if self.request.method in ['PATCH', 'POST', 'DELETE']:
@@ -194,15 +194,15 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
 
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectAllocationSerializer
 
     def get_serializer_context(self):
         return {'student_id': self.kwargs.get('student_pk')}
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return Project.objects.all()
-        return Project.objects.filter(student__user_id=self.request.user.id).filter(project_assigned=True)
+            return ProjectAllocation.objects.all()
+        return ProjectAllocation.objects.filter(student__user_id=self.request.user.id).filter(project__project_assigned=True)
 
     def get_permissions(self):
         if self.request.method in ['POST', 'PATCH', 'DELETE']:
@@ -238,17 +238,17 @@ class CoursesViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Course.objects.prefetch_related('coursemanual_set').all()
+        return Course.objects.filter(enrollment__student__user_id=self.request.user.id)
 
     serializer_class = EnrollCourseSerializer
-    permission_classes = [permissions.IsAuthenticated()]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class CourseManualViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
 
-    queryset = CourseManual.objects.prefetch_related('course').all()
-    serializer_class = CourseManualSerializer
+    queryset = CourseManualAllocation.objects.select_related('course_manual').all()
+    serializer_class = CourseManualAllocationSerializer
 
     def get_permissions(self):
         if self.request.method in ['POST', 'PATCH', 'DELETE']:
@@ -257,13 +257,11 @@ class CourseManualViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return CourseManual.objects.prefetch_related('course').all()
-        elif self.request.user.is_staff:
-            return CourseManual.objects.filter(enrollment__teacher__user=self.request.user).prefetch_related('course').all()
-        else:           
-            
-            student = Student.objects.get(user=self.request.user)
-            return CourseManual.objects.filter(course__enrollment=self.kwargs.get('course_pk')).filter(enrollment__student__user=self.request.user).prefetch_related('course').all()
+            return CourseManualAllocation.objects.select_related('course_manual').all()
+        elif self.request.user.is_active: 
+            return CourseManualAllocation.objects.filter(student__user=self.request.user).select_related('course_manual')
+        else:
+            pass
 
 
 class ResourceViewSet(viewsets.ModelViewSet):

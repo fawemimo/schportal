@@ -233,6 +233,15 @@ class AssignmentSerializer(serializers.ModelSerializer):
         fields = ('id', 'batch', 'name', 'assignment_file', 'date_posted')
 
 
+class AssignmentAllocationSerializer(serializers.ModelSerializer):
+    student = serializers.StringRelatedField(read_only=True)
+    assignment = AssignmentSerializer(read_only=True)
+    supervisor = serializers.StringRelatedField(read_only=True)
+    class Meta:
+        model = AssignmentAllocation
+        fields = ['id','student','assignment','supervisor','start_date','deadline']
+
+
 class ResourceSerializer(serializers.ModelSerializer):
     resource_type = serializers.StringRelatedField(read_only=True)
 
@@ -242,20 +251,34 @@ class ResourceSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    student = serializers.StringRelatedField()
 
     class Meta:
         model = Project
-        fields = ['id', 'student', 'name', 'project_docs', 'date_posted']
+        fields = ['id', 'name', 'project_docs', 'date_posted']
 
+class ProjectAllocationSerializer(serializers.ModelSerializer):
+    student = serializers.StringRelatedField(read_only=True)
+    project = ProjectSerializer()
+    supervisor = serializers.StringRelatedField(read_only=True)
+    class Meta:
+        model = ProjectAllocation
+        fields = ['id','student','project','supervisor','start_date','delivery_status']
 
 class CourseManualSerializer(serializers.ModelSerializer):
     course = EnrollCourseSerializer(many=True,read_only=True)
 
     class Meta:
         model = CourseManual
-        fields = ['id', 'course', 'manual', 'date_posted']
+        fields = ['id','title', 'course', 'manual', 'date_posted']
 
+
+class CourseManualAllocationSerializer(serializers.ModelSerializer):
+    student = serializers.StringRelatedField(read_only=True)
+    course_manual = CourseManualSerializer()
+    released_by = serializers.StringRelatedField(read_only=True)
+    class Meta:
+        model = CourseManualAllocation
+        fields = ['id','student','course_manual','released_by','when_released']
 
 class AddCourseCardSerializer(serializers.ModelSerializer):
    

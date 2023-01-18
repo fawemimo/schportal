@@ -75,7 +75,7 @@ class Teacher(models.Model):
     when_joined = models.DateField()
 
     def __str__(self):
-        return f'{self.id}'
+        return f'{self.user}'
 
 
 class Student(models.Model):
@@ -89,7 +89,7 @@ class Student(models.Model):
     next_of_kin_contact_address = models.CharField(max_length=250)
 
     def __str__(self):
-        return f'{self.user} {self.student_idcard_id}'
+        return f'{self.user} - {self.student_idcard_id}'
 
 
 class Schedule(models.Model):
@@ -269,9 +269,18 @@ class Assignment(models.Model):
     def __str__(self):
         return f'{self.name}'
 
+class AssignmentAllocation(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    supervisor = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    deadline = models.DateField()
+
+    def __str__(self):
+        return f'{self.student.user}'
+
 
 class Project(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.PROTECT)
     name = models.CharField(max_length=255)
     project_docs = models.FileField(upload_to='project/%Y%M%d')
     project_assigned = models.BooleanField(default=True)
@@ -279,15 +288,38 @@ class Project(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.student} - {self.name}'
+        return self.name
+
+
+class ProjectAllocation(models.Model):    
+    student = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
+    project = models.ForeignKey(Project, on_delete=models.DO_NOTHING)
+    supervisor = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
+    start_date = models.DateField()
+    delivery_status = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.student.user}'
 
 
 class CourseManual(models.Model):
-    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE,blank=True, null=True)
+    title = models.CharField(max_length=350,blank=True,null=True)
     course = models.ManyToManyField(Course)
     manual = models.FileField(upload_to='coursemanual/')
     date_posted = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+class CourseManualAllocation(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course_manual = models.ForeignKey(CourseManual, on_delete=models.CASCADE)
+    released_by = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    when_released = models.DateField()
+
+    def __str__(self):
+        return f'{self.student.user}'        
 
 
 class ResourceType(models.Model):
@@ -296,7 +328,6 @@ class ResourceType(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class Resource(models.Model): 
     resource_type = models.ForeignKey(ResourceType, on_delete=models.CASCADE)

@@ -174,20 +174,51 @@ class AssignmentAdmin(admin.ModelAdmin):
 
 @admin.register(Project)           
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ['student', 'name','project_docs','date_posted']
-
-    def student(self, obj):
-        return obj.student.user
-
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-
-        if request.user.is_superuser:
-            return queryset        
-        teacher = Teacher.objects.get(user=request.user.id)            
-        return queryset.filter(student__batch__teacher=teacher)      
+    list_display = ['name','project_docs','project_assigned','date_posted']         
 
 
 @admin.register(Batch)        
 class BatchAdmin(admin.ModelAdmin):
     list_display = ['title','start_date','end_date']
+
+
+@admin.register(AssignmentAllocation)
+class AssignmentAllocationAdmin(admin.ModelAdmin):
+    list_display = ['student','assignment','supervisor','deadline']
+
+    def student(self, obj):
+        return obj.student.user
+
+    def assignment(self, obj):
+        return obj.assignment.name
+
+    def supervisor(self, obj):
+        return obj.supervisor.user
+
+
+@admin.register(ProjectAllocation)        
+class ProjectAllocationAdmin(admin.ModelAdmin):
+    list_display = ['student','project','supervisor','start_date','delivery_status']
+
+    def student(self, obj):
+        return obj.student.user
+
+    def project(self, obj):
+        return obj.project.name   
+
+    def supervisor(self, obj):
+        return obj.supervisor.user     
+
+
+@admin.register(CourseManualAllocation)
+class CourseManualAllocationAdmin(admin.ModelAdmin):
+    list_display = ['student','course_manual','released_by','when_released']
+
+    def student(self, obj):
+        return obj.student.user
+
+    def course_manual(self, obj):
+        return obj.course_manual.title
+
+    def release_by(self, obj):
+        return obj.release_by.user        
