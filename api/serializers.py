@@ -220,7 +220,7 @@ class InquirySerializer(serializers.ModelSerializer):
             }
             
             )
-            message.send([settings.EMAIL_HOST_USER])
+            message.send([email,settings.EMAIL_HOST_USER])
         except Exception as e:
             print(e)
 
@@ -409,27 +409,27 @@ class VirtualClassSerializer(serializers.ModelSerializer):
         virtualclass.save()
         return virtualclass    
 
-    # def save(self, **kwargs):
-    #     course = self.validated_data['course']
-    #     full_name = self.validated_data['full_name']
-    #     email = self.validated_data['email']
-    #     mobile = self.validated_data['mobile']
-    #     remarks = self.validated_data['remarks']
+    def save(self, **kwargs):
+        course = self.validated_data['course']
+        full_name = self.validated_data['full_name']
+        email = self.validated_data['email']
+        mobile = self.validated_data['mobile']
+        remarks = self.validated_data['remarks']
 
-    #     try:
-    #         message = BaseEmailMessage(template_name='emails/virtual_class.html',
-    #         context = {
-    #             'course':course,
-    #             'full_name':full_name,
-    #             'email':email,
-    #             'mobile':mobile,
-    #             'remarks': remarks
-    #         }
+        try:
+            message = BaseEmailMessage(template_name='emails/virtual_class.html',
+            context = {
+                'course':course,
+                'full_name':full_name,
+                'email':email,
+                'mobile':mobile,
+                'remarks': remarks
+            }
             
-    #         )
-    #         message.send([email, settings.EMAIL_HOST_USER])
-    #     except Exception as e:
-    #         print(e)
+            )
+            message.send([email, settings.EMAIL_HOST_USER])
+        except Exception as e:
+            print(e)
 
 
 class KidsCodingSerializer(serializers.ModelSerializer):
@@ -442,27 +442,27 @@ class KidsCodingSerializer(serializers.ModelSerializer):
         kidscoding.save()
         return kidscoding
 
-    # def save(self, **kwargs):
-    #     full_name = self.validated_data['full_name']
-    #     email = self.validated_data['email']
-    #     mobile = self.validated_data['mobile']
-    #     age_bracket = self.validated_data['age_bracket']
-    #     remarks = self.validated_data['remarks'] 
+    def save(self, **kwargs):
+        full_name = self.validated_data['full_name']
+        email = self.validated_data['email']
+        mobile = self.validated_data['mobile']
+        age_bracket = self.validated_data['age_bracket']
+        remarks = self.validated_data['remarks'] 
 
-        # try:
-        #     message = BaseEmailMessage(template_name='emails/kidscoding.html',
-        #         context = {
-        #         'age_bracket':age_bracket,
-        #         'full_name':full_name,
-        #         'email':email,
-        #         'mobile':mobile,
-        #         'remarks': remarks
-        #     }
+        try:
+            message = BaseEmailMessage(template_name='emails/kidscoding.html',
+                context = {
+                'age_bracket':age_bracket,
+                'full_name':full_name,
+                'email':email,
+                'mobile':mobile,
+                'remarks': remarks
+            }
             
-        #     )
-        #     message.send([email, settings.EMAIL_HOST_USER])
-        # except Exception as e:
-        #     print(e)
+            )
+            message.send([email, settings.EMAIL_HOST_USER])
+        except Exception as e:
+            print(e)
 
 
 class KidsCodingCourseSerializer(serializers.ModelSerializer):
