@@ -32,6 +32,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 ]
 
+if DEBUG:
+    INSTALLED_APPS += ['django_extensions']
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -182,7 +185,14 @@ LOGGING = {
         }
     }
 }
-
+# email configurations
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' 
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER') 
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_USE_SSL=True
+# DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
 try:
     from .prod_settings import *

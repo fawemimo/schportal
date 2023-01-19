@@ -127,14 +127,45 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 
         if request.user.is_superuser:
             return queryset
-        return queryset.filter(batch__teacher__user=request.user.id)
+        elif request.user.is_staff:    
+            return queryset.filter(batch__teacher__user=request.user.id)
+
+    
+    def save_model(self, request, obj, form, change):
+        obj.batch.teacher.user = request.user
+        return super().save_model(request, obj, form, change) 
+
+    def save_formset(self, request, form, formset, change):
+        formset.save() 
+        form.instance.save() 
+
+    def get_form(self, request, obj=None, **kwargs):
+        request._obj_ = obj 
+
+        return super().get_form(request, **kwargs)        
 
 
 @admin.register(Student)        
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ['user','student_idcard_id']
+    list_display = ['name','student_idcard_id','batch_name']
 
-    
+    @admin.display(description='Student Name')
+    def name(self, obj):
+        return (f'{obj.user.first_name} {obj.user.last_name}').upper()
+
+    def batch_name(self, obj):
+        obj = obj.batch_set.only('id').values('title')
+        for x in obj:
+            return (x['title']).upper()
+
+    def get_queryset(self,request):
+        queryset = super().get_queryset(request)
+
+        if request.user.is_superuser:
+            return queryset
+        return queryset.filter(batch__teacher__user=request.user)
+
+
 @admin.register(Enrollment)
 class EnrollmentAdmin(admin.ModelAdmin):
     list_display = ['student','course','batch','training_date']

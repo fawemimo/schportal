@@ -29,7 +29,9 @@ router.register('coursescards',views.CourseCardViewSet,basename='coursescard')
 router.register('interestedforms',views.InterestedFormViewSet,basename='interestedform')
 router.register('studentattendances',views.StudentAttendanceViewSet,basename='studentattendance')
 router.register('coursehomepagefeatures', views.CourseHomepageFeatured,basename='homepagefeatured')
-
+router.register('virtualclasses', views.VirtualClassViewSet)
+router.register('kidscoding', views.KidsCodingViewSet)
+router.register('kidscodingcourses', views.KidsCodingCourseViewSet, basename='kidscodingcourses')
 # Nested routes
 courses_router = routers.NestedDefaultRouter(
     router, 'courses', lookup='course')

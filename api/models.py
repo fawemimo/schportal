@@ -16,6 +16,8 @@ class User(AbstractUser):
 
 class CourseCategory(models.Model):
     title = models.CharField(max_length=150)
+    child_1 = models.CharField(max_length=250, blank=True, null=True)
+    child_2 = models.CharField(max_length=250, blank=True, null=True)
 
     def __str__(self) -> str:
         return self.title
@@ -25,6 +27,7 @@ class Course(models.Model):
     coursecategory = models.ForeignKey(
         CourseCategory, on_delete=models.DO_NOTHING)
     ordering = models.IntegerField(null=True, blank=True)
+    kids_coding = models.BooleanField(default=False)
     title = models.CharField(max_length=300)
     frontpage_featured = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
@@ -62,7 +65,7 @@ class Course(models.Model):
         super(Course, self).save(args, kwargs)
 
     def __str__(self):
-        return f'{self.course_code} - {self.title}'
+        return f'{self.title}'
 
     def get_absolute_url(self):
         return f'/{self.location_state}/{self.location_state_area}/{self.slug}/'
@@ -356,8 +359,33 @@ class StudentAttendance(models.Model):
    raise_warning = models.BooleanField(default=False)
 
    def __str__(self):
-        return f'{self.student}'
+        return f'{self.id}'
 
    
+class VirtualClass(models.Model):
+    full_name = models.CharField(max_length=50)
+    email = models.EmailField()
+    mobile = models.CharField(max_length=50)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    remarks = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.full_name
+
+
+class KidsCoding(models.Model):
+    age_bracket_choices = (
+        ('1', '6-9'),
+        ('2', '10-14')
+    )
+    full_name = models.CharField(max_length=50)
+    email = models.EmailField()
+    mobile = models.CharField(max_length=50)
+    age_bracket = models.CharField(max_length=150, choices= age_bracket_choices)
+    remarks = models.TextField(blank=True, null=True)
+
+
+    def __str__(self):
+        return self.full_name
 
 # endregion

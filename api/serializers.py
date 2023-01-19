@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from .models import *
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer, UserSerializer as BaseUserSerializer
-
+from templated_mail.mail import BaseEmailMessage
+from django.conf import settings
 
 class CourseCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseCategory
-        fields = ['id', 'title']
+        fields = ['id', 'title', 'child_1','child_2']
 
 
 class AddCourseSerializer(serializers.ModelSerializer):
@@ -167,11 +168,61 @@ class ShortQuizSerializer(serializers.ModelSerializer):
         model = ShortQuiz
         fields = '__all__'
 
+    def save(self, **kwargs):
+        fullname = self.validated_data['fullname']
+        email = self.validated_data['email']
+        mobile = self.validated_data['mobile']
+        tartiary_education = self.validated_data['tartiary_education']
+        tartiary_studied = self.validated_data['tartiary_studied']
+        secondary_sch = self.validated_data['secondary_sch']
+        secondary_studied = self.validated_data['secondary_studied']
+        tech_interest = self.validated_data['tech_interest']
+        more_about_you = self.validated_data['more_about_you']
+
+        try:
+            message = BaseEmailMessage(template_name='emails/short_quizzes.html',
+            context = {
+                'fullname' : fullname,
+                'email' :email,
+                'mobile' : mobile,
+                'tartiary_education': tartiary_education,
+                'tartiary_studied' : tartiary_studied,
+                'secondary_sch' : secondary_sch,
+                'secondary_studied' : secondary_studied,
+                'tech_interest' : tech_interest,
+                'more_about_you': more_about_you, 
+            }
+            
+            )
+            message.send([settings.EMAIL_HOST_USER])
+        except Exception as e:
+            print(e)
+
 
 class InquirySerializer(serializers.ModelSerializer):
     class Meta:
         model = Inquiry
         fields = '__all__'
+
+    def save(self, **kwargs):
+        fullname = self.validated_data['fullname']
+        email = self.validated_data['email']
+        mobile = self.validated_data['mobile']
+        message = self.validated_data['message']
+
+        try:
+            message = BaseEmailMessage(template_name='emails/iniquiries.html',
+            context = {
+                'fullname' : fullname,
+                'email' :email,
+                'mobile' : mobile,
+                'message': message
+            }
+            
+            )
+            message.send([settings.EMAIL_HOST_USER])
+        except Exception as e:
+            print(e)
 
 
 class InterestedFormSerializer(serializers.ModelSerializer):
@@ -190,6 +241,28 @@ class InterestedFormSerializer(serializers.ModelSerializer):
         interestedform.save()
         return interestedform
 
+    def save(self, **kwargs):
+        course_id = self.validated_data['course_id']
+        full_name = self.validated_data['full_name']
+        email = self.validated_data['email']
+        mobile = self.validated_data['mobile']
+     
+        try:
+            message = BaseEmailMessage(template_name='emails/interested_emails.html',
+            context = {
+                'course_id':course_id,
+                'full_name':full_name,
+                'email':email,
+                'mobile':mobile
+
+            }
+            
+            )
+            message.send([email, settings.EMAIL_HOST_USER])
+
+        except Exception as e:
+            print(e)
+        
 
 
 
@@ -324,3 +397,76 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
         fields = ['id', 'username', 'email', 'first_name', 'last_name']        
+
+
+class VirtualClassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VirtualClass
+        fields = ['course','full_name', 'email', 'mobile',  'remarks']
+
+    def create(self, validated_data):
+        virtualclass = VirtualClass(**validated_data)      
+        virtualclass.save()
+        return virtualclass    
+
+    # def save(self, **kwargs):
+    #     course = self.validated_data['course']
+    #     full_name = self.validated_data['full_name']
+    #     email = self.validated_data['email']
+    #     mobile = self.validated_data['mobile']
+    #     remarks = self.validated_data['remarks']
+
+    #     try:
+    #         message = BaseEmailMessage(template_name='emails/virtual_class.html',
+    #         context = {
+    #             'course':course,
+    #             'full_name':full_name,
+    #             'email':email,
+    #             'mobile':mobile,
+    #             'remarks': remarks
+    #         }
+            
+    #         )
+    #         message.send([email, settings.EMAIL_HOST_USER])
+    #     except Exception as e:
+    #         print(e)
+
+
+class KidsCodingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KidsCoding
+        fields = ('full_name', 'email', 'mobile', 'age_bracket', 'remarks', )
+
+    def create(self, validated_data):
+        kidscoding = KidsCoding(**validated_data)
+        kidscoding.save()
+        return kidscoding
+
+    # def save(self, **kwargs):
+    #     full_name = self.validated_data['full_name']
+    #     email = self.validated_data['email']
+    #     mobile = self.validated_data['mobile']
+    #     age_bracket = self.validated_data['age_bracket']
+    #     remarks = self.validated_data['remarks'] 
+
+        # try:
+        #     message = BaseEmailMessage(template_name='emails/kidscoding.html',
+        #         context = {
+        #         'age_bracket':age_bracket,
+        #         'full_name':full_name,
+        #         'email':email,
+        #         'mobile':mobile,
+        #         'remarks': remarks
+        #     }
+            
+        #     )
+        #     message.send([email, settings.EMAIL_HOST_USER])
+        # except Exception as e:
+        #     print(e)
+
+
+class KidsCodingCourseSerializer(serializers.ModelSerializer):
+    coursecategory = CourseCategorySerializer(read_only=True)
+    class Meta:
+        model = Course
+        fields = ['id','coursecategory', 'ordering', 'title', 'frontpage_featured', 'active', 'delisted', 'slug', 'extra_note', 'course_code', 'location_state', 'location_state_area', 'card_title', 'tech_subs', 'audience', 'audience_description', 'description', 'course_outline', 'what_you_will_learn', 'requirements', 'prerequisites', 'card_thumb', 'pic1', 'pic2', 'pic3', 'seo_pagetitle', 'seo_metabulk']

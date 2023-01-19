@@ -294,3 +294,24 @@ class CourseHomepageFeatured(viewsets.ModelViewSet):
     lookup_value_regex = '[^/]+'
 
 
+class VirtualClassViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get','post']
+
+    queryset = VirtualClass.objects.all()
+    serializer_class = VirtualClassSerializer
+
+class KidsCodingViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get','post']
+
+    queryset = KidsCoding.objects.all()
+    serializer_class = KidsCodingSerializer
+
+    
+class KidsCodingCourseViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+
+    
+    serializer_class = KidsCodingCourseSerializer
+
+    def get_queryset(self):
+        return Course.objects.filter(kids_coding=True)
