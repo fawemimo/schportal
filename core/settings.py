@@ -32,9 +32,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 ]
 
-if DEBUG:
-    INSTALLED_APPS += ['django_extensions']
-
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',

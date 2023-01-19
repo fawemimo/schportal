@@ -10,7 +10,6 @@ defusedxml==0.7.1
 Django==4.1.4
 django-cors-headers==3.13.0
 django-decouple==2.1
-django-extensions==3.2.1
 django-filter==22.1
 django-templated-mail==1.1.1
 djangorestframework==3.14.0
@@ -27,7 +26,6 @@ Pillow==9.3.0
 psycopg2==2.9.5
 pycodestyle==2.10.0
 pycparser==2.21
-pygraphviz==1.10
 PyJWT==2.6.0
 python3-openid==3.2.0
 pytz==2022.7
