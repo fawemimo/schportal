@@ -150,7 +150,7 @@ class SectionBanner(models.Model):
 class Testimonial(models.Model):
     student_name = models.CharField(max_length=250)
     student_pic = models.ImageField(upload_to='testimonial_pic/')
-    batch = models.DateField()
+    batch = models.CharField(max_length=255)
     course_taken = models.CharField(max_length=150)
     published = models.BooleanField(default=False)
     body = models.TextField()
