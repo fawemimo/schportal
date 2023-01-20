@@ -287,7 +287,7 @@ class CourseHomepageFeatured(viewsets.ModelViewSet):
     http_method_names = ['get']
 
     queryset = Course.objects.filter(
-        frontpage_featured=True).filter(active=True).order_by('ordering')
+        frontpage_featured=True).filter(active=True)
     serializer_class = CourseCardSerializer
 
     lookup_field = 'slug'
