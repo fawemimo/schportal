@@ -90,3 +90,6 @@ staging_settings.py
 
 .env
 db.sqlite3
+emails.py
+tasks.py
+celery.py

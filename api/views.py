@@ -214,7 +214,7 @@ class CourseCardViewSet(viewsets.ModelViewSet):
 
     http_method_names = ['get','post','patch','delete']
     
-    queryset = Course.objects.filter(active=True)
+    queryset = Course.objects.filter(active=True).order_by('ordering')
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
 
@@ -287,7 +287,7 @@ class CourseHomepageFeatured(viewsets.ModelViewSet):
     http_method_names = ['get']
 
     queryset = Course.objects.filter(
-        frontpage_featured=True).filter(active=True)
+        frontpage_featured=True).filter(active=True).order_by('ordering')
     serializer_class = CourseCardSerializer
 
     lookup_field = 'slug'
@@ -314,4 +314,4 @@ class KidsCodingCourseViewSet(viewsets.ModelViewSet):
     serializer_class = KidsCodingCourseSerializer
 
     def get_queryset(self):
-        return Course.objects.filter(kids_coding=True)
+        return Course.objects.filter(kids_coding=True).order_by('ordering')
