@@ -129,7 +129,6 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
             return queryset
         elif request.user.is_staff:    
             return queryset.filter(batch__teacher__user=request.user.id)
-
     
     def save_model(self, request, obj, form, change):
         obj.batch.teacher.user = request.user
@@ -253,3 +252,10 @@ class CourseManualAllocationAdmin(admin.ModelAdmin):
 
     def release_by(self, obj):
         return obj.release_by.user        
+
+
+@admin.register(Testimonial)
+class TestimonialAdmin(admin.ModelAdmin):
+    list_display = ['student_name',  'batch',  'published' ]
+    list_editable = ['published']
+    list_filter = ['batch']
