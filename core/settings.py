@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'api',
     'mainsite',
     'djoser',
-    'rest_framework.authtoken',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -189,7 +189,8 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_USE_SSL=True
-# DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+
+CELERY_BROKER_URL = 'redis://localhost:6379/1'
 
 try:
     from .prod_settings import *

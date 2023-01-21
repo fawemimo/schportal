@@ -1,8 +1,7 @@
 from rest_framework import serializers
+from api.tasks import send_inquiries_email_task, send_interested_email_task, send_kids_coding_email_task, send_short_quizze_email_task, send_virtualclass_email_task
 from .models import *
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer, UserSerializer as BaseUserSerializer
-from templated_mail.mail import BaseEmailMessage
-from django.conf import settings
 
 class CourseCategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -179,24 +178,9 @@ class ShortQuizSerializer(serializers.ModelSerializer):
         tech_interest = self.validated_data['tech_interest']
         more_about_you = self.validated_data['more_about_you']
 
-        try:
-            message = BaseEmailMessage(template_name='emails/short_quizzes.html',
-            context = {
-                'fullname' : fullname,
-                'email' :email,
-                'mobile' : mobile,
-                'tartiary_education': tartiary_education,
-                'tartiary_studied' : tartiary_studied,
-                'secondary_sch' : secondary_sch,
-                'secondary_studied' : secondary_studied,
-                'tech_interest' : tech_interest,
-                'more_about_you': more_about_you, 
-            }
-            
-            )
-            message.send([settings.EMAIL_HOST_USER])
-        except Exception as e:
-            print(e)
+        send_short_quizze_email_task.delay(fullname,email,mobile,tartiary_education,tartiary_studied,secondary_sch,secondary_studied,tech_interest,more_about_you)           
+
+        return self.instance
 
 
 class InquirySerializer(serializers.ModelSerializer):
@@ -209,22 +193,11 @@ class InquirySerializer(serializers.ModelSerializer):
         email = self.validated_data['email']
         mobile = self.validated_data['mobile']
         message = self.validated_data['message']
-
-        try:
-            message = BaseEmailMessage(template_name='emails/iniquiries.html',
-            context = {
-                'fullname' : fullname,
-                'email' :email,
-                'mobile' : mobile,
-                'message': message
-            }
+        
+        instance = send_inquiries_email_task.delay(fullname,email,mobile,message)
+        instance.save()
             
-            )
-            message.send([email,settings.EMAIL_HOST_USER])
-        except Exception as e:
-            print(e)
-
-
+        
 class InterestedFormSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
     class Meta:
@@ -245,26 +218,10 @@ class InterestedFormSerializer(serializers.ModelSerializer):
         course_id = self.validated_data['course_id']
         full_name = self.validated_data['full_name']
         email = self.validated_data['email']
-        mobile = self.validated_data['mobile']
-     
-        try:
-            message = BaseEmailMessage(template_name='emails/interested_emails.html',
-            context = {
-                'course_id':course_id,
-                'full_name':full_name,
-                'email':email,
-                'mobile':mobile
-
-            }
-            
-            )
-            message.send([email, settings.EMAIL_HOST_USER])
-
-        except Exception as e:
-            print(e)
-        
-
-
+        mobile = self.validated_data['mobile']     
+    
+        send_interested_email_task.delay(course_id,full_name,email,mobile)
+        return self.instance
 
 class EnrollBatchSerializer(serializers.ModelSerializer):
     class Meta:
@@ -415,21 +372,10 @@ class VirtualClassSerializer(serializers.ModelSerializer):
         email = self.validated_data['email']
         mobile = self.validated_data['mobile']
         remarks = self.validated_data['remarks']
-
-        try:
-            message = BaseEmailMessage(template_name='emails/virtual_class.html',
-            context = {
-                'course':course,
-                'full_name':full_name,
-                'email':email,
-                'mobile':mobile,
-                'remarks': remarks
-            }
-            
-            )
-            message.send([email, settings.EMAIL_HOST_USER])
-        except Exception as e:
-            print(e)
+        
+        send_virtualclass_email_task.delay(course,full_name,email,mobile,remarks)
+        return self.instance
+       
 
 
 class KidsCodingSerializer(serializers.ModelSerializer):
@@ -449,20 +395,9 @@ class KidsCodingSerializer(serializers.ModelSerializer):
         age_bracket = self.validated_data['age_bracket']
         remarks = self.validated_data['remarks'] 
 
-        try:
-            message = BaseEmailMessage(template_name='emails/kidscoding.html',
-                context = {
-                'age_bracket':age_bracket,
-                'full_name':full_name,
-                'email':email,
-                'mobile':mobile,
-                'remarks': remarks
-            }
-            
-            )
-            message.send([email, settings.EMAIL_HOST_USER])
-        except Exception as e:
-            print(e)
+        send_kids_coding_email_task.delay(age_bracket,full_name,email,mobile,remarks)
+
+        return self.instance
 
 
 class KidsCodingCourseSerializer(serializers.ModelSerializer):
