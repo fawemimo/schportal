@@ -68,18 +68,9 @@ class Course(models.Model):
         return f'/{self.location_state}/{self.location_state_area}/{self.slug}/'
 
 
-class Teacher(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,blank=True, null=True)
-    teacher_idcard_id = models.CharField(max_length=50, blank=True,null=True)
-    courses_taking = models.ManyToManyField(Course)
-    when_joined = models.DateField()
-
-    def __str__(self):
-        return f'{self.user}'
-
-
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,blank=True,null=True)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, blank=True, null=True)
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
     mobile_numbers = models.CharField(max_length=250)
     profile_pic = models.ImageField(upload_to='students_profilepix/')
@@ -90,6 +81,17 @@ class Student(models.Model):
 
     def __str__(self):
         return f'{self.user} - {self.student_idcard_id}'
+
+
+class Teacher(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, blank=True, null=True)
+    teacher_idcard_id = models.CharField(max_length=50, blank=True, null=True)
+    courses_taking = models.ManyToManyField(Course)
+    when_joined = models.DateField()
+
+    def __str__(self):
+        return f'{self.user}'
 
 
 class Schedule(models.Model):
@@ -259,7 +261,8 @@ class Enrollment(models.Model):
 
 
 class Assignment(models.Model):
-    batch = models.ForeignKey(Batch, on_delete=models.SET_NULL, null=True, blank=True)
+    batch = models.ForeignKey(
+        Batch, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255)
     assignment_file = models.FileField(upload_to='assignment/%Y%M%d')
     assignment_given = models.BooleanField(default=False)
@@ -268,6 +271,7 @@ class Assignment(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+
 
 class AssignmentAllocation(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -291,7 +295,7 @@ class Project(models.Model):
         return self.name
 
 
-class ProjectAllocation(models.Model):    
+class ProjectAllocation(models.Model):
     student = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
     project = models.ForeignKey(Project, on_delete=models.DO_NOTHING)
     supervisor = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
@@ -303,7 +307,7 @@ class ProjectAllocation(models.Model):
 
 
 class CourseManual(models.Model):
-    title = models.CharField(max_length=350,blank=True,null=True)
+    title = models.CharField(max_length=350, blank=True, null=True)
     course = models.ManyToManyField(Course)
     manual = models.FileField(upload_to='coursemanual/')
     date_posted = models.DateTimeField(auto_now_add=True)
@@ -312,6 +316,7 @@ class CourseManual(models.Model):
     def __str__(self):
         return self.title
 
+
 class CourseManualAllocation(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course_manual = models.ForeignKey(CourseManual, on_delete=models.CASCADE)
@@ -319,7 +324,7 @@ class CourseManualAllocation(models.Model):
     when_released = models.DateField()
 
     def __str__(self):
-        return f'{self.student.user}'        
+        return f'{self.student.user}'
 
 
 class ResourceType(models.Model):
@@ -329,36 +334,39 @@ class ResourceType(models.Model):
     def __str__(self):
         return self.name
 
-class Resource(models.Model): 
+
+class Resource(models.Model):
     resource_type = models.ForeignKey(ResourceType, on_delete=models.CASCADE)
-    primer = models.FileField(upload_to='free/primer',blank=True, null=True)
-    cheat_sheat = models.FileField(upload_to='free/cheat_sheat',blank=True, null=True)
+    primer = models.FileField(upload_to='free/primer', blank=True, null=True)
+    cheat_sheat = models.FileField(
+        upload_to='free/cheat_sheat', blank=True, null=True)
     published = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.resource_type.name}' 
+        return f'{self.resource_type.name}'
 
 
 class StudentAttendance(models.Model):
 
-   ABSENT = 'Absent'
-   PRESENT = 'Present'
-   attendance_choices = (
-      (ABSENT, 'Absent'),
-      (PRESENT, 'Present'),
-   )
+    ABSENT = 'Absent'
+    PRESENT = 'Present'
+    attendance_choices = (
+        (ABSENT, 'Absent'),
+        (PRESENT, 'Present'),
+    )
 
-   student = models.ForeignKey(Student, on_delete=models.PROTECT)
-   batch = models.ForeignKey(Batch, on_delete=models.PROTECT)   
-   attendance_status = models.CharField(max_length=50, choices=attendance_choices, default=ABSENT)
-   timestamp = models.DateTimeField(blank=True, null=True)
-   attendance_comment = models.CharField(max_length=255)
-   raise_warning = models.BooleanField(default=False)
+    student = models.ForeignKey(Student, on_delete=models.PROTECT)
+    batch = models.ForeignKey(Batch, on_delete=models.PROTECT)
+    attendance_status = models.CharField(
+        max_length=50, choices=attendance_choices, default=ABSENT)
+    timestamp = models.DateTimeField(blank=True, null=True)
+    attendance_comment = models.CharField(max_length=255)
+    raise_warning = models.BooleanField(default=False)
 
-   def __str__(self):
+    def __str__(self):
         return f'{self.id}'
 
-   
+
 class VirtualClass(models.Model):
     full_name = models.CharField(max_length=50)
     email = models.EmailField()
@@ -378,9 +386,8 @@ class KidsCoding(models.Model):
     full_name = models.CharField(max_length=50)
     email = models.EmailField()
     mobile = models.CharField(max_length=50)
-    age_bracket = models.CharField(max_length=150, choices= age_bracket_choices)
+    age_bracket = models.CharField(max_length=150, choices=age_bracket_choices)
     remarks = models.TextField(blank=True, null=True)
-
 
     def __str__(self):
         return self.full_name

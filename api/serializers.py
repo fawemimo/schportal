@@ -195,7 +195,7 @@ class InquirySerializer(serializers.ModelSerializer):
         message = self.validated_data['message']
         
         instance = send_inquiries_email_task.delay(fullname,email,mobile,message)
-        instance.save()
+        return self.instance
             
         
 class InterestedFormSerializer(serializers.ModelSerializer):
@@ -357,14 +357,22 @@ class UserSerializer(BaseUserSerializer):
 
 
 class VirtualClassSerializer(serializers.ModelSerializer):
+    course = serializers.SerializerMethodField()
     class Meta:
         model = VirtualClass
-        fields = ['course','full_name', 'email', 'mobile',  'remarks']
+        fields = ['id','course','full_name', 'email', 'mobile',  'remarks']  
+
+    def get_course(self, obj):
+        return obj.course.title
 
     def create(self, validated_data):
-        virtualclass = VirtualClass(**validated_data)      
-        virtualclass.save()
-        return virtualclass    
+        course_id = self.context['course_id']
+        return VirtualClass.objects.create(course_id=course_id, **validated_data)
+
+    def validate_course(self, value):
+        if not Course.objects.filter(pk=value).exists():
+            raise serializers.ValidationError('Invalid Course ID supplied')
+        return value
 
     def save(self, **kwargs):
         course = self.validated_data['course']

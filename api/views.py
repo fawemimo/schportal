@@ -36,7 +36,7 @@ class TeacherViewSet(viewsets.ModelViewSet):
 
 
 class StudentViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get','post','patch','delete']
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     serializer_class = StudentSerializer
     permission_classes = []
@@ -212,8 +212,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 class CourseCardViewSet(viewsets.ModelViewSet):
 
-    http_method_names = ['get','post','patch','delete']
-    
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
     queryset = Course.objects.filter(active=True).order_by('ordering')
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
@@ -247,7 +247,8 @@ class CoursesViewSet(viewsets.ModelViewSet):
 class CourseManualViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
 
-    queryset = CourseManualAllocation.objects.select_related('course_manual').all()
+    queryset = CourseManualAllocation.objects.select_related(
+        'course_manual').all()
     serializer_class = CourseManualAllocationSerializer
 
     def get_permissions(self):
@@ -258,7 +259,7 @@ class CourseManualViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_superuser:
             return CourseManualAllocation.objects.select_related('course_manual').all()
-        elif self.request.user.is_active: 
+        elif self.request.user.is_active:
             return CourseManualAllocation.objects.filter(student__user=self.request.user).select_related('course_manual')
         else:
             pass
@@ -286,7 +287,7 @@ class StudentAttendanceViewSet(viewsets.ModelViewSet):
 class CourseHomepageFeatured(viewsets.ModelViewSet):
     http_method_names = ['get']
 
-    queryset = Course.objects.filter(
+    queryset = Course.objects.order_by('ordering').filter(
         frontpage_featured=True).filter(active=True)
     serializer_class = CourseCardSerializer
 
@@ -295,22 +296,25 @@ class CourseHomepageFeatured(viewsets.ModelViewSet):
 
 
 class VirtualClassViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get','post']
+    http_method_names = ['get', 'post']
 
     queryset = VirtualClass.objects.all()
     serializer_class = VirtualClassSerializer
 
+    def get_serializer_context(self):
+        return {'course_id' : self.kwargs.get('course_id')}
+
+
 class KidsCodingViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get','post']
+    http_method_names = ['get', 'post']
 
     queryset = KidsCoding.objects.all()
     serializer_class = KidsCodingSerializer
 
-    
+
 class KidsCodingCourseViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
 
-    
     serializer_class = KidsCodingCourseSerializer
 
     def get_queryset(self):
