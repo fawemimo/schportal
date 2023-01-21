@@ -1,0 +1,35 @@
+{% block subject %}
+ 
+        VIRTUAL CLASS
+    
+{% endblock subject %}
+
+
+{% block html_body %}
+
+
+    Here are the following details of the short quizzes and we will get back to you shortly
+   <div class="container">
+    <div class="wrapper">
+        <ul>
+            <li>
+                Course: {{course}}
+            </li>
+            <li>
+                Name: {{full_name}}
+            </li>           
+            
+           
+            <li>
+                Email: {{email}}
+            </li>
+            <li>
+                Phone: {{mobile}}
+            </li>
+            <li>
+                Remarks: {{remarks}}
+            </li>
+        </ul>
+    </div>
+   </div>
+{% endblock html_body %}
