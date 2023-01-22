@@ -167,6 +167,11 @@ class ShortQuizSerializer(serializers.ModelSerializer):
         model = ShortQuiz
         fields = '__all__'
 
+    def create(self, validated_data):
+        shortquiz = ShortQuiz(**validated_data)
+        shortquiz.save()
+        return shortquiz
+
     def save(self, **kwargs):
         fullname = self.validated_data['fullname']
         email = self.validated_data['email']
@@ -178,9 +183,11 @@ class ShortQuizSerializer(serializers.ModelSerializer):
         tech_interest = self.validated_data['tech_interest']
         more_about_you = self.validated_data['more_about_you']
 
+        shortquiz = ShortQuiz.objects.create(fullname=fullname,email=email,mobile=mobile,tartiary_education=tartiary_education,tartiary_studied=tartiary_studied,secondary_sch=secondary_sch,secondary_studied=secondary_studied,tech_interest=tech_interest,more_about_you=more_about_you)
+
         send_short_quizze_email_task.delay(fullname,email,mobile,tartiary_education,tartiary_studied,secondary_sch,secondary_studied,tech_interest,more_about_you)           
 
-        return self.instance
+        return shortquiz
 
 
 class InquirySerializer(serializers.ModelSerializer):
@@ -193,9 +200,12 @@ class InquirySerializer(serializers.ModelSerializer):
         email = self.validated_data['email']
         mobile = self.validated_data['mobile']
         message = self.validated_data['message']
+
+        inquiry = Inquiry.objects.create(fullname=fullname,email=email,mobile=mobile,message=message)
+
         
-        instance = send_inquiries_email_task.delay(fullname,email,mobile,message)
-        return self.instance
+        send_inquiries_email_task.delay(fullname,email,mobile,message)
+        return inquiry
             
         
 class InterestedFormSerializer(serializers.ModelSerializer):
@@ -209,19 +219,16 @@ class InterestedFormSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Course ID does not exist')
         return value
 
-    def create(self, validated_data):
-        interestedform = InterestedForm(**validated_data)      
-        interestedform.save()
-        return interestedform
-
     def save(self, **kwargs):
         course_id = self.validated_data['course_id']
         full_name = self.validated_data['full_name']
         email = self.validated_data['email']
-        mobile = self.validated_data['mobile']     
-    
+        mobile = self.validated_data['mobile']  
+
+        interestform = InterestedForm.objects.create(course_id=course_id,full_name=full_name,email=email,mobile=mobile)
+
         send_interested_email_task.delay(course_id,full_name,email,mobile)
-        return self.instance
+        return interestform
 
 class EnrollBatchSerializer(serializers.ModelSerializer):
     class Meta:
@@ -357,17 +364,18 @@ class UserSerializer(BaseUserSerializer):
 
 
 class VirtualClassSerializer(serializers.ModelSerializer):
-    course = serializers.SerializerMethodField()
+    course_id = serializers.IntegerField()
     class Meta:
         model = VirtualClass
-        fields = ['id','course','full_name', 'email', 'mobile',  'remarks']  
+        fields = ['id','course_id','full_name', 'email', 'mobile',  'remarks']  
 
-    def get_course(self, obj):
-        return obj.course.title
+    # def get_course(self, obj):
+    #     return obj.course.title
 
     def create(self, validated_data):
-        course_id = self.context['course_id']
-        return VirtualClass.objects.create(course_id=course_id, **validated_data)
+        virtualclass = VirtualClass(**validated_data)
+        virtualclass.save()
+        return virtualclass
 
     def validate_course(self, value):
         if not Course.objects.filter(pk=value).exists():
@@ -375,14 +383,16 @@ class VirtualClassSerializer(serializers.ModelSerializer):
         return value
 
     def save(self, **kwargs):
-        course = self.validated_data['course']
+        course_id = self.validated_data['course_id']
         full_name = self.validated_data['full_name']
         email = self.validated_data['email']
         mobile = self.validated_data['mobile']
         remarks = self.validated_data['remarks']
         
-        send_virtualclass_email_task.delay(course,full_name,email,mobile,remarks)
-        return self.instance
+        virtualclass = VirtualClass.objects.create(course_id=course_id,full_name=full_name,email=email,mobile=mobile,remarks=remarks)
+
+        send_virtualclass_email_task.delay(course_id,full_name,email,mobile,remarks)
+        return virtualclass
        
 
 
@@ -403,9 +413,11 @@ class KidsCodingSerializer(serializers.ModelSerializer):
         age_bracket = self.validated_data['age_bracket']
         remarks = self.validated_data['remarks'] 
 
+        kidscoding = KidsCoding.objects.create(full_name=full_name,email=email,mobile=mobile,age_bracket=age_bracket,remarks=remarks)
+
         send_kids_coding_email_task.delay(age_bracket,full_name,email,mobile,remarks)
 
-        return self.instance
+        return kidscoding
 
 
 class KidsCodingCourseSerializer(serializers.ModelSerializer):

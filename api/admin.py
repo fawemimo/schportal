@@ -263,3 +263,13 @@ class TestimonialAdmin(admin.ModelAdmin):
     list_display = ['student_name',  'batch',  'published']
     list_editable = ['published']
     list_filter = ['batch']
+
+
+@admin.register(KidsCoding)
+class KidsCodingAdmin(admin.ModelAdmin):
+    list_display = ['full_name', 'email', 'mobile', 'age_bracket', 'remarks']
+
+
+@admin.register(VirtualClass)
+class VirtualClassAdmin(admin.ModelAdmin):
+    list_display = ['full_name', 'email', 'mobile', 'course']

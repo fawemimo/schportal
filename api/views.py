@@ -3,7 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
-from rest_framework import permissions
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 # Create your views here.
@@ -141,20 +141,35 @@ class ShortQuizViewSet(viewsets.ModelViewSet):
 
 
 class InquiryViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ['get', 'post', 'patch']
 
     queryset = Inquiry.objects.all()
-    serializer_class = InquirySerializer
-    permission_classes = []
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return InquirySerializer
+        return InquirySerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data)
 
 
 class InterestedFormViewSet(viewsets.ModelViewSet):
-    http_method_names = ['post', 'get']
+    http_method_names = ['post', 'get','patch']   
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return InterestedFormSerializer
         return InterestedFormSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data)
 
     def get_serializer_context(self):
         return {'course_id': self.kwargs.get('course_pk')}
@@ -300,9 +315,6 @@ class VirtualClassViewSet(viewsets.ModelViewSet):
 
     queryset = VirtualClass.objects.all()
     serializer_class = VirtualClassSerializer
-
-    def get_serializer_context(self):
-        return {'course_id' : self.kwargs.get('course_id')}
 
 
 class KidsCodingViewSet(viewsets.ModelViewSet):

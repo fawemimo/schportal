@@ -14,10 +14,10 @@ def send_inquiries_email_task(fullname,email,mobile,message):
 
 
 @shared_task
-def send_virtualclass_email_task(course,full_name,email,mobile,remarks):
+def send_virtualclass_email_task(course_id,full_name,email,mobile,remarks):
     with transaction.atomic():
         logger.info('Successful')
-        return send_virtualclass_email(course,full_name,email,mobile,remarks)        
+        return send_virtualclass_email(course_id,full_name,email,mobile,remarks)        
 
 
 @shared_task
