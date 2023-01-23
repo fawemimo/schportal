@@ -283,7 +283,7 @@ class CourseManualViewSet(viewsets.ModelViewSet):
 class ResourceViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
 
-    queryset = Resource.objects.all()
+    queryset = Resource.objects.filter(published=True)
     serializer_class = ResourceSerializer
     permission_classes = []
 

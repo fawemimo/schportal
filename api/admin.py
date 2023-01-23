@@ -274,3 +274,18 @@ class KidsCodingAdmin(admin.ModelAdmin):
 @admin.register(VirtualClass)
 class VirtualClassAdmin(admin.ModelAdmin):
     list_display = ['full_name', 'email', 'mobile', 'course']
+
+
+@admin.register(Resource)
+class ResourceAdmin(admin.ModelAdmin):
+    list_display = ['resource_type', 'primer', 'cheat_sheat', 'published']
+    list_filter = ['published']
+    list_editable = ['published']
+    
+    def resource_type(self, obj):
+        return obj.resource_type.name
+
+
+@admin.register(ResourceType)
+class ResourceTypeAdmin(admin.ModelAdmin):
+    list_display = ['name', 'date_created']
