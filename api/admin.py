@@ -90,8 +90,8 @@ class TeacherAdmin(admin.ModelAdmin):
     list_display = ['id', 'fullname']
 
     def fullname(self, teacher: Teacher):
-        if teacher.user.first_name is None:
-            return f'Teacher has no user object or empty first name'
+        if teacher.user is None:
+            return f'Teacher has no user objectgi'
         return f'{teacher.user.first_name} {teacher.user.last_name}'
 
 
