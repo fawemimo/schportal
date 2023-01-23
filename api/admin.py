@@ -91,7 +91,7 @@ class TeacherAdmin(admin.ModelAdmin):
 
     def fullname(self, teacher: Teacher):
         if teacher.user is None:
-            return f'Teacher has no user objectgi'
+            return f'Teacher has no user object'
         return f'{teacher.user.first_name} {teacher.user.last_name}'
 
 
