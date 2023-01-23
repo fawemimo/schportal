@@ -47,8 +47,10 @@ class Course(models.Model):
     prerequisites = models.TextField(max_length=450, null=True, blank=True)
     card_thumb = models.ImageField(
         null=True, blank=True, upload_to='courseimg')
-    pic1 = models.ImageField(null=True, blank=True, upload_to='courseimg')
-    pic2 = models.ImageField(null=True, blank=True, upload_to='courseimg')
+    pic1_detailpage_banner = models.ImageField(
+        null=True, blank=True, upload_to='courseimg')
+    pic2_detailpage_main = models.ImageField(
+        null=True, blank=True, upload_to='courseimg')
     pic3 = models.ImageField(null=True, blank=True, upload_to='courseimg')
 
     seo_pagetitle = models.CharField(max_length=200, null=True, blank=True)

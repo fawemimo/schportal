@@ -87,11 +87,12 @@ class NavLinkItemAdmin(admin.ModelAdmin):
 
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
+    list_display = ['id', 'fullname']
 
-    list_display = ['id', 'name']
-
-    def name(self, obj):
-        return f'{obj.user.first_name} {obj.user.last_name}'
+    def fullname(self, teacher: Teacher):
+        if teacher.user.first_name is None:
+            return f'Teacher has no user object or empty first name'
+        return f'{teacher.user.first_name} {teacher.user.last_name}'
 
 
 @admin.register(ShortQuiz)
