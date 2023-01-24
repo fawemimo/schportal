@@ -345,6 +345,7 @@ class ResourceType(models.Model):
 
 class Resource(models.Model):
     resource_type = models.ForeignKey(ResourceType, on_delete=models.CASCADE)
+    short_description = models.TextField(blank=True, null=True)
     primer = models.FileField(upload_to='free/primer', blank=True, null=True)
     cheat_sheat = models.FileField(
         upload_to='free/cheat_sheat', blank=True, null=True)

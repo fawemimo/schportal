@@ -284,7 +284,7 @@ class ResourceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Resource
-        fields = ('id', 'resource_type', 'primer', 'cheat_sheat', 'published')
+        fields = ('id', 'resource_type', 'short_description','primer', 'cheat_sheat', 'published')
 
 
 class ProjectSerializer(serializers.ModelSerializer):
