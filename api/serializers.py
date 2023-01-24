@@ -281,10 +281,16 @@ class AssignmentAllocationSerializer(serializers.ModelSerializer):
 
 class ResourceSerializer(serializers.ModelSerializer):
     resource_type = serializers.StringRelatedField(read_only=True)
+    slug = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Resource
-        fields = ('id', 'resource_type', 'short_description','primer', 'cheat_sheat', 'published')
+        fields = ('id', 'resource_type','slug', 'short_description','primer', 'cheat_sheat', 'published')
+        lookup_field = 'slug'
+
+    def get_slug(self,obj):
+        return obj.resource_type.slug   
+         
 
 
 class ProjectSerializer(serializers.ModelSerializer):

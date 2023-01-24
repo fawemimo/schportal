@@ -288,4 +288,5 @@ class ResourceAdmin(admin.ModelAdmin):
 
 @admin.register(ResourceType)
 class ResourceTypeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'date_created']
+    list_display = ['name', 'slug','date_created']
+    prepopulated_fields = {'slug': ('name',)}

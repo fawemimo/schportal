@@ -287,6 +287,9 @@ class ResourceViewSet(viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
     permission_classes = []
 
+    lookup_field = 'resource_type__slug'
+    lookup_value_regex = '[^/]+'
+
 
 class StudentAttendanceViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
