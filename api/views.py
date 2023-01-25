@@ -3,10 +3,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
-from rest_framework import permissions, status
+from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework.decorators import action
-# Create your views here.
+from .pdf import *
 
 
 class CourseCategoryViewSet(viewsets.ModelViewSet):
@@ -351,3 +350,19 @@ class CourseDetailsViewSet(viewsets.ModelViewSet):
         course = Course.objects.order_by('ordering').filter(
         frontpage_featured=True).filter(active=True)
         return course.exclude(slug=self.kwargs.get('slug'))
+
+
+class CourseOutlineViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+
+    serializer_class = CourseOutlineSerializer
+
+    lookup_field = 'slug'
+    lookup_value_regex = '[^/]+'
+
+    def get_serializer_context(self):
+        return {'slug' : self.kwargs.get('slug')}
+
+    def get_queryset(self):
+        return Course.objects.filter(slug=self.kwargs.get('slug'))
+        
