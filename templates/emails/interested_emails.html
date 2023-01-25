@@ -1,6 +1,6 @@
 {% block subject %}
  
-Interest in Fullstack Web Development
+{{course}}
     
 {% endblock subject %}
 
@@ -210,7 +210,7 @@ Interest in Fullstack Web Development
 												font-weight: 800;
 											"
 										>
-											INTEREST IN FULLSTACK WEB DEVELOPMENT
+											{{course}}
 										</p>
 									</td>
 								</tr>
@@ -261,9 +261,7 @@ Interest in Fullstack Web Development
 											style="font-size: 17px; color: #244d68; font-weight: 500"
 										>
 											According to your request, the course is starting on
-											<span style="font-weight: 700">Jan 23, 2023</span> and
-											ending on
-											<span style="font-weight: 700">Feb 23, 2022</span>. We
+											<span style="font-weight: 700">{{startdate}}</span></span>. We
 											will review your application and get back to you as soon
 											as possible with more information about the course,
 											including the course materials and registration details.
@@ -281,6 +279,154 @@ Interest in Fullstack Web Development
 										</p>
 									</td>
 								</tr>
+
+									<!-- name -->
+									<tr>
+										<td
+										  style="
+											padding: 0;
+											padding-bottom: 20px;
+											background-color: white;
+										  "
+										>
+										  <table
+											width="100%"
+											style="border-spacing: 0"
+											role="presentation"
+										  >
+											<tr>
+											  <td style=" padding-bottom:10px">
+												<p style="color: #404141">
+												  <span style="font-weight: 700">Name:</span>
+												  <span>{{ full_name }}</span>
+												</p>
+											  </td>
+											</tr>
+											<tr>
+											  <td style="height: 1px; background-color: #404141"></td>
+											</tr>
+										  </table>
+										</td>
+									  </tr>
+									  <!-- EMAIL -->
+									  <tr>
+										<td
+										  style="
+											padding: 0;
+											padding-bottom: 20px;
+											background-color: white;
+										  "
+										>
+										  <table
+											width="100%"
+											style="border-spacing: 0"
+											role="presentation"
+										  >
+											<tr>
+											  <td style=" padding-bottom: 10px">
+												<p style="color: #404141">
+												  <span style="font-weight: 700">Email:</span>
+												  <span>{{ email }}</span>
+												</p>
+											  </td>
+											</tr>
+											<tr>
+											  <td style="height: 1px; background-color: #404141"></td>
+											</tr>
+										  </table>
+										</td>
+									  </tr>
+					  
+									  <!-- MOBILE -->
+									  <tr>
+										  <td
+											style="
+											  padding: 0;
+											  padding-bottom: 20px;
+											  background-color: white;
+											"
+										  >
+											<table
+											  width="100%"
+											  style="border-spacing: 0"
+											  role="presentation"
+											>
+											  <tr>
+												<td style=" padding-bottom: 10px">
+												  <p style="color: #404141">
+													<span style="font-weight: 700">Phone Number:</span>
+													<span>{{ mobile }}</span>
+												  </p>
+												</td>
+											  </tr>
+											  <tr>
+												<td style="height: 1px; background-color: #404141"></td>
+											  </tr>
+											</table>
+										  </td>
+										</tr>
+					  
+										<!-- COURSE TITLE -->
+										
+										<tr>
+										  <td
+											style="
+											  padding: 0;
+											  padding-bottom: 20px;
+											  background-color: white;
+											"
+										  >
+											<table
+											  width="100%"
+											  style="border-spacing: 0"
+											  role="presentation"
+											>
+											  <tr>
+												<td style=" padding-bottom: 10px">
+												  <p style="color: #404141">
+													<span style="font-weight: 700">Course:</span>
+													<span>{{ course }}</span>
+												  </p>
+												</td>
+											  </tr>
+											  <tr>
+												<td style="height: 1px; background-color: #404141"></td>
+											  </tr>
+											</table>
+										  </td>
+										</tr>
+										<!-- START DATE -->
+										<tr>
+										  <td
+											style="
+											  padding: 0;
+											  padding-bottom: 20px;
+											  background-color: white;
+											"
+										  >
+											<table
+											  width="100%"
+											  style="border-spacing: 0"
+											  role="presentation"
+											>
+											  <tr>
+												<td style=" padding-bottom: 10px">
+												  <p style="color: #404141">
+													<span style="font-weight: 700">Starting Date:</span>
+													<span>{{ startdate }}</span>
+												  </p>
+												</td>
+											  </tr>
+											  <tr>
+												<td style="height: 1px; background-color: #404141"></td>
+											  </tr>
+											</table>
+										  </td>
+										</tr>
+
+				
+
+								<!-- THANK YOU FOR CHOOSING  ANCHORSOFT-->
 								<tr>
 									<td style="text-align: start; padding-bottom: 25px">
 										<p

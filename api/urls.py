@@ -32,6 +32,7 @@ router.register('coursehomepagefeatures', views.CourseHomepageFeatured,basename=
 router.register('virtualclasses', views.VirtualClassViewSet, basename='virtualclasses')
 router.register('kidscoding', views.KidsCodingViewSet,basename='kidscoding')
 router.register('kidscodingcourses', views.KidsCodingCourseViewSet, basename='kidscodingcourses')
+router.register('coursedetails',views.CourseDetailsViewSet, basename='coursedetails')
 # Nested routes
 courses_router = routers.NestedDefaultRouter(
     router, 'courses', lookup='course')

@@ -290,7 +290,6 @@ class ResourceSerializer(serializers.ModelSerializer):
 
     def get_slug(self,obj):
         return obj.resource_type.slug   
-         
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -343,6 +342,7 @@ class CourseCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','discounted_fee','card_thumb','audience','audience_description','frontpage_featured','active','slug','location_state','location_state_area']
+        
         lookup_field = 'slug'
 
     def get_the_url(self, obj):

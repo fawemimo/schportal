@@ -25,7 +25,8 @@ def send_interested_email(course_id,full_name,email,mobile):
     try:
         message = BaseEmailMessage(template_name='emails/interested_emails.html',
         context = {
-            'course':course,
+            'course':course.title.upper(),
+            'startdate':course.schedule_set.values('startdate'),
             'course_id':course_id,
             'full_name':full_name,
             'email':email,
@@ -41,9 +42,11 @@ def send_interested_email(course_id,full_name,email,mobile):
 
 
 def send_virtualclass_email(course_id,full_name,email,mobile,remarks):
+    course = Course.objects.get(id=course_id)
     try:
             message = BaseEmailMessage(template_name='emails/virtual_class.html',
             context = {
+                'course': course,
                 'course_id':course_id,
                 'full_name':full_name,
                 'email':email,

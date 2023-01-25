@@ -312,7 +312,6 @@ class CourseHomepageFeatured(viewsets.ModelViewSet):
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
 
-
 class VirtualClassViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post']
 
@@ -334,3 +333,21 @@ class KidsCodingCourseViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Course.objects.filter(kids_coding=True).order_by('ordering')
+
+
+class CourseDetailsViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+
+    queryset = Course.objects.all()
+    serializer_class = CourseCardSerializer
+    
+    lookup_field = 'slug'
+    lookup_value_regex = '[^/]+'
+
+    def get_serializer_context(self):
+        return {'slug': self.kwargs.get('slug')}
+
+    def get_queryset(self):
+        course = Course.objects.order_by('ordering').filter(
+        frontpage_featured=True).filter(active=True)
+        return course.exclude(slug=self.kwargs.get('slug'))
