@@ -356,13 +356,9 @@ class CourseOutlineViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
 
     serializer_class = CourseOutlineSerializer
-
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
 
-    def get_serializer_context(self):
-        return {'slug' : self.kwargs.get('slug')}
-
     def get_queryset(self):
-        return Course.objects.filter(slug=self.kwargs.get('slug'))
-        
+        return Course.objects.order_by('ordering').filter(
+            frontpage_featured=True).filter(active=True)
