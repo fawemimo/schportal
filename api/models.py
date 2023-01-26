@@ -44,7 +44,7 @@ class Course(models.Model):
     course_outline = models.TextField(null=True, blank=True)
     what_you_will_learn = models.TextField(null=True, blank=True)
     requirements = models.CharField(max_length=450, null=True, blank=True)
-    prerequisites = models.TextField(max_length=450, null=True, blank=True)
+    prerequisites = models.TextField(null=True, blank=True)
     card_thumb = models.ImageField(
         null=True, blank=True, upload_to='courseimg')
     pic1_detailpage_banner = models.ImageField(
@@ -337,7 +337,7 @@ class CourseManualAllocation(models.Model):
 
 class ResourceType(models.Model):
     name = models.CharField(max_length=250)
-    slug = models.SlugField(blank=True,null=True)
+    slug = models.SlugField(blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
