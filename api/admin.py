@@ -23,7 +23,7 @@ class TopbarAdmin(admin.ModelAdmin):
 
 @admin.register(MainBanner)
 class MainBannerAdmin(admin.ModelAdmin):
-    list_display = ['id', 'ordering', 'published', 'title']
+    list_display = ['id', 'ordering', 'published', 'title', 'banner_src']
 
 
 @admin.register(SectionBanner)
