@@ -72,7 +72,8 @@ class TopBarViewSet(viewsets.ModelViewSet):
 
 
 class MainBannerViewSet(ModelViewSet):
-    queryset = MainBanner.objects.all()
+    queryset = MainBanner.objects.order_by(
+        'ordering').filter(published=True).all()
     serializer_class = MainBannerSerializer
     permission_classes = []
 
@@ -157,7 +158,7 @@ class InquiryViewSet(viewsets.ModelViewSet):
 
 
 class InterestedFormViewSet(viewsets.ModelViewSet):
-    http_method_names = ['post', 'get','patch']   
+    http_method_names = ['post', 'get', 'patch']
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -311,6 +312,7 @@ class CourseHomepageFeatured(viewsets.ModelViewSet):
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
 
+
 class VirtualClassViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post']
 
@@ -339,7 +341,7 @@ class CourseDetailsViewSet(viewsets.ModelViewSet):
 
     queryset = Course.objects.all()
     serializer_class = CourseCardSerializer
-    
+
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
 
@@ -348,7 +350,7 @@ class CourseDetailsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         course = Course.objects.order_by('ordering').filter(
-        frontpage_featured=True).filter(active=True)
+            frontpage_featured=True).filter(active=True)
         return course.exclude(slug=self.kwargs.get('slug'))
 
 
@@ -361,8 +363,7 @@ class CourseOutlineViewSet(viewsets.ModelViewSet):
     lookup_value_regex = '[^/]+'
 
     def get_serializer_context(self):
-        return {'slug' : self.kwargs.get('slug')}
+        return {'slug': self.kwargs.get('slug')}
 
     def get_queryset(self):
         return Course.objects.filter(slug=self.kwargs.get('slug'))
-        
