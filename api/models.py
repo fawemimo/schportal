@@ -137,6 +137,7 @@ class MainBanner(models.Model):
     title = models.CharField(max_length=150)
     published = models.BooleanField(default=False)
     banner_src = models.TextField()
+    ordering = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.title

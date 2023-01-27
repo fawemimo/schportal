@@ -90,3 +90,4 @@ staging_settings.py
 
 .env
 db.sqlite3
+contents.html

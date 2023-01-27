@@ -23,7 +23,7 @@ class TopbarAdmin(admin.ModelAdmin):
 
 @admin.register(MainBanner)
 class MainBannerAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'banner_src']
+    list_display = ['id', 'ordering', 'published', 'title']
 
 
 @admin.register(SectionBanner)
@@ -281,12 +281,12 @@ class ResourceAdmin(admin.ModelAdmin):
     list_display = ['resource_type', 'primer', 'cheat_sheat', 'published']
     list_filter = ['published']
     list_editable = ['published']
-    
+
     def resource_type(self, obj):
         return obj.resource_type.name
 
 
 @admin.register(ResourceType)
 class ResourceTypeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug','date_created']
+    list_display = ['name', 'slug', 'date_created']
     prepopulated_fields = {'slug': ('name',)}
