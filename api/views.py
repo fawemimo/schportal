@@ -72,8 +72,7 @@ class TopBarViewSet(viewsets.ModelViewSet):
 
 
 class MainBannerViewSet(ModelViewSet):
-    queryset = MainBanner.objects.order_by(
-        'ordering').filter(published=True).all()
+    queryset = MainBanner.objects.filter(published=True).all()
     serializer_class = MainBannerSerializer
     permission_classes = []
 

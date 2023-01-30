@@ -23,9 +23,9 @@ class TopbarAdmin(admin.ModelAdmin):
 
 @admin.register(MainBanner)
 class MainBannerAdmin(admin.ModelAdmin):
-    list_display = ['title', 'ordering', 'published',  'banner_src']
+    list_display = ['title', 'published',  'banner_src']
     list_display_links = ['title']
-    list_editable = ['ordering']
+    list_editable = ['published']
 
 
 @admin.register(SectionBanner)

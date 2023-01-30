@@ -1,5 +1,5 @@
 {% block subject %} 
-Short Quizzes - Anchorsoft Academy   
+Career Choice Advisory - Anchorsoft Academy   
 {% endblock subject %}
 
 {% block html_body %}
@@ -11,7 +11,7 @@ Short Quizzes - Anchorsoft Academy
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title></title>
+		<title>Career Choice Advisory - Anchorsoft Academy </title>
 		<style type="text/css">
 			table {
 				border-spacing: 0;
@@ -331,7 +331,7 @@ Short Quizzes - Anchorsoft Academy
 												<td style=" padding-bottom: 10px">
 												  <p style="color: #404141">
 													<span style="font-weight: 700">Phone Number:</span>
-													<span>{{ mobile }}</span>
+													<span><a href="tel:{{mobile}}" style="text-decoration: none; color: #244d68;">{{mobile}}</a></span>
 												  </p>
 												</td>
 											  </tr>
@@ -342,8 +342,10 @@ Short Quizzes - Anchorsoft Academy
 										  </td>
 										</tr>
 					  
-										<!-- TERTIARY EDUCTION -->
+										<!-- TERTIARY EDUCTION -->	
 										
+										{% if tartiary_education %}
+																				
 										<tr>
 										  <td
 											style="
@@ -399,8 +401,11 @@ Short Quizzes - Anchorsoft Academy
 											</table>
 										  </td>
 										</tr>
+										{% endif %}
 
 										<!-- SECONDARY SCHOOL -->
+										{% if secondary_sch  %}
+										
 										<tr>
 											<td
 											  style="
@@ -417,7 +422,7 @@ Short Quizzes - Anchorsoft Academy
 												<tr>
 												  <td style=" padding-bottom: 10px">
 													<p style="color: #404141">
-													  <span style="font-weight: 700">Secondery School:</span>
+													  <span style="font-weight: 700">Secondary School:</span>
 													  <span>{{secondary_sch}}</span>
 													</p>
 												  </td>
@@ -428,37 +433,12 @@ Short Quizzes - Anchorsoft Academy
 											  </table>
 											</td>
 										  </tr>
-
-										  <!-- SECONDAY SCHOOL -->
-										<tr>
-											<td
-											  style="
-												padding: 0;
-												padding-bottom: 20px;
-												background-color: white;
-											  "
-											>
-											  <table
-												width="100%"
-												style="border-spacing: 0"
-												role="presentation"
-											  >
-												<tr>
-												  <td style=" padding-bottom: 10px">
-													<p style="color: #404141">
-													  <span style="font-weight: 700">Department:</span>
-													  <span>{{secondary_studied}}</span>
-													</p>
-												  </td>
-												</tr>
-												<tr>
-												  <td style="height: 1px; background-color: #404141"></td>
-												</tr>
-											  </table>
-											</td>
-										  </tr>
-
+										  	
+										{% endif %}
+										
 										  <!-- TECHNOLOGIES INTERESTED -->
+										  
+										  {% if tech_interest  %}
 										  <tr>
 											<td
 											  style="
@@ -487,34 +467,39 @@ Short Quizzes - Anchorsoft Academy
 											</td>
 										  </tr>
 
+											
+										  {% endif %}
+											
 										  <!-- MORE ABOUT YOU  -->
-										  <tr>
-											<td
-											  style="
-												padding: 0;
-												padding-bottom: 60px;
-												background-color: white;
-											  "
-											>
-											  <table width="100%" style="border-spacing: 0" role="presentation">
-												<tr>
-												  <td style=" padding-bottom: 10px">
-													<p style="color: #404141">
-													  <span style="font-weight: 700">Remarks</span>
-													</p>
-												  </td>
-												</tr>
-												<tr>
-												  <td style="padding: 15px; border: 1px solid #404141">
-													<p style="color: #404141">
-													  {{remarks}}
-													</p>
-												  </td>
-												</tr>
-											  </table>
-											</td>
-										  </tr>
+										  {% if remarks  %}
+											<tr>
+												<td
+												style="
+													padding: 0;
+													padding-bottom: 60px;
+													background-color: white;
+												"
+												>
+												<table width="100%" style="border-spacing: 0" role="presentation">
+													<tr>
+													<td style=" padding-bottom: 10px">
+														<p style="color: #404141">
+														<span style="font-weight: 700">Remarks</span>
+														</p>
+													</td>
+													</tr>
+													<tr>
+													<td style="padding: 15px; border: 1px solid #404141">
+														<p style="color: #404141">
+														{{remarks}}
+														</p>
+													</td>
+													</tr>
+												</table>
+												</td>
+											</tr>
 
+										  {% endif %}
 
 								<tr>
 									<td style="text-align: start; padding-bottom: 25px">

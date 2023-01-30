@@ -13,7 +13,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Interest in Fullstack Web Development</title>
+		<title>Enrollement in {{course}}</title>
 		<style type="text/css">
 			table {
 				border-spacing: 0;
@@ -242,16 +242,7 @@
 										<p
 											style="font-size: 17px; color: #244d68; font-weight: 500"
 										>
-											We wanted to let you know that we have received your
-											interest in our
-											<span style="font-weight: 700"
-												>{{course}}.</span
-											>
-											course. We appreciate your interest in our school and are
-											committed to providing you with high-quality education in
-											<span style="font-weight: 700"
-												>{{course}}.</span
-											>.
+											
 										</p>
 									</td>
 								</tr>
@@ -260,11 +251,6 @@
 										<p
 											style="font-size: 17px; color: #244d68; font-weight: 500"
 										>
-											According to your request, the course is starting on
-											<span style="font-weight: 700">{{startdate}}</span></span>. We
-											will review your application and get back to you as soon
-											as possible with more information about the course,
-											including the course materials and registration details.
 										</p>
 									</td>
 								</tr>
@@ -273,13 +259,108 @@
 										<p
 											style="font-size: 17px; color: #244d68; font-weight: 500"
 										>
-											If you have any questions or concerns, please do not
-											hesitate to reach out to us. We are happy to help and
-											provide you with any information you need.
 										</p>
 									</td>
 								</tr>
 
+									<!-- THANK YOU FOR CHOOSING  ANCHORSOFT-->
+									<tr>
+										<td style="text-align: start; padding-bottom: 25px">
+											<p
+												style="font-size: 17px; color: #244d68; font-weight: 500;    margin-top: -50px;"
+											>
+												Thank you for enrolling for {{course}} schedule for {{startdate}}. We would get in touch with you for further information
+											</p>
+										</td>
+									</tr>
+
+										<!-- COURSE TITLE -->										
+										<tr>
+											<td
+											  style="
+												padding: 0;
+												padding-bottom: 20px;
+												background-color: white;
+											  "
+											>
+											  <table
+												width="100%"
+												style="border-spacing: 0"
+												role="presentation"
+											  >
+												<tr>
+												  <td style=" padding-bottom: 10px">
+													<p style="color: #404141">
+													  <span style="font-weight: 700">Course:</span>
+													  <span>{{ course }}</span>
+													</p>
+												  </td>
+												</tr>
+												<tr>
+												  <td style="height: 1px; background-color: #404141"></td>
+												</tr>
+											  </table>
+											</td>
+										  </tr>
+
+										  		<!-- START DATE -->
+										<tr>
+											<td
+											  style="
+												padding: 0;
+												padding-bottom: 20px;
+												background-color: white;
+											  "
+											>
+											  <table
+												width="100%"
+												style="border-spacing: 0"
+												role="presentation"
+											  >
+												<tr>
+												  <td style=" padding-bottom: 10px">
+													<p style="color: #404141">
+													  <span style="font-weight: 700">Starting Date:</span>
+													  <span>{{ startdate }}</span>
+													</p>
+												  </td>
+												</tr>
+												<tr>
+												  <td style="height: 1px; background-color: #404141"></td>
+												</tr>
+											  </table>
+											</td>
+										  </tr>
+										  
+									  <!-- MOBILE -->
+									  <tr>
+										<td
+										  style="
+											padding: 0;
+											padding-bottom: 20px;
+											background-color: white;
+										  "
+										>
+										  <table
+											width="100%"
+											style="border-spacing: 0"
+											role="presentation"
+										  >
+											<tr>
+											  <td style=" padding-bottom: 10px">
+												<p style="color: #404141">
+												  <span style="font-weight: 700">Phone Number:</span>
+												  <span>{{ mobile }}</span>
+												</p>
+											  </td>
+											</tr>
+											<tr>
+											  <td style="height: 1px; background-color: #404141"></td>
+											</tr>
+										  </table>
+										</td>
+									  </tr>
+				  
 									<!-- name -->
 									<tr>
 										<td
@@ -337,94 +418,8 @@
 										</td>
 									  </tr>
 					  
-									  <!-- MOBILE -->
-									  <tr>
-										  <td
-											style="
-											  padding: 0;
-											  padding-bottom: 20px;
-											  background-color: white;
-											"
-										  >
-											<table
-											  width="100%"
-											  style="border-spacing: 0"
-											  role="presentation"
-											>
-											  <tr>
-												<td style=" padding-bottom: 10px">
-												  <p style="color: #404141">
-													<span style="font-weight: 700">Phone Number:</span>
-													<span>{{ mobile }}</span>
-												  </p>
-												</td>
-											  </tr>
-											  <tr>
-												<td style="height: 1px; background-color: #404141"></td>
-											  </tr>
-											</table>
-										  </td>
-										</tr>
 					  
-										<!-- COURSE TITLE -->
-										
-										<tr>
-										  <td
-											style="
-											  padding: 0;
-											  padding-bottom: 20px;
-											  background-color: white;
-											"
-										  >
-											<table
-											  width="100%"
-											  style="border-spacing: 0"
-											  role="presentation"
-											>
-											  <tr>
-												<td style=" padding-bottom: 10px">
-												  <p style="color: #404141">
-													<span style="font-weight: 700">Course:</span>
-													<span>{{ course }}</span>
-												  </p>
-												</td>
-											  </tr>
-											  <tr>
-												<td style="height: 1px; background-color: #404141"></td>
-											  </tr>
-											</table>
-										  </td>
-										</tr>
-										<!-- START DATE -->
-										<tr>
-										  <td
-											style="
-											  padding: 0;
-											  padding-bottom: 20px;
-											  background-color: white;
-											"
-										  >
-											<table
-											  width="100%"
-											  style="border-spacing: 0"
-											  role="presentation"
-											>
-											  <tr>
-												<td style=" padding-bottom: 10px">
-												  <p style="color: #404141">
-													<span style="font-weight: 700">Starting Date:</span>
-													<span>{{ startdate }}</span>
-												  </p>
-												</td>
-											  </tr>
-											  <tr>
-												<td style="height: 1px; background-color: #404141"></td>
-											  </tr>
-											</table>
-										  </td>
-										</tr>
-
-				
+								
 
 								<!-- THANK YOU FOR CHOOSING  ANCHORSOFT-->
 								<tr>
