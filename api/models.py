@@ -5,7 +5,12 @@ from django.utils.text import slugify
 
 
 class User(AbstractUser):
+    user_type_choices = (
+        ('teacher', 'Teacher'),
+        ('student', 'Student'),
+    )
     email = models.EmailField(unique=True)
+    user_type = models.CharField(max_length=7,choices=user_type_choices,default='')
 
 
 # region core models - mainsite
