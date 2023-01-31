@@ -114,7 +114,7 @@ Career Choice Advisory - Anchorsoft Academy
 						mso-hide: all;
 					"
 				>
-					Anchorsoft Academy Short Quiz
+				Career Choice Advisory 
 				</div>
 
 				<table
@@ -331,7 +331,7 @@ Career Choice Advisory - Anchorsoft Academy
 												<td style=" padding-bottom: 10px">
 												  <p style="color: #404141">
 													<span style="font-weight: 700">Phone Number:</span>
-													<span><a href="tel:{{mobile}}" style="text-decoration: none; color: #244d68;">{{mobile}}</a></span>
+													<span><a href="tel:{{mobile}}" style="text-decoration: none; color: #244d68; cursor: pointer;">{{mobile}}</a></span>
 												  </p>
 												</td>
 											  </tr>
@@ -401,6 +401,8 @@ Career Choice Advisory - Anchorsoft Academy
 											</table>
 										  </td>
 										</tr>
+										{% else %}
+										<span>.</span>
 										{% endif %}
 
 										<!-- SECONDARY SCHOOL -->
@@ -433,7 +435,8 @@ Career Choice Advisory - Anchorsoft Academy
 											  </table>
 											</td>
 										  </tr>
-										  	
+										  {% else %}
+										  <span>.</span>
 										{% endif %}
 										
 										  <!-- TECHNOLOGIES INTERESTED -->
@@ -466,7 +469,8 @@ Career Choice Advisory - Anchorsoft Academy
 											  </table>
 											</td>
 										  </tr>
-
+										  {% else %}
+										<span>.</span>
 											
 										  {% endif %}
 											
@@ -498,7 +502,8 @@ Career Choice Advisory - Anchorsoft Academy
 												</table>
 												</td>
 											</tr>
-
+											{% else %}
+										<span>.</span>
 										  {% endif %}
 
 								<tr>
