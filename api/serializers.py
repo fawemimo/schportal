@@ -381,8 +381,9 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 
 
 class UserSerializer(BaseUserSerializer):
+    student = StudentSerializer(read_only=True)
     class Meta(BaseUserSerializer.Meta):
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']        
+        fields = ['id', 'username', 'email', 'first_name','last_name','student']        
 
 
 class VirtualClassSerializer(serializers.ModelSerializer):

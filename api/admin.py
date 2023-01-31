@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import *
+from django import forms
 
 
 @admin.register(User)
@@ -23,7 +24,7 @@ class TopbarAdmin(admin.ModelAdmin):
 
 @admin.register(MainBanner)
 class MainBannerAdmin(admin.ModelAdmin):
-    list_display = ['title', 'published',  'banner_src']
+    list_display = ['title', 'published', 'banner_src']
     list_display_links = ['title']
     list_editable = ['published']
 
@@ -90,11 +91,20 @@ class NavLinkItemAdmin(admin.ModelAdmin):
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
     list_display = ['id', 'fullname']
+    search_fields = ['user__first_name__istartswith', 'user__last_name__istartswith']
 
     def fullname(self, teacher: Teacher):
         if teacher.user is None:
             return f'Teacher has no user object'
         return f'{teacher.user.first_name} {teacher.user.last_name}'
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+
+        if request.user.is_superuser:
+            return queryset
+        return queryset.filter(id=request.user.id)    
+
 
 
 @admin.register(ShortQuiz)
@@ -153,6 +163,7 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = ['name', 'student_idcard_id', 'batch_name']
+    search_fields = ['user__first_name', 'user__last_name__istartswith']
 
     @admin.display(description='Student Name')
     def name(self, obj):
@@ -188,6 +199,9 @@ class EnrollmentAdmin(admin.ModelAdmin):
 @admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
     list_display = ['batch', 'name', 'assignment_file', 'date_posted']
+    search_fields = ['name','batch']
+    autocomplete_fields = ['batch']
+
 
     def batch(self, obj):
         return obj.batch.title
@@ -216,11 +230,13 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(Batch)
 class BatchAdmin(admin.ModelAdmin):
     list_display = ['title', 'start_date', 'end_date']
+    search_fields = ['title']
 
 
 @admin.register(AssignmentAllocation)
 class AssignmentAllocationAdmin(admin.ModelAdmin):
     list_display = ['student', 'assignment', 'supervisor', 'deadline']
+    autocomplete_fields = ['student','assignment']    
 
     def student(self, obj):
         return obj.student.user
@@ -228,8 +244,22 @@ class AssignmentAllocationAdmin(admin.ModelAdmin):
     def assignment(self, obj):
         return obj.assignment.name
 
-    def supervisor(self, obj):
+    def supervisor(self, obj):        
         return obj.supervisor.user
+
+    def get_queryset(self,request):
+        queryset = super().get_queryset(request)
+        if request.user.is_superuser:
+            return queryset
+        return queryset.filter(supervisor__user=request.user)    
+
+    def save_model(self, request, obj, form, change):
+        obj.supervisor.user = request.user
+        return super().save_model(request, obj, form, change)
+
+    def save_formset(self, request, form, formset, change):
+        formset.save()
+        form.instance.save()        
 
 
 @admin.register(ProjectAllocation)

@@ -38,7 +38,7 @@ class TeacherViewSet(viewsets.ModelViewSet):
 
 
 class StudentViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ['get']
 
     serializer_class = StudentSerializer
     permission_classes = []
@@ -47,10 +47,10 @@ class StudentViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated:
             return Student.objects.filter(user_id=self.request.user.id)
 
-    def get_permissions(self):
-        if self.request.method in ['PATCH', 'POST', 'GET']:
-            return [permissions.IsAuthenticated()]
-        return [permissions.IsAdminUser()]
+    # def get_permissions(self):
+    #     if self.request.method in ['PATCH', 'POST', 'GET']:
+    #         return [permissions.IsAuthenticated()]
+    #     return [permissions.IsAdminUser()]
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):

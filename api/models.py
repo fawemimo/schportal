@@ -126,7 +126,7 @@ class Batch(models.Model):
     students = models.ManyToManyField(Student)
 
     def __str__(self):
-        return f'{self.title} - {self.start_date}'
+        return f'{self.title}'
 
 
 class TopBar(models.Model):
