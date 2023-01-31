@@ -87,6 +87,10 @@ __pycache__/
 prod_settings.py
 test_settings.py
 staging_settings.py
+/media/
+media
+media/
+imagefile_name.png
 
 .env
 db.sqlite3
