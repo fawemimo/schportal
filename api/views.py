@@ -6,7 +6,10 @@ from .serializers import *
 from rest_framework import permissions
 from rest_framework.response import Response
 from .pdf import *
+from rest_framework_simplejwt.views import TokenObtainPairView
 
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 class CourseCategoryViewSet(viewsets.ModelViewSet):
     queryset = CourseCategory.objects.all()

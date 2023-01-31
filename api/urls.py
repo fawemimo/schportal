@@ -3,7 +3,6 @@ from rest_framework_nested import routers
 from . import views
 from . import pdf
 
-
 router = routers.DefaultRouter()
 router.register('topbars', views.TopBarViewSet)
 router.register('mainbanners', views.MainBannerViewSet)
@@ -56,5 +55,6 @@ urlpatterns = [
     path('', include(coursemanual_router.urls)),
     path('auth/',include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
+    path('auth/users/login',views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('courseoutlines/<slug:slug>/pdf', pdf.create_pdf,name='pdf')
 ]

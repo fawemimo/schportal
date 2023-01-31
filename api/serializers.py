@@ -3,6 +3,18 @@ from api.tasks import send_inquiries_email_task, send_interested_email_task, sen
 from .models import *
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer, UserSerializer as BaseUserSerializer
 from .pdf import create_pdf
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self,attrs):
+        data = super().validate(attrs)
+
+        data['id'] = self.user.id
+        data['username'] = self.user.username
+        return data    
+
+
 class CourseCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseCategory
