@@ -80,7 +80,7 @@ def send_kids_coding_email(age_bracket,full_name,email,mobile,remarks):
 def send_short_quizze_email(fullname,email,mobile,tartiary_education,tartiary_studied,secondary_sch,secondary_studied,tech_interest,more_about_you):
     today_date = date.today()
     try:
-        message = BaseEmailMessage(template_name='emails/short_quizzes.html',
+        message = BaseEmailMessage(template_name='emails/career_choice.html',
         context = {
             'today_date':today_date,
             'fullname' : fullname,
