@@ -442,10 +442,22 @@ class KidsCodingSerializer(serializers.ModelSerializer):
 
 class KidsCodingCourseSerializer(serializers.ModelSerializer):
     coursecategory = CourseCategorySerializer(read_only=True)
+    the_url = serializers.SerializerMethodField(read_only=True)
+    fee = serializers.SerializerMethodField(source='schedule_set')
+    discounted_fee = serializers.SerializerMethodField(source='schedule_set')
+
     class Meta:
         model = Course
-        fields = ['id','coursecategory', 'ordering', 'title', 'frontpage_featured', 'active', 'delisted', 'slug', 'extra_note', 'course_code', 'location_state', 'location_state_area', 'card_title', 'tech_subs', 'audience', 'audience_description', 'description', 'course_outline', 'what_you_will_learn', 'requirements', 'prerequisites', 'card_thumb', 'pic1', 'pic2', 'pic3', 'seo_pagetitle', 'seo_metabulk']
+        fields = ['id', 'title','coursecategory', 'card_title', 'course_code', 'the_url', 'fee','discounted_fee','card_thumb','audience','audience_description','frontpage_featured','active','slug','location_state','location_state_area']
 
+    def get_the_url(self, obj):
+        return f'{obj.location_state}/{obj.location_state_area}/{obj.slug}'
+
+    def get_fee(self, obj):
+        return obj.schedule_set.only('id').values('fee').first()
+
+    def get_discounted_fee(self, obj):
+        return obj.schedule_set.only('id').values('discounted_fee').first()  
 
 
 class CourseOutlineSerializer(serializers.ModelSerializer):
