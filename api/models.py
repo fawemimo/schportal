@@ -47,6 +47,7 @@ class Course(models.Model):
     audience_description = models.TextField(null=True, blank=True)
     description = models.TextField()
     course_outline = models.TextField(null=True, blank=True)
+    course_outline_pdf = models.TextField(blank=True,null=True)
     what_you_will_learn = models.TextField(null=True, blank=True)
     requirements = models.CharField(max_length=450, null=True, blank=True)
     prerequisites = models.TextField(null=True, blank=True)

@@ -374,32 +374,36 @@
 				 
 	
 					<!-- REMARKS -->
+					{% if remarks %}
 					<tr>
-					  <td
-						style="
-						  padding: 0;
-						  padding-bottom: 60px;
-						  background-color: white;
-						"
-					  >
-						<table width="100%" style="border-spacing: 0" role="presentation">
-						  <tr>
-							<td style=" padding-bottom: 10px">
-							  <p style="color: #404141">
-								<span style="font-weight: 700">Remarks</span>
-							  </p>
-							</td>
-						  </tr>
-						  <tr>
-							<td style="padding: 15px; border: 1px solid #404141">
-							  <p style="color: #404141">
-								{{remarks}}
-							  </p>
-							</td>
-						  </tr>
-						</table>
-					  </td>
-					</tr>
+						<td
+						  style="
+							padding: 0;
+							padding-bottom: 60px;
+							background-color: white;
+						  "
+						>
+						  <table width="100%" style="border-spacing: 0" role="presentation">
+							<tr>
+							  <td style=" padding-bottom: 10px">
+								<p style="color: #404141">
+								  <span style="font-weight: 700">Remarks</span>
+								</p>
+							  </td>
+							</tr>
+							<tr>
+							  <td style="padding: 15px; border: 1px solid #404141">
+								<p style="color: #404141">
+								  {{remarks}}
+								</p>
+							  </td>
+							</tr>
+						  </table>
+						</td>
+					  </tr>
+					  {% else %}
+					  <p>No Remarks</p>
+					{% endif %}
 
 								<tr>
 									<td style="text-align: start; padding-bottom: 25px">

@@ -46,7 +46,7 @@ def send_virtualclass_email(course_id,full_name,email,mobile,remarks):
     try:
             message = BaseEmailMessage(template_name='api/emails/virtual_class.html',
             context = {
-                'course': course,
+                'course': course.title,
                 'course_id':course_id,
                 'full_name':full_name,
                 'email':email,

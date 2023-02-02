@@ -201,6 +201,7 @@ class AssignmentAdmin(admin.ModelAdmin):
     list_display = ['batch', 'name', 'assignment_file', 'date_posted']
     search_fields = ['name','batch']
     autocomplete_fields = ['batch']
+    list_select_related = ['batch']
 
 
     def batch(self, obj):
@@ -236,7 +237,8 @@ class BatchAdmin(admin.ModelAdmin):
 @admin.register(AssignmentAllocation)
 class AssignmentAllocationAdmin(admin.ModelAdmin):
     list_display = ['student', 'assignment', 'supervisor', 'deadline']
-    autocomplete_fields = ['student','assignment']    
+    autocomplete_fields = ['student','assignment']   
+    list_select_related = ['assignment','student','supervisor'] 
 
     def student(self, obj):
         return obj.student.user
@@ -257,7 +259,12 @@ class AssignmentAllocationAdmin(admin.ModelAdmin):
         if getattr(obj, 'supervisor', None) is None:  
             obj.supervisor.user = request.user
         obj.save()
-        
+
+    def get_form(self, request, obj=None, **kwargs):
+        form_class = super(AssignmentAllocationAdmin, self).get_form(request, obj, **kwargs)
+        form_class(request.user)
+
+        return form_class    
 
 @admin.register(ProjectAllocation)
 class ProjectAllocationAdmin(admin.ModelAdmin):

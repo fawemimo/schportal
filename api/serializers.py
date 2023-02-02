@@ -392,9 +392,6 @@ class VirtualClassSerializer(serializers.ModelSerializer):
         model = VirtualClass
         fields = ['id','course_id','full_name', 'email', 'mobile',  'remarks']  
 
-    # def get_course(self, obj):
-    #     return obj.course.title
-
     def create(self, validated_data):
         virtualclass = VirtualClass(**validated_data)
         virtualclass.save()

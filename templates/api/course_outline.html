@@ -30,7 +30,11 @@
         Course Outline
     </h1></div>
 
-    {{course.course_outline | safe }}
+        {% if course.course_outline_pdf %}
+        {{course.course_outline_pdf | safe }}
+        {% else %}
+        <p>No Course Outlines</p>
+        {% endif %}
     <div id="footer_content">(c) - page <pdf:pagenumber>
         of <pdf:pagecount>
     </div>
