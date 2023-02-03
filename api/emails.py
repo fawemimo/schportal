@@ -23,7 +23,7 @@ def send_inquiries_email(fullname,email,mobile,message):
 def send_interested_email(course_id,full_name,email,mobile):
     course = Course.objects.get(id=course_id)
     try:
-        message = BaseEmailMessage(template_name='api/emails/interested_api/emails.html',
+        message = BaseEmailMessage(template_name='api/emails/interested_emails.html',
         context = {
             'course':course.title.upper(),
             'startdate':course.schedule_set.values('startdate'),
