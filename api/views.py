@@ -45,6 +45,7 @@ class StudentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
+            print()
             return Student.objects.filter(user_id=self.request.user.id)
 
     # def get_permissions(self):
