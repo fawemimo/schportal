@@ -12,7 +12,7 @@ router.register('techicons', views.TechIconViewSet)
 router.register('featuredprojects', views.FeaturedProjectViewSet)
 router.register('componentdumps', views.ComponentDumpViewSet)
 router.register('coursecategories', views.CourseCategoryViewSet)
-router.register('courses', views.CourseViewSet)
+router.register('courses', views.CourseViewSet, basename='courses')
 router.register('teachers', views.TeacherViewSet)
 router.register('students', views.StudentViewSet, basename='students')
 router.register('navlinks', views.NavLinkViewSet)
@@ -34,6 +34,9 @@ router.register('kidscoding', views.KidsCodingViewSet,basename='kidscoding')
 router.register('kidscodingcourses', views.KidsCodingCourseViewSet, basename='kidscodingcourses')
 router.register('coursedetails',views.CourseDetailsViewSet, basename='coursedetails')
 router.register('courseoutlines', views.CourseOutlineViewSet,basename='courseoutlines')
+router.register('coursedetailsfeatured', views.CourseDetailsFeaturedViewSet, basename='coursedetailsfeatured')
+router.register('kidscoursedetailsfeatured',views.KidCourseDetailsFeaturedViewSet, basename='kidscoursedetailsfeatured')
+
 # Nested routes
 courses_router = routers.NestedDefaultRouter(
     router, 'courses', lookup='course')

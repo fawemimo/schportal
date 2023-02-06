@@ -470,3 +470,6 @@ class CourseOutlineSerializer(serializers.ModelSerializer):
 
     def get_pdf(self,obj):
         return f'courseoutlines/{obj.slug}/pdf'
+
+
+        

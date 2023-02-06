@@ -19,7 +19,6 @@ class CourseCategoryViewSet(viewsets.ModelViewSet):
 
 class CourseViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'patch', 'post', 'delete']
-    queryset = Course.objects.order_by('ordering').all()
     serializer_class = CourseSerializer
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
@@ -29,6 +28,9 @@ class CourseViewSet(viewsets.ModelViewSet):
             return AddCourseSerializer
         return CourseSerializer
     permission_classes = []
+
+    def get_queryset(self):
+        return Course.objects.order_by('ordering').filter(kids_coding=False).all()
 
 
 class TeacherViewSet(viewsets.ModelViewSet):
@@ -352,9 +354,9 @@ class CourseDetailsViewSet(viewsets.ModelViewSet):
         return {'slug': self.kwargs.get('slug')}
 
     def get_queryset(self):
-        course = Course.objects.order_by('ordering').filter(
+        return Course.objects.order_by('ordering').filter(
             frontpage_featured=True).filter(active=True)
-        return course.exclude(slug=self.kwargs.get('slug'))
+        
 
 
 class CourseOutlineViewSet(viewsets.ModelViewSet):
@@ -369,4 +371,28 @@ class CourseOutlineViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Course.objects.filter(slug=self.kwargs.get('slug'))
+        
+
+class CourseDetailsFeaturedViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+    serializer_class = CourseCardSerializer
+
+    lookup_field = 'slug'
+    lookup_value_regex = '[^/]+'
+
+    def get_queryset(self):
+        slug = self.request.query_params.get('slug')
+        return Course.objects.order_by('ordering').filter(active=True).filter(kids_coding=False).exclude(slug=slug)
+
+
+class KidCourseDetailsFeaturedViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+    serializer_class = CourseCardSerializer
+
+    lookup_field = 'slug'
+    lookup_value_regex = '[^/]+'
+
+    def get_queryset(self):
+        slug = self.request.query_params.get('slug')
+        return Course.objects.order_by('ordering').filter(active=True).filter(kids_coding=True).exclude(slug=slug)
         
