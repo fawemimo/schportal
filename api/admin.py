@@ -2,6 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import *
 from django import forms
+from django.db.models.aggregates import Count
+from django.utils.html import format_html, urlencode
+from django.urls import reverse
 
 
 @admin.register(User)
@@ -42,7 +45,23 @@ class TechIconAdmin(admin.ModelAdmin):
 
 @admin.register(CourseCategory)
 class CourseCategoryAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title']
+    list_display = ['id', 'title','total_course']
+
+    @admin.display(ordering='total_course')
+    def total_course(self,obj):
+        url = (
+            reverse('admin:api_course_changelist')
+            + '?'
+            +urlencode({
+                'coursecategory__id': str(obj.id)
+            })
+        )
+        return format_html(f'<a href="{url}">{obj.total_course} Courses</a>')
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(
+            total_course=Count('course')
+        )   
 
 
 @admin.register(Course)
@@ -65,6 +84,7 @@ class ScheduleAdmin(admin.ModelAdmin):
     list_display = ['id', 'course', 'teacher',
                     'startdate', 'fee', 'discounted_fee']
     list_editable = ['startdate']
+    list_select_related = ['course']
 
     def course(self, schedule: Schedule):
         return schedule.course.title
@@ -131,6 +151,7 @@ class InterestsAdmin(admin.ModelAdmin):
 @admin.register(StudentAttendance)
 class StudentAttendanceAdmin(admin.ModelAdmin):
     list_display = ['student', 'batch', 'attendance_status', 'timestamp']
+    list_select_related = ['student','batch']
 
     def student(self, obj):
         return f'{obj.student.user.first_name} {obj.student.user.last_name}'
@@ -170,7 +191,7 @@ class StudentAdmin(admin.ModelAdmin):
         return (f'{obj.user.first_name} {obj.user.last_name}').upper()
 
     def batch_name(self, obj):
-        obj = obj.batch_set.only('id').values('title')
+        obj = obj.batch_set.values('title')
         for x in obj:
             return (x['title']).upper()
 
@@ -198,12 +219,11 @@ class EnrollmentAdmin(admin.ModelAdmin):
 
 @admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
-    list_display = ['batch', 'name', 'assignment_file', 'date_posted']
+    list_display = ['batch', 'name', 'assignment_file','date_posted']
     search_fields = ['name','batch']
     autocomplete_fields = ['batch']
     list_select_related = ['batch']
-
-
+    
     def batch(self, obj):
         return obj.batch.title
 
@@ -230,9 +250,24 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(Batch)
 class BatchAdmin(admin.ModelAdmin):
-    list_display = ['title', 'start_date', 'end_date']
+    list_display = ['title', 'total_students','start_date', 'end_date']
     search_fields = ['title']
+    list_select_related = ['teacher']
 
+    @admin.display(ordering='start_date')
+    def total_students(self, obj):
+        batch = Batch.objects.get(id=obj.id)
+        student = Student.objects.prefetch_related('batch_set').filter(batch=batch).count()
+        url = (
+            reverse('admin:api_student_changelist')
+            + '?'
+            + urlencode({
+                'batch__id': str(obj.id)
+            })
+        )
+
+        return format_html(f'<a href="{url}">{student}</a>')
+    
 
 @admin.register(AssignmentAllocation)
 class AssignmentAllocationAdmin(admin.ModelAdmin):

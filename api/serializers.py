@@ -12,7 +12,21 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         data['id'] = self.user.id
         data['username'] = self.user.username
+        data['first_name'] = self.user.first_name
+        data['last_name'] = self.user.last_name
+        data['student_id'] = self.user.student.student_idcard_id
+
         return data    
+
+    def validate_username(self, value):        
+        if not User.objects.filter(username=value).exists():
+            raise serializers.ValidationError('Username does not exist')
+        return value    
+
+    def validate_password(self, value):
+        if not User.objects.filter(password=value).exists():
+            raise serializers.ValidationError('Incorrect password, Please enter a valid password')
+        return value 
 
 
 class CourseCategorySerializer(serializers.ModelSerializer):
@@ -361,10 +375,10 @@ class CourseCardSerializer(serializers.ModelSerializer):
         return f'{obj.location_state}/{obj.location_state_area}/{obj.slug}'
 
     def get_fee(self, obj):
-        return obj.schedule_set.only('id').values('fee').first()
+        return obj.schedule_set.values('fee').first()
 
     def get_discounted_fee(self, obj):
-        return obj.schedule_set.only('id').values('discounted_fee').first()    
+        return obj.schedule_set.values('discounted_fee').first()    
 
 
 class StudentAttendanceSerializer(serializers.ModelSerializer):

@@ -1,4 +1,12 @@
-{% autoescape off %}
+
+{% block subject %}
+  Career Choice Advisory - Anchorsoft Academy
+{% endblock subject %}
+  
+
+{% block html_body %}
+  
+  
 <style type="text/css">
   table {
     border-spacing: 0;
@@ -450,7 +458,7 @@
                     </tr>
                     <tr>
                       <td style="padding: 15px; border: 1px solid #404141">
-                        <p style="color: #404141">{{remarks}}</p>
+                        <p style="color: #404141">{{more_about_you}}</p>
                       </td>
                     </tr>
                   </table>
@@ -542,4 +550,6 @@
       </table>
     </div>
   </center>
-{% endautoescape %}
+
+
+{% endblock html_body %}

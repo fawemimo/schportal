@@ -30,7 +30,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = []
 
     def get_queryset(self):
-        return Course.objects.order_by('ordering').filter(kids_coding=False).all()
+        return Course.objects.order_by('ordering').all()
 
 
 class TeacherViewSet(viewsets.ModelViewSet):
@@ -234,7 +234,7 @@ class CourseCardViewSet(viewsets.ModelViewSet):
 
     http_method_names = ['get', 'post', 'patch', 'delete']
 
-    queryset = Course.objects.filter(active=True).order_by('ordering')
+    queryset = Course.objects.filter(active=True).filter(kids_coding=False).order_by('ordering')
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
 
