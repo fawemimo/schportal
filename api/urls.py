@@ -59,5 +59,4 @@ urlpatterns = [
     path('auth/',include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
     path('auth/users/login',views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('courseoutlines/<slug:slug>/pdf', pdf.create_pdf,name='pdf')
 ]

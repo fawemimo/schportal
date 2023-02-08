@@ -68,8 +68,8 @@ class CourseCategoryAdmin(admin.ModelAdmin):
 class CourseAdmin(admin.ModelAdmin):
 
     list_display = ['course_code', 'title',
-                    'frontpage_featured', 'active', 'ordering', 'slug']
-    list_editable = ['frontpage_featured', 'active', 'ordering']
+                    'frontpage_featured', 'published', 'ordering', 'slug']
+    list_editable = ['frontpage_featured', 'published', 'ordering']
     list_display_links = ['course_code', 'title']
     list_select_related = ['coursecategory']
     prepopulated_fields = {'slug': ('title',)}

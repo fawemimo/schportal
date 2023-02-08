@@ -5,7 +5,6 @@ from .models import *
 from .serializers import *
 from rest_framework import permissions
 from rest_framework.response import Response
-from .pdf import *
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -234,7 +233,7 @@ class CourseCardViewSet(viewsets.ModelViewSet):
 
     http_method_names = ['get', 'post', 'patch', 'delete']
 
-    queryset = Course.objects.filter(active=True).filter(kids_coding=False).order_by('ordering')
+    queryset = Course.objects.filter(published=True).filter(kids_coding=False).order_by('ordering')
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
 
@@ -311,7 +310,7 @@ class CourseHomepageFeatured(viewsets.ModelViewSet):
     http_method_names = ['get']
 
     queryset = Course.objects.order_by('ordering').filter(
-        frontpage_featured=True).filter(active=True)
+        frontpage_featured=True).filter(published=True)
     serializer_class = CourseCardSerializer
 
     lookup_field = 'slug'
@@ -338,7 +337,7 @@ class KidsCodingCourseViewSet(viewsets.ModelViewSet):
     serializer_class = KidsCodingCourseSerializer
 
     def get_queryset(self):
-        return Course.objects.filter(kids_coding=True).order_by('ordering')
+        return Course.objects.filter(kids_coding=True).filter(published=True).order_by('ordering')
 
 
 class CourseDetailsViewSet(viewsets.ModelViewSet):
@@ -355,7 +354,7 @@ class CourseDetailsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Course.objects.order_by('ordering').filter(
-            frontpage_featured=True).filter(active=True)
+            frontpage_featured=True).filter(published=True)
         
 
 
@@ -382,7 +381,7 @@ class CourseDetailsFeaturedViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         slug = self.request.query_params.get('slug')
-        return Course.objects.order_by('ordering').filter(active=True).filter(kids_coding=False).exclude(slug=slug)
+        return Course.objects.order_by('ordering').filter(published=True).filter(kids_coding=False).exclude(slug=slug)
 
 
 class KidCourseDetailsFeaturedViewSet(viewsets.ModelViewSet):
@@ -394,5 +393,5 @@ class KidCourseDetailsFeaturedViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         slug = self.request.query_params.get('slug')
-        return Course.objects.order_by('ordering').filter(active=True).filter(kids_coding=True).exclude(slug=slug)
+        return Course.objects.order_by('ordering').filter(published=True).filter(kids_coding=True).exclude(slug=slug)
         

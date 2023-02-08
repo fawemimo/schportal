@@ -2,7 +2,6 @@ from rest_framework import serializers
 from api.tasks import send_inquiries_email_task, send_interested_email_task, send_kids_coding_email_task, send_short_quizze_email_task, send_virtualclass_email_task
 from .models import *
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer, UserSerializer as BaseUserSerializer
-from .pdf import create_pdf
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
@@ -367,7 +366,7 @@ class CourseCardSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Course
-        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','discounted_fee','card_thumb','audience','audience_description','frontpage_featured','active','slug','location_state','location_state_area']
+        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','discounted_fee','card_thumb','audience','audience_description','frontpage_featured','published','slug','location_state','location_state_area']
 
         lookup_field = 'slug'
 
@@ -462,7 +461,7 @@ class KidsCodingCourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'title','coursecategory', 'card_title', 'course_code', 'the_url', 'fee','discounted_fee','card_thumb','audience','audience_description','frontpage_featured','active','slug','location_state','location_state_area']
+        fields = ['id', 'title','coursecategory', 'card_title', 'course_code', 'the_url', 'fee','discounted_fee','card_thumb','audience','audience_description','frontpage_featured','published','slug','location_state','location_state_area']
 
     def get_the_url(self, obj):
         return f'{obj.location_state}/{obj.location_state_area}/{obj.slug}'
@@ -478,12 +477,12 @@ class CourseOutlineSerializer(serializers.ModelSerializer):
     pdf = serializers.SerializerMethodField()
     class Meta:
         model = Course
-        fields = ['id','pdf','ordering', 'frontpage_featured', 'active', 'delisted', 'slug', 'extra_note', 'course_code', 'location_state', 'location_state_area', 'card_title','course_outline']
+        fields = ['id','pdf','ordering', 'frontpage_featured', 'published', 'delisted', 'slug', 'extra_note', 'course_code', 'location_state', 'location_state_area', 'card_title','course_outline']
         
         lookup_field = 'slug'
 
     def get_pdf(self,obj):
-        return f'courseoutlines/{obj.slug}/pdf'
+        return f'{obj.course_outline_pdf.url}'
 
 
         
