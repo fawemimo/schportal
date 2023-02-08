@@ -82,8 +82,8 @@ class CourseAdmin(admin.ModelAdmin):
 class ScheduleAdmin(admin.ModelAdmin):
 
     list_display = ['id', 'course', 'teacher',
-                    'startdate', 'fee', 'discounted_fee']
-    list_editable = ['startdate']
+                    'startdate', 'fee', 'discounted_fee','program_type','fee_dollar']
+    list_editable = ['startdate','program_type']
     list_select_related = ['course']
 
     def course(self, schedule: Schedule):
@@ -344,7 +344,7 @@ class KidsCodingAdmin(admin.ModelAdmin):
 
 @admin.register(VirtualClass)
 class VirtualClassAdmin(admin.ModelAdmin):
-    list_display = ['full_name', 'email', 'mobile', 'course']
+    list_display = ['full_name', 'email', 'mobile', 'course','country_of_residence']
 
 
 @admin.register(Resource)
@@ -361,3 +361,9 @@ class ResourceAdmin(admin.ModelAdmin):
 class ResourceTypeAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug', 'date_created']
     prepopulated_fields = {'slug': ('name',)}
+
+
+@admin.register(InternationalModel)
+class InternationalModelAdmin(admin.ModelAdmin):
+
+    list_display = ['id','country_name', 'flag', 'country_code', 'topbar_src', 'intro_txt']

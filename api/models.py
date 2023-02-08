@@ -2,7 +2,8 @@ from datetime import datetime
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.text import slugify
-
+from django.core.validators import FileExtensionValidator
+import math
 
 class User(AbstractUser):
     user_type_choices = (
@@ -30,6 +31,7 @@ class Course(models.Model):
         CourseCategory, on_delete=models.DO_NOTHING)
     ordering = models.IntegerField(null=True, blank=True)
     kids_coding = models.BooleanField(default=False)
+    is_virtual_class = models.BooleanField(default=False)
     title = models.CharField(max_length=300)
     frontpage_featured = models.BooleanField(default=False)
     published = models.BooleanField(default=False)
@@ -103,6 +105,12 @@ class Teacher(models.Model):
 
 
 class Schedule(models.Model):
+    program_type_choices = (
+        ('physical', 'Physical Class'),
+        ('virtual', 'Virtual Class'),
+    )
+
+    program_type = models.CharField(max_length=50, choices = program_type_choices,blank=True,null=True)
     active = models.BooleanField(default=False)
     registration_status = models.BooleanField(default=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -111,9 +119,23 @@ class Schedule(models.Model):
     startdate = models.DateField(null=True, blank=True)
     duration = models.CharField(max_length=50)
     timing = models.CharField(max_length=450, blank=True)
-
-    fee = models.IntegerField(null=True, blank=True)
+    
+    fee = models.IntegerField(null=True, blank=True)    
     discounted_fee = models.IntegerField(null=True, blank=True)
+
+    naira_to_dollar_rate = models.IntegerField(null=True, blank=True)
+    fee_dollar = models.IntegerField(null=True,blank=True,editable=False)
+
+    # overriding the save method to input the dollar fee
+    def save(self, *args, **kwargs):
+        half_fee = (self.fee) / 2
+        fee_dollar = half_fee / self.naira_to_dollar_rate
+
+        # rounding up 
+        round_up = math.ceil(fee_dollar)
+
+        self.fee_dollar = round_up
+        super(Schedule, self).save(args, kwargs)
 
     def __str__(self):
         return f'{self.teacher} - {self.course}'
@@ -384,6 +406,7 @@ class StudentAttendance(models.Model):
 
 
 class VirtualClass(models.Model):
+    country_of_residence = models.CharField(max_length=255,blank=True,null=True)
     full_name = models.CharField(max_length=50)
     email = models.EmailField()
     mobile = models.CharField(max_length=50)
@@ -407,5 +430,17 @@ class KidsCoding(models.Model):
 
     def __str__(self):
         return self.full_name
+
+
+class InternationalModel(models.Model):
+    country_name = models.CharField(max_length=255)
+    flag = models.ImageField(upload_to='international/flags',validators=[FileExtensionValidator(allowed_extensions = ['jpg','jpeg','png'])])
+    country_code = models.CharField(max_length=255)
+    topbar_src = models.TextField()
+    intro_txt = models.TextField()
+
+    def __str__(self):
+        return self.country_name
+
 
 # endregion

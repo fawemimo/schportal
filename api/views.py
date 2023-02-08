@@ -395,3 +395,21 @@ class KidCourseDetailsFeaturedViewSet(viewsets.ModelViewSet):
         slug = self.request.query_params.get('slug')
         return Course.objects.order_by('ordering').filter(published=True).filter(kids_coding=True).exclude(slug=slug)
         
+
+class InternationalModelViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get','post']        
+
+    queryset = InternationalModel.objects.all()
+    serializer_class = InternationalModelSerializer
+
+
+class FeaturedVirtualClassViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+
+    serializer_class = CourseSerializer
+    lookup_field = 'slug'
+    lookup_value_regex = '[^/]+'
+
+    def get_queryset(self):
+        return Course.objects.filter(is_virtual_class=True).filter(published=True).order_by('ordering')
+

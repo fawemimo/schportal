@@ -1,7 +1,6 @@
 from django.urls import path, include
 from rest_framework_nested import routers
 from . import views
-from . import pdf
 
 router = routers.DefaultRouter()
 router.register('topbars', views.TopBarViewSet)
@@ -36,7 +35,8 @@ router.register('coursedetails',views.CourseDetailsViewSet, basename='coursedeta
 router.register('courseoutlines', views.CourseOutlineViewSet,basename='courseoutlines')
 router.register('coursedetailsfeatured', views.CourseDetailsFeaturedViewSet, basename='coursedetailsfeatured')
 router.register('kidscoursedetailsfeatured',views.KidCourseDetailsFeaturedViewSet, basename='kidscoursedetailsfeatured')
-
+router.register('internationalmodels', views.InternationalModelViewSet, basename='internationalmodels')
+router.register('featuredvirtualclasses', views.FeaturedVirtualClassViewSet,basename='featuredvirtualclasses')
 # Nested routes
 courses_router = routers.NestedDefaultRouter(
     router, 'courses', lookup='course')

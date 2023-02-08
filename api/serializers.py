@@ -85,20 +85,26 @@ class StudentSerializer(serializers.ModelSerializer):
 class ScheduleSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
     teacher = serializers.StringRelatedField()
+    fee_dollar = serializers.SerializerMethodField()
 
     class Meta:
         model = Schedule
         fields = [
             'id',
+            'program_type',
             'course',
             'registration_status',
             'teacher',
             'fee',
             'discounted_fee',
+            'fee_dollar',
             'startdate',
             'duration',
             'timing',
         ]
+
+    def get_fee_dollar(self, obj):
+        return obj.fee_dollar
 
 
 class AddScheduleSerializer(serializers.ModelSerializer):
@@ -403,7 +409,7 @@ class VirtualClassSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
     class Meta:
         model = VirtualClass
-        fields = ['id','course_id','full_name', 'email', 'mobile',  'remarks']  
+        fields = ['id','country_of_residence','course_id','full_name', 'email', 'mobile',  'remarks']  
 
     def create(self, validated_data):
         virtualclass = VirtualClass(**validated_data)
@@ -485,4 +491,11 @@ class CourseOutlineSerializer(serializers.ModelSerializer):
         return f'{obj.course_outline_pdf.url}'
 
 
-        
+class InternationalModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = InternationalModel
+        fields = ['id','country_name', 'flag', 'country_code', 'topbar_src', 'intro_txt']
+
+
+
