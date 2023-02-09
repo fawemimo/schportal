@@ -77,6 +77,9 @@ class CourseAdmin(admin.ModelAdmin):
     def course_category(self, course):
         return course.coursecategory.title
 
+    def get_queryset(self, request):
+        return Course.objects.order_by('ordering') 
+        
 
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
