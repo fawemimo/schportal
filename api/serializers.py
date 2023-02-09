@@ -370,13 +370,13 @@ class CourseCardSerializer(serializers.ModelSerializer):
     fee = serializers.SerializerMethodField(source='schedule_set')
     discounted_fee = serializers.SerializerMethodField(source='schedule_set')
     fee_dollar = serializers.SerializerMethodField(source='schedule_set')
-    
+    program_type = serializers.SerializerMethodField(source='schedule_set')
     class Meta:
         model = Course
-        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','discounted_fee','fee_dollar','card_thumb','audience','audience_description','frontpage_featured','published','slug','location_state','location_state_area']
+        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','discounted_fee','fee_dollar','card_thumb','program_type','audience','audience_description','frontpage_featured','published','slug','location_state','location_state_area']
 
         lookup_field = 'slug'
-
+    
     def get_the_url(self, obj):
         return f'{obj.location_state}/{obj.location_state_area}/{obj.slug}'
 
@@ -388,6 +388,9 @@ class CourseCardSerializer(serializers.ModelSerializer):
 
     def get_fee_dollar(self, obj):
         return obj.schedule_set.values('fee_dollar').first()     
+
+    def get_program_type(self, obj):
+        return obj.schedule_set.values('program_type').first()    
 
 
 class StudentAttendanceSerializer(serializers.ModelSerializer):

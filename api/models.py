@@ -2,8 +2,9 @@ from datetime import datetime
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.text import slugify
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, MinValueValidator
 import math
+from decimal import Decimal
 
 class User(AbstractUser):
     user_type_choices = (
@@ -123,17 +124,19 @@ class Schedule(models.Model):
     fee = models.IntegerField(null=True, blank=True)    
     discounted_fee = models.IntegerField(null=True, blank=True)
 
-    naira_to_dollar_rate = models.IntegerField(null=True, blank=True)
-    fee_dollar = models.IntegerField(null=True,blank=True,editable=False)
+    naira_to_dollar_rate = models.DecimalField(max_digits=6, decimal_places=2,blank=True,null=True, validators=[MinValueValidator(1)])
+    fee_dollar = models.IntegerField(editable=False, default=0)
 
     # overriding the save method to input the dollar fee
     def save(self, *args, **kwargs):
-        half_fee = (self.fee) / 2
-        fee_dollar = half_fee / self.naira_to_dollar_rate
+        half_fee = 0
+        if self.fee is not None:
+            half_fee = self.fee / 2
+        fee_dollar = 0
+        if self.naira_to_dollar_rate is not None:
+            fee_dollar = Decimal(half_fee) / self.naira_to_dollar_rate 
 
-        # rounding up 
         round_up = math.ceil(fee_dollar)
-
         self.fee_dollar = round_up
         super(Schedule, self).save(args, kwargs)
 
