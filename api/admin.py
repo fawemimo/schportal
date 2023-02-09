@@ -74,12 +74,12 @@ class CourseAdmin(admin.ModelAdmin):
     list_select_related = ['coursecategory']
     prepopulated_fields = {'slug': ('title',)}
 
-    def course_category(self, course):
+    def course_categoryo(self, course):
         return course.coursecategory.title
 
     def get_queryset(self, request):
         return Course.objects.order_by('ordering') 
-        
+
 
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
@@ -370,3 +370,9 @@ class ResourceTypeAdmin(admin.ModelAdmin):
 class InternationalModelAdmin(admin.ModelAdmin):
 
     list_display = ['id','country_name', 'flag', 'country_code', 'topbar_src', 'intro_txt']
+
+
+@admin.register(FeaturedProject)
+class FeaturedProjectAdmin(admin.ModelAdmin):
+    list_display = ['title', 'student_name',  'course_taken', 'batch', 'published']
+
