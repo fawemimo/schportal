@@ -373,7 +373,7 @@ class CourseCardSerializer(serializers.ModelSerializer):
     program_type = serializers.SerializerMethodField(source='schedule_set')
     class Meta:
         model = Course
-        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','discounted_fee','fee_dollar','card_thumb','program_type','audience','audience_description','frontpage_featured','published','slug','location_state','location_state_area']
+        fields = ['id', 'title', 'card_title', 'course_code','is_virtual_class', 'the_url', 'fee','discounted_fee','fee_dollar','card_thumb','program_type','audience','audience_description','frontpage_featured','published','slug','location_state','location_state_area']
 
         lookup_field = 'slug'
     
