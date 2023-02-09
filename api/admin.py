@@ -67,9 +67,9 @@ class CourseCategoryAdmin(admin.ModelAdmin):
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
 
-    list_display = ['course_code', 'title',
+    list_display = ['course_code', 'title','is_virtual_class',
                     'frontpage_featured', 'published', 'ordering', 'slug']
-    list_editable = ['frontpage_featured', 'published', 'ordering']
+    list_editable = ['frontpage_featured', 'published','is_virtual_class', 'ordering']
     list_display_links = ['course_code', 'title']
     list_select_related = ['coursecategory']
     prepopulated_fields = {'slug': ('title',)}
@@ -82,7 +82,7 @@ class CourseAdmin(admin.ModelAdmin):
 class ScheduleAdmin(admin.ModelAdmin):
 
     list_display = ['id', 'course', 'teacher',
-                    'startdate', 'fee', 'discounted_fee','program_type','fee_dollar']
+                    'startdate', 'fee', 'discounted_fee','fee_dollar','program_type']
     list_editable = ['startdate','program_type']
     list_select_related = ['course']
 

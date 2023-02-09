@@ -397,16 +397,18 @@ class KidCourseDetailsFeaturedViewSet(viewsets.ModelViewSet):
         
 
 class InternationalModelViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get','post']        
+    http_method_names = ['get']        
 
     queryset = InternationalModel.objects.all()
     serializer_class = InternationalModelSerializer
 
+    lookup_field = 'country_code'
+    lookup_value_regex = '[^/]+'
 
 class FeaturedVirtualClassViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
 
-    serializer_class = CourseSerializer
+    serializer_class = CourseCardSerializer
     lookup_field = 'slug'
     lookup_value_regex = '[^/]+'
 

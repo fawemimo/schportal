@@ -3,7 +3,7 @@ from api.tasks import send_inquiries_email_task, send_interested_email_task, sen
 from .models import *
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer, UserSerializer as BaseUserSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+from django.utils.text import slugify
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self,attrs):
@@ -369,10 +369,11 @@ class CourseCardSerializer(serializers.ModelSerializer):
     the_url = serializers.SerializerMethodField(read_only=True)
     fee = serializers.SerializerMethodField(source='schedule_set')
     discounted_fee = serializers.SerializerMethodField(source='schedule_set')
+    fee_dollar = serializers.SerializerMethodField(source='schedule_set')
     
     class Meta:
         model = Course
-        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','discounted_fee','card_thumb','audience','audience_description','frontpage_featured','published','slug','location_state','location_state_area']
+        fields = ['id', 'title', 'card_title', 'course_code', 'the_url', 'fee','discounted_fee','fee_dollar','card_thumb','audience','audience_description','frontpage_featured','published','slug','location_state','location_state_area']
 
         lookup_field = 'slug'
 
@@ -384,6 +385,9 @@ class CourseCardSerializer(serializers.ModelSerializer):
 
     def get_discounted_fee(self, obj):
         return obj.schedule_set.values('discounted_fee').first()    
+
+    def get_fee_dollar(self, obj):
+        return obj.schedule_set.values('fee_dollar').first()     
 
 
 class StudentAttendanceSerializer(serializers.ModelSerializer):
@@ -492,10 +496,9 @@ class CourseOutlineSerializer(serializers.ModelSerializer):
 
 
 class InternationalModelSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = InternationalModel
         fields = ['id','country_name', 'flag', 'country_code', 'topbar_src', 'intro_txt']
 
-
+    lookup_field = 'country_code'      
 
