@@ -107,8 +107,8 @@ class Teacher(models.Model):
 
 class Schedule(models.Model):
     program_type_choices = (
-        ('physical', 'Physical Class'),
-        ('virtual', 'Virtual Class'),
+        ('Physical/Onsite', 'Physical/Onsite Class'),
+        ('Virtual', 'Virtual Class'),
     )
 
     program_type = models.CharField(max_length=50, choices = program_type_choices,blank=True,null=True)
