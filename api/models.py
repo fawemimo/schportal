@@ -124,6 +124,7 @@ class Schedule(models.Model):
     fee = models.IntegerField(null=True, blank=True)    
     discounted_fee = models.IntegerField(null=True, blank=True)
 
+    discounted_fee_dollar = models.DecimalField(max_digits=6, decimal_places=2,blank=True,null=True)
     naira_to_dollar_rate = models.DecimalField(max_digits=6, decimal_places=2,blank=True,null=True, validators=[MinValueValidator(1)])
     fee_dollar = models.IntegerField(editable=False, default=0)
 
@@ -436,6 +437,7 @@ class KidsCoding(models.Model):
 
 
 class InternationalModel(models.Model):
+    ordering = models.CharField(max_length=25, blank=True, null=True)
     country_name = models.CharField(max_length=255)
     flag = models.ImageField(upload_to='international/flags',validators=[FileExtensionValidator(allowed_extensions = ['jpg','jpeg','png'])])
     country_code = models.CharField(max_length=255)

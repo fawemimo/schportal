@@ -402,7 +402,7 @@ class InternationalModelViewSet(viewsets.ModelViewSet):
     serializer_class = InternationalModelSerializer
 
     def get_queryset(self):
-        return InternationalModel.objects.order_by('country_name').all()
+        return InternationalModel.objects.order_by('ordering').all()
 
     lookup_field = 'country_name'
     lookup_value_regex = '[^/]+'

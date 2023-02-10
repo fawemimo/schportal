@@ -122,6 +122,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
             "fee",
             "discounted_fee",
             "fee_dollar",
+            "discounted_fee_dollar",
             "startdate",
             "duration",
             "timing",
@@ -438,6 +439,7 @@ class CourseCardSerializer(serializers.ModelSerializer):
     fee = serializers.SerializerMethodField(source="schedule_set")
     discounted_fee = serializers.SerializerMethodField(source="schedule_set")
     fee_dollar = serializers.SerializerMethodField(source="schedule_set")
+    discounted_fee_dollar = serializers.SerializerMethodField(source="schedule_set")
     program_type = serializers.SerializerMethodField(source="schedule_set")
 
     class Meta:
@@ -452,6 +454,7 @@ class CourseCardSerializer(serializers.ModelSerializer):
             "fee",
             "discounted_fee",
             "fee_dollar",
+            "discounted_fee_dollar",
             "card_thumb",
             "program_type",
             "audience",
@@ -480,6 +483,8 @@ class CourseCardSerializer(serializers.ModelSerializer):
     def get_program_type(self, obj):
         return obj.schedule_set.values("program_type").first()
 
+    def get_discounted_fee_dollar(self, obj):
+        return obj.schedule_set.values("discounted_fee_dollar").first()
 
 class StudentAttendanceSerializer(serializers.ModelSerializer):
     batch = serializers.StringRelatedField()
