@@ -437,7 +437,7 @@ class KidsCoding(models.Model):
 
 
 class InternationalModel(models.Model):
-    ordering = models.CharField(max_length=25, blank=True, null=True)
+    ordering = models.CharField(max_length=25, blank=True, null=True, unique=True)
     country_name = models.CharField(max_length=255)
     flag = models.ImageField(upload_to='international/flags',validators=[FileExtensionValidator(allowed_extensions = ['jpg','jpeg','png'])])
     country_code = models.CharField(max_length=255)
@@ -447,5 +447,7 @@ class InternationalModel(models.Model):
     def __str__(self):
         return self.country_name
 
-
+    def save(self, *args, **kwargs):
+        self.country_name = self.country_name.lower()
+        super(InternationalModel, self).save(*args, **kwargs)
 # endregion
