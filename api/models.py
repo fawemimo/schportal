@@ -125,21 +125,7 @@ class Schedule(models.Model):
     discounted_fee = models.IntegerField(null=True, blank=True)
 
     discounted_fee_dollar = models.DecimalField(max_digits=6, decimal_places=2,blank=True,null=True)
-    naira_to_dollar_rate = models.DecimalField(max_digits=6, decimal_places=2,blank=True,null=True, validators=[MinValueValidator(1)])
-    fee_dollar = models.IntegerField(editable=False, default=0)
-
-    # overriding the save method to input the dollar fee
-    def save(self, *args, **kwargs):
-        half_fee = 0
-        if self.fee is not None:
-            half_fee = self.fee / 2
-        fee_dollar = 0
-        if self.naira_to_dollar_rate is not None:
-            fee_dollar = Decimal(half_fee) / self.naira_to_dollar_rate 
-
-        round_up = math.ceil(fee_dollar)
-        self.fee_dollar = round_up
-        super(Schedule, self).save(args, kwargs)
+    fee_dollar = models.IntegerField(editable=False, default=0)   
 
     def __str__(self):
         return f'{self.teacher} - {self.course}'
@@ -166,6 +152,7 @@ class TopBar(models.Model):
 
 
 class MainBanner(models.Model):
+    ordering = models.CharField(max_length=50, blank=True,null=True)
     title = models.CharField(max_length=150)
     published = models.BooleanField(default=False)
     banner_src = models.TextField()
