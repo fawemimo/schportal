@@ -674,3 +674,31 @@ class InternationalModelSerializer(serializers.ModelSerializer):
         ]
 
     lookup_field = "country_name"
+
+
+class AlumiConnectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AlumiConnect
+        fields = ['id','first_name', 'last_name', 'title', 'date_posted']
+
+    def create(self, validated_data):
+        alumiconnect = AlumiConnect(**validated_data)
+        alumiconnect.save()
+        return alumiconnect    
+
+
+class CommunityConnectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommunityConnect
+        fields = ['id','community', 'title', 'descriptions', 'image', 'start_date']
+
+
+class FinancialAidSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FinancialAid
+        fields = ['id','aid_type', 'first_name', 'last_name', 'email', 'mobile', 'date_posted']
+
+    def create(self, validated_data):
+        financialaid = FinancialAid(**validated_data)
+        financialaid.save()
+        return financialaid     

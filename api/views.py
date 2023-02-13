@@ -417,3 +417,23 @@ class FeaturedVirtualClassViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Course.objects.filter(is_virtual_class=True).filter(published=True).order_by('ordering')
 
+
+class AlumiConnectViewSet(viewsets.ModelViewSet):
+    http_method_name = ['get','post']
+
+    queryset = AlumiConnect.objects.all()
+    serializer_class = AlumiConnectSerializer
+
+
+class CommunityConnectViewSet(viewsets.ModelViewSet):
+    http_method_name = ['get']
+
+    queryset = CommunityConnect.objects.all()
+    serializer_class = CommunityConnectSerializer
+
+
+class FinancialAidViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get','post']
+
+    queryset = FinancialAid.objects.all()
+    serializer_class = FinancialAidSerializer

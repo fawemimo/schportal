@@ -37,6 +37,11 @@ router.register('coursedetailsfeatured', views.CourseDetailsFeaturedViewSet, bas
 router.register('kidscoursedetailsfeatured',views.KidCourseDetailsFeaturedViewSet, basename='kidscoursedetailsfeatured')
 router.register('internationalmodels', views.InternationalModelViewSet, basename='internationalmodels')
 router.register('featuredvirtualclasses', views.FeaturedVirtualClassViewSet,basename='featuredvirtualclasses')
+router.register('alumiconnects', views.AlumiConnectViewSet, basename='alumiconnects')
+router.register('communityconnects', views.CommunityConnectViewSet, basename='communityconnects')
+router.register('financialconnects', views.FinancialAidViewSet,basename='financialconnects')
+
+
 # Nested routes
 courses_router = routers.NestedDefaultRouter(
     router, 'courses', lookup='course')

@@ -437,4 +437,52 @@ class InternationalModel(models.Model):
     def save(self, *args, **kwargs):
         self.country_name = self.country_name.lower()
         super(InternationalModel, self).save(*args, **kwargs)
+
+
+class FinancialAid(models.Model):
+    aid_type_choices = (
+        ('Student Loan','Student Loan'),
+        ('Full Scholarship', 'Full Scholarship'),
+        ('Partial Scholarship', 'Partial Scholarship')
+    )
+
+    aid_type = models.CharField(max_length=50, choices=aid_type_choices)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)
+    mobile = models.CharField(max_length=50)
+    date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
+
+class CommunityConnect(models.Model):
+    community_type = (
+        ('Webinars', 'Webinars'), 
+        ('Meetups','Meetups')
+    )
+
+    community = models.CharField(max_length=50, choices=community_type)
+    title = models.CharField(max_length=255)
+    descriptions = models.TextField()
+    image = models.ImageField(upload_to='community/banners',validators=[FileExtensionValidator(allowed_extensions = ['jpg','jpeg','png'])])
+    start_date = models.DateTimeField()
+
+    def __str__(self):
+        return self.title
+
+
+class AlumiConnect(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
+    date_posted = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
+
+
+
 # endregion

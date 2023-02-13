@@ -376,3 +376,26 @@ class InternationalModelAdmin(admin.ModelAdmin):
 class FeaturedProjectAdmin(admin.ModelAdmin):
     list_display = ['title', 'student_name',  'course_taken', 'batch', 'published']
 
+
+@admin.register(FinancialAid)
+class FinancialAidAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email','mobile','date_posted']
+    list_filter = ['date_posted']
+
+    def name(self, obj):
+        return f'{obj.first_name} {obj.last_name}'.upper()
+
+
+@admin.register(CommunityConnect)
+class CommunityConnectAdmin(admin.ModelAdmin):
+    list_display = ['title', 'community','start_date']
+    list_filter = ['start_date']
+
+
+@admin.register(AlumiConnect)
+class AlumiConnectAdmin(admin.ModelAdmin):
+    list_display = ['name','title','date_posted']
+    list_filter = ['date_posted']
+
+    def name(self, obj):
+        return f'{obj.first_name} {obj.last_name}'.upper()
