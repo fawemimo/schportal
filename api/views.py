@@ -354,8 +354,7 @@ class CourseDetailsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Course.objects.order_by('ordering').filter(
-            frontpage_featured=True).filter(published=True)
-        
+            frontpage_featured=True).filter(published=True)        
 
 
 class CourseOutlineViewSet(viewsets.ModelViewSet):
@@ -437,3 +436,10 @@ class FinancialAidViewSet(viewsets.ModelViewSet):
 
     queryset = FinancialAid.objects.all()
     serializer_class = FinancialAidSerializer
+
+
+class TermsOfServiceViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+
+    queryset = TermsOfService.objects.all()
+    serializer_class = TermsOfServiceSerializer

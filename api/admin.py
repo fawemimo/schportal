@@ -399,3 +399,10 @@ class AlumiConnectAdmin(admin.ModelAdmin):
 
     def name(self, obj):
         return f'{obj.first_name} {obj.last_name}'.upper()
+
+
+@admin.register(TermsOfService)
+class TermsOfServiceAdmin(admin.ModelAdmin):
+
+    list_display = ('id','title')
+    

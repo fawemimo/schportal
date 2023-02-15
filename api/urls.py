@@ -40,6 +40,7 @@ router.register('featuredvirtualclasses', views.FeaturedVirtualClassViewSet,base
 router.register('alumiconnects', views.AlumiConnectViewSet, basename='alumiconnects')
 router.register('communityconnects', views.CommunityConnectViewSet, basename='communityconnects')
 router.register('financialconnects', views.FinancialAidViewSet,basename='financialconnects')
+router.register('termsofservices',views.TermsOfServiceViewSet, basename='termsofservices')
 
 
 # Nested routes

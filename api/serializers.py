@@ -702,3 +702,9 @@ class FinancialAidSerializer(serializers.ModelSerializer):
         financialaid = FinancialAid(**validated_data)
         financialaid.save()
         return financialaid     
+
+
+class TermsOfServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TermsOfService
+        fields = ['id','title', 'descriptions', 'date_created']
