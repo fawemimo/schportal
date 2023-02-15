@@ -690,7 +690,7 @@ class AlumiConnectSerializer(serializers.ModelSerializer):
 class CommunityConnectSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommunityConnect
-        fields = ['id','community', 'title', 'descriptions', 'image', 'start_date']
+        fields = ['id','completed','community', 'title', 'descriptions', 'image', 'start_date']
 
 
 class FinancialAidSerializer(serializers.ModelSerializer):

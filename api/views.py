@@ -427,7 +427,7 @@ class AlumiConnectViewSet(viewsets.ModelViewSet):
 class CommunityConnectViewSet(viewsets.ModelViewSet):
     http_method_name = ['get']
 
-    queryset = CommunityConnect.objects.all()
+    queryset = CommunityConnect.objects.order_by('ordering')
     serializer_class = CommunityConnectSerializer
 
 

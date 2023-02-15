@@ -388,8 +388,9 @@ class FinancialAidAdmin(admin.ModelAdmin):
 
 @admin.register(CommunityConnect)
 class CommunityConnectAdmin(admin.ModelAdmin):
-    list_display = ['title', 'community','start_date']
-    list_filter = ['start_date']
+    list_display = ['title','completed', 'community','start_date','ordering']
+    list_filter = ['start_date','completed']
+    list_editable = ['ordering']
 
 
 @admin.register(AlumiConnect)

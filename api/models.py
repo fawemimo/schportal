@@ -463,6 +463,8 @@ class CommunityConnect(models.Model):
         ('Meetups','Meetups')
     )
 
+    completed = models.BooleanField(default=False)
+    ordering = models.CharField(max_length=5, blank=True, null=True)
     community = models.CharField(max_length=50, choices=community_type)
     title = models.CharField(max_length=255)
     descriptions = models.TextField()
