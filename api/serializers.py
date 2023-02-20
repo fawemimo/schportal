@@ -647,12 +647,10 @@ class CourseOutlineSerializer(serializers.ModelSerializer):
             "published",
             "delisted",
             "slug",
-            "extra_note",
             "course_code",
             "location_state",
             "location_state_area",
             "card_title",
-            "course_outline",
         ]
 
         lookup_field = "slug"

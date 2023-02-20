@@ -38,7 +38,6 @@ class Course(models.Model):
     published = models.BooleanField(default=False)
     delisted = models.BooleanField(default=False)
     slug = models.CharField(max_length=150, null=True, blank=True)
-    extra_note = models.TextField(null=True, blank=True)
     course_code = models.CharField(max_length=20, null=True, blank=True)
     location_state = models.CharField(
         max_length=50, null=True, blank=True, default='Lagos')  # Lagos, Abuja etc
@@ -49,10 +48,8 @@ class Course(models.Model):
     audience = models.CharField(max_length=100, null=True, blank=True)
     audience_description = models.TextField(null=True, blank=True)
     description = models.TextField()
-    course_outline = models.TextField(null=True, blank=True)
     course_outline_pdf = models.FileField(blank=True,null=True, upload_to='courseoutline/files')
     what_you_will_learn = models.TextField(null=True, blank=True)
-    requirements = models.CharField(max_length=450, null=True, blank=True)
     prerequisites = models.TextField(null=True, blank=True)
     card_thumb = models.ImageField(
         null=True, blank=True, upload_to='courseimg')
@@ -124,8 +121,8 @@ class Schedule(models.Model):
     fee = models.IntegerField(null=True, blank=True)    
     discounted_fee = models.IntegerField(null=True, blank=True)
 
+    fee_dollar = models.IntegerField(blank=True, null=True)   
     discounted_fee_dollar = models.DecimalField(max_digits=6, decimal_places=2,blank=True,null=True)
-    fee_dollar = models.IntegerField(editable=False, default=0)   
 
     def __str__(self):
         return f'{self.teacher} - {self.course}'
