@@ -539,6 +539,7 @@ class VirtualClassSerializer(serializers.ModelSerializer):
         email = self.validated_data["email"]
         mobile = self.validated_data["mobile"]
         remarks = self.validated_data["remarks"]
+        country_of_residence = self.validated_data["country_of_residence"]
 
         virtualclass = VirtualClass.objects.create(
             course_id=course_id,
@@ -546,9 +547,10 @@ class VirtualClassSerializer(serializers.ModelSerializer):
             email=email,
             mobile=mobile,
             remarks=remarks,
+            country_of_residence=country_of_residence
         )
 
-        send_virtualclass_email(course_id, full_name, email, mobile, remarks)
+        send_virtualclass_email(course_id, full_name, email, mobile, remarks,country_of_residence)
         return virtualclass
 
 

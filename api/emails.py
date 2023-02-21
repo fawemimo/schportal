@@ -43,7 +43,7 @@ def send_interested_email(course_id,full_name,email,mobile):
         print(e)
 
 
-def send_virtualclass_email(course_id,full_name,email,mobile,remarks):
+def send_virtualclass_email(course_id,full_name,email,mobile,remarks,country_of_residence):
     course = Course.objects.get(id=course_id)
     try:
             message = BaseEmailMessage(template_name='api/email_response/virtual_class.html',
@@ -53,7 +53,8 @@ def send_virtualclass_email(course_id,full_name,email,mobile,remarks):
                 'full_name':full_name,
                 'email':email,
                 'mobile':mobile,
-                'remarks': remarks
+                'remarks': remarks,
+                'country_of_residence':country_of_residence
             }
             
             )
@@ -98,7 +99,7 @@ def send_short_quizze_email(fullname,email,mobile,tartiary_education,tartiary_st
         
         )
         message.send([email,settings.EMAIL_HOST_USER])
-                
+
     except Exception as e:
         print(e)
 
