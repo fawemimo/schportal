@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.emails import send_inquiries_email, send_interested_email, send_kids_coding_email, send_short_quizze_email, send_virtualclass_email
+from api.emails import send_financial_aid_email, send_inquiries_email, send_interested_email, send_kids_coding_email, send_short_quizze_email, send_virtualclass_email
 from .models import *
 from djoser.serializers import (
     UserCreateSerializer as BaseUserCreateSerializer,
@@ -692,7 +692,20 @@ class FinancialAidSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         financialaid = FinancialAid(**validated_data)
         financialaid.save()
-        return financialaid     
+        return financialaid 
+
+    def save(self, **kwargs):
+        aid_type = self.validated_data['aid_type']
+        first_name = self.validated_data['first_name']
+        last_name = self.validated_data['last_name']
+        email = self.validated_data['email']
+        mobile = self.validated_data['mobile']
+
+        financial_aid = FinancialAid.objects.create(aid_type=aid_type, first_name=first_name, last_name=last_name,email=email,mobile=mobile)
+
+        send_financial_aid_email(aid_type,first_name,last_name,email,mobile)
+
+        return financial_aid
 
 
 class TermsOfServiceSerializer(serializers.ModelSerializer):
