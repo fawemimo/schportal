@@ -191,7 +191,6 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_USE_SSL=True
 
-CELERY_BROKER_URL = 'redis://localhost:6379/1'
 
 try:
     from .prod_settings import *

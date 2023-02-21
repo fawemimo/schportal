@@ -407,8 +407,8 @@ class VirtualClass(models.Model):
 
 class KidsCoding(models.Model):
     age_bracket_choices = (
-        ('1', '6-9'),
-        ('2', '10-14')
+        ('6-9', '6-9'),
+        ('10-14', '10-14')
     )
     full_name = models.CharField(max_length=50)
     email = models.EmailField()

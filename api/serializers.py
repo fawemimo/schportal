@@ -1,18 +1,11 @@
 from rest_framework import serializers
-from api.tasks import (
-    send_inquiries_email_task,
-    send_interested_email_task,
-    send_kids_coding_email_task,
-    send_short_quizze_email_task,
-    send_virtualclass_email_task,
-)
+from api.emails import send_inquiries_email, send_interested_email, send_kids_coding_email, send_short_quizze_email, send_virtualclass_email
 from .models import *
 from djoser.serializers import (
     UserCreateSerializer as BaseUserCreateSerializer,
     UserSerializer as BaseUserSerializer,
 )
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from django.utils.text import slugify
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -251,7 +244,7 @@ class ShortQuizSerializer(serializers.ModelSerializer):
             more_about_you=more_about_you,
         )
 
-        send_short_quizze_email_task.delay(
+        send_short_quizze_email(
             fullname,
             email,
             mobile,
@@ -281,7 +274,7 @@ class InquirySerializer(serializers.ModelSerializer):
             fullname=fullname, email=email, mobile=mobile, message=message
         )
 
-        send_inquiries_email_task.delay(fullname, email, mobile, message)
+        send_inquiries_email(fullname, email, mobile, message)
         return inquiry
 
 
@@ -307,7 +300,7 @@ class InterestedFormSerializer(serializers.ModelSerializer):
             course_id=course_id, full_name=full_name, email=email, mobile=mobile
         )
 
-        send_interested_email_task.delay(course_id, full_name, email, mobile)
+        send_interested_email(course_id, full_name, email, mobile)
         return interestform
 
 
@@ -555,7 +548,7 @@ class VirtualClassSerializer(serializers.ModelSerializer):
             remarks=remarks,
         )
 
-        send_virtualclass_email_task.delay(course_id, full_name, email, mobile, remarks)
+        send_virtualclass_email(course_id, full_name, email, mobile, remarks)
         return virtualclass
 
 
@@ -590,7 +583,7 @@ class KidsCodingSerializer(serializers.ModelSerializer):
             remarks=remarks,
         )
 
-        send_kids_coding_email_task.delay(
+        send_kids_coding_email(
             age_bracket, full_name, email, mobile, remarks
         )
 
