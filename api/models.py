@@ -511,7 +511,14 @@ class VirtualVsOther(models.Model):
         return self.title
 
 
-class VirtualHowItWork(models.Model):
+class HowItWork(models.Model):
+
+    how_it_work_class_type = (
+        ('Physical Class', 'Physical Class'),
+        ('Virtual Class', 'Virtual Class')
+    )
+
+    how_it_work_class = models.CharField(max_length=50, choices=how_it_work_class_type, blank=True, null=True)
     content = models.TextField()
 
     def __str__(self):

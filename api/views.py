@@ -489,11 +489,11 @@ class TermsOfServiceViewSet(viewsets.ModelViewSet):
     serializer_class = TermsOfServiceSerializer
 
 
-class VirtualHowItWorksViewSet(viewsets.ModelViewSet):
+class HowItWorksViewSet(viewsets.ModelViewSet):
     http_method_names = ["get"]
 
-    queryset = VirtualHowItWork.objects.all()
-    serializer_class = VirtualHowItWorksSerializer
+    queryset = HowItWork.objects.all()
+    serializer_class = HowItWorksSerializer
 
 
 class VirtualVsOthersViewSet(viewsets.ModelViewSet):

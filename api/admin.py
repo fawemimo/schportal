@@ -470,7 +470,7 @@ class VirtualVsOthersAdmin(admin.ModelAdmin):
     list_display = ["id", "title", "descriptions"]
 
 
-@admin.register(VirtualHowItWork)
+@admin.register(HowItWork)
 class VirtualHowItWorksAdmin(admin.ModelAdmin):
 
     list_display = ["id", "content"]

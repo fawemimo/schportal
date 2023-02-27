@@ -752,7 +752,7 @@ class VirtualVsOthersSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "descriptions"]
 
 
-class VirtualHowItWorksSerializer(serializers.ModelSerializer):
+class HowItWorksSerializer(serializers.ModelSerializer):
     class Meta:
-        model = VirtualHowItWork
-        fields = ["id", "content"]
+        model = HowItWork
+        fields = ["id", "how_it_work_class","content"]

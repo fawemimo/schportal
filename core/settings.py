@@ -29,8 +29,7 @@ INSTALLED_APPS = [
     'django_filters',
     'api',
     'mainsite',
-    'djoser',
-    'django_celery_results'
+    'djoser'
 ]
 
 MIDDLEWARE = [
