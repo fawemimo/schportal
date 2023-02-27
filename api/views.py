@@ -487,3 +487,17 @@ class TermsOfServiceViewSet(viewsets.ModelViewSet):
 
     queryset = TermsOfService.objects.all()
     serializer_class = TermsOfServiceSerializer
+
+
+class VirtualHowItWorksViewSet(viewsets.ModelViewSet):
+    http_method_names = ["get"]
+
+    queryset = VirtualHowItWork.objects.all()
+    serializer_class = VirtualHowItWorksSerializer
+
+
+class VirtualVsOthersViewSet(viewsets.ModelViewSet):
+    http_method_names = ["get"]
+
+    queryset = VirtualVsOther.objects.all()
+    serializer_class = VirtualVsOthersSerializer

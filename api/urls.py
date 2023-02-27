@@ -41,7 +41,8 @@ router.register('alumiconnects', views.AlumiConnectViewSet, basename='alumiconne
 router.register('communityconnects', views.CommunityConnectViewSet, basename='communityconnects')
 router.register('financialconnects', views.FinancialAidViewSet,basename='financialconnects')
 router.register('termsofservices',views.TermsOfServiceViewSet, basename='termsofservices')
-
+router.register('virtualhowitworks',views.VirtualHowItWorksViewSet,basename='virtualhowitworks')
+router.register('virtualvsothers',views.VirtualVsOthersViewSet, basename='virtualvsothers')
 
 # Nested routes
 courses_router = routers.NestedDefaultRouter(

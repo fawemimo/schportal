@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from api.emails import send_financial_aid_email, send_inquiries_email, send_interested_email, send_kids_coding_email, send_short_quizze_email, send_virtualclass_email
+from api.emails import (
+    send_financial_aid_email,
+    send_inquiries_email,
+    send_interested_email,
+    send_kids_coding_email,
+    send_short_quizze_email,
+    send_virtualclass_email,
+)
 from .models import *
 from djoser.serializers import (
     UserCreateSerializer as BaseUserCreateSerializer,
@@ -479,6 +486,7 @@ class CourseCardSerializer(serializers.ModelSerializer):
     def get_discounted_fee_dollar(self, obj):
         return obj.schedule_set.values("discounted_fee_dollar").first()
 
+
 class StudentAttendanceSerializer(serializers.ModelSerializer):
     batch = serializers.StringRelatedField()
     student = serializers.StringRelatedField()
@@ -547,10 +555,12 @@ class VirtualClassSerializer(serializers.ModelSerializer):
             email=email,
             mobile=mobile,
             remarks=remarks,
-            country_of_residence=country_of_residence
+            country_of_residence=country_of_residence,
         )
 
-        send_virtualclass_email(course_id, full_name, email, mobile, remarks,country_of_residence)
+        send_virtualclass_email(
+            course_id, full_name, email, mobile, remarks, country_of_residence
+        )
         return virtualclass
 
 
@@ -585,9 +595,7 @@ class KidsCodingSerializer(serializers.ModelSerializer):
             remarks=remarks,
         )
 
-        send_kids_coding_email(
-            age_bracket, full_name, email, mobile, remarks
-        )
+        send_kids_coding_email(age_bracket, full_name, email, mobile, remarks)
 
         return kidscoding
 
@@ -672,40 +680,62 @@ class InternationalModelSerializer(serializers.ModelSerializer):
 class AlumiConnectSerializer(serializers.ModelSerializer):
     class Meta:
         model = AlumiConnect
-        fields = ['id','first_name', 'last_name', 'title', 'date_posted']
+        fields = ["id", "first_name", "last_name", "title", "date_posted"]
 
     def create(self, validated_data):
         alumiconnect = AlumiConnect(**validated_data)
         alumiconnect.save()
-        return alumiconnect    
+        return alumiconnect
 
 
 class CommunityConnectSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommunityConnect
-        fields = ['id','completed','community', 'title', 'descriptions', 'image', 'start_date']
+        fields = [
+            "id",
+            "completed",
+            "community",
+            "title",
+            "descriptions",
+            "image",
+            "start_date",
+        ]
 
 
 class FinancialAidSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinancialAid
-        fields = ['id','aid_type', 'first_name', 'last_name', 'email', 'mobile', 'date_posted']
+        fields = [
+            "id",
+            "aid_type",
+            "first_name",
+            "last_name",
+            "email",
+            "mobile",
+            "date_posted",
+        ]
 
     def create(self, validated_data):
         financialaid = FinancialAid(**validated_data)
         financialaid.save()
-        return financialaid 
+        return financialaid
 
     def save(self, **kwargs):
-        aid_type = self.validated_data['aid_type']
-        first_name = self.validated_data['first_name']
-        last_name = self.validated_data['last_name']
-        email = self.validated_data['email']
-        mobile = self.validated_data['mobile']
+        aid_type = self.validated_data["aid_type"]
+        first_name = self.validated_data["first_name"]
+        last_name = self.validated_data["last_name"]
+        email = self.validated_data["email"]
+        mobile = self.validated_data["mobile"]
 
-        financial_aid = FinancialAid.objects.create(aid_type=aid_type, first_name=first_name, last_name=last_name,email=email,mobile=mobile)
+        financial_aid = FinancialAid.objects.create(
+            aid_type=aid_type,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            mobile=mobile,
+        )
 
-        send_financial_aid_email(aid_type,first_name,last_name,email,mobile)
+        send_financial_aid_email(aid_type, first_name, last_name, email, mobile)
 
         return financial_aid
 
@@ -713,4 +743,16 @@ class FinancialAidSerializer(serializers.ModelSerializer):
 class TermsOfServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = TermsOfService
-        fields = ['id','title', 'descriptions', 'date_created']
+        fields = ["id", "title", "descriptions", "date_created"]
+
+
+class VirtualVsOthersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VirtualVsOther
+        fields = ["id", "title", "descriptions"]
+
+
+class VirtualHowItWorksSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VirtualHowItWork
+        fields = ["id", "content"]

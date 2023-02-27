@@ -462,3 +462,15 @@ class AlumiConnectAdmin(admin.ModelAdmin):
 class TermsOfServiceAdmin(admin.ModelAdmin):
 
     list_display = ("id", "title")
+
+
+@admin.register(VirtualVsOther)
+class VirtualVsOthersAdmin(admin.ModelAdmin):
+
+    list_display = ["id", "title", "descriptions"]
+
+
+@admin.register(VirtualHowItWork)
+class VirtualHowItWorksAdmin(admin.ModelAdmin):
+
+    list_display = ["id", "content"]
