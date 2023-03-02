@@ -479,4 +479,5 @@ class VirtualHowItWorksAdmin(admin.ModelAdmin):
 @admin.register(OurTeam)
 class OurTeamAdmin(admin.ModelAdmin):
 
-    list_display = ['image', 'full_name', 'designation', 'social_dump']
+    list_display = ['id','image', 'full_name', 'designation', 'social_dump']
+    list_display_link = ['id','full_name']
