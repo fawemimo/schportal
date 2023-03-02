@@ -32,13 +32,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             raise serializers.ValidationError("Username does not exist")
         return value
 
-    def validate_password(self, value):
-        if not User.objects.filter(password=value).exists():
-            raise serializers.ValidationError(
-                "Incorrect password, Please enter a valid password"
-            )
-        return value
-
 
 class CourseCategorySerializer(serializers.ModelSerializer):
     class Meta:
