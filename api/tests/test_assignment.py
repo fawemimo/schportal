@@ -21,4 +21,3 @@ class TestAssignmentView:
         endpoint = "/api/assignments/"
         response = api_client.get(endpoint)
         assert response.status_code == status.HTTP_200_OK
-
