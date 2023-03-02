@@ -75,6 +75,8 @@ router.register("howitworks", views.HowItWorksViewSet, basename="virtualhowitwor
 router.register(
     "virtualvsothers", views.VirtualVsOthersViewSet, basename="virtualvsothers"
 )
+router.register('ourteams', views.OurTeamViewSet,basename='ourteams')
+
 
 # Nested routes
 courses_router = routers.NestedDefaultRouter(router, "courses", lookup="course")

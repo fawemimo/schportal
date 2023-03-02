@@ -269,6 +269,16 @@ class Inquiry(models.Model):
         return self.fullname
 
 
+class OurTeam(models.Model):
+    image = models.ImageField()
+    full_name = models.CharField(max_length=255)
+    designation = models.CharField(max_length=255)
+    social_dump = models.TextField()
+
+    def __str__(self):
+        return str(self.id)
+
+
 # endregion
 
 

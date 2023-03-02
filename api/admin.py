@@ -474,3 +474,9 @@ class VirtualVsOthersAdmin(admin.ModelAdmin):
 class VirtualHowItWorksAdmin(admin.ModelAdmin):
 
     list_display = ["id", "content"]
+
+
+@admin.register(OurTeam)
+class OurTeamAdmin(admin.ModelAdmin):
+
+    list_display = ['image', 'full_name', 'designation', 'social_dump']

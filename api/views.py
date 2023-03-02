@@ -501,3 +501,10 @@ class VirtualVsOthersViewSet(viewsets.ModelViewSet):
 
     queryset = VirtualVsOther.objects.all()
     serializer_class = VirtualVsOthersSerializer
+
+
+class OurTeamViewSet(viewsets.ModelViewSet):
+    http_method_names = ["get"]
+
+    queryset = OurTeam.objects.order_by('?')
+    serializer_class = OurTeamSerializer

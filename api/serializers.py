@@ -749,3 +749,10 @@ class HowItWorksSerializer(serializers.ModelSerializer):
     class Meta:
         model = HowItWork
         fields = ["id", "how_it_work_class","content"]
+
+
+class OurTeamSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OurTeam
+        fields = ['id','image', 'full_name', 'designation', 'social_dump']
