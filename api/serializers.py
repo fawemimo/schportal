@@ -307,7 +307,7 @@ class InterestedFormSerializer(serializers.ModelSerializer):
 class EnrollBatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Batch
-        fields = ("id", "title", "start_date", "end_date")
+        fields = ("id", "title", "course", "start_date", "end_date")
 
 
 class EnrollStudentSerializer(serializers.ModelSerializer):
@@ -326,32 +326,21 @@ class EnrollCourseSerializer(serializers.ModelSerializer):
         fields = ("id", "title")
 
 
-class EnrollmentSerializer(serializers.ModelSerializer):
-    student = EnrollStudentSerializer(read_only=True)
-    course = EnrollCourseSerializer(read_only=True)
-    batch = EnrollBatchSerializer(read_only=True)
-
-    class Meta:
-        model = Enrollment
-        fields = ["id", "student", "course", "batch", "enrolled", "training_date"]
-
-
 class AssignmentSerializer(serializers.ModelSerializer):
-    batch = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Assignment
-        fields = ("id", "batch", "name", "assignment_file", "date_posted")
+        fields = ("id", "name", "assignment_file", "date_posted")
 
 
 class AssignmentAllocationSerializer(serializers.ModelSerializer):
-    student = serializers.StringRelatedField(read_only=True)
+    batch = serializers.StringRelatedField(read_only=True)
     assignment = AssignmentSerializer(read_only=True)
     supervisor = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = AssignmentAllocation
-        fields = ["id", "student", "assignment", "supervisor", "start_date", "deadline"]
+        fields = ["id", "batch", "assignment", "supervisor", "start_date", "deadline"]
 
 
 class ResourceSerializer(serializers.ModelSerializer):

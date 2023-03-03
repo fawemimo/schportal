@@ -19,7 +19,6 @@ router.register("shortquizes", views.ShortQuizViewSet)
 router.register("inquiries", views.InquiryViewSet)
 
 # new viewset implemented
-router.register("enrollments", views.EnrollmentViewSet)
 router.register("assignments", views.AssignmentViewSet, basename="assignment")
 router.register("resources", views.ResourceViewSet, basename="resource")
 router.register("projects", views.ProjectViewSet, basename="project")

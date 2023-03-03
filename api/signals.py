@@ -7,8 +7,12 @@ from .models import User, Teacher,Student
 def create_teacher_profile(sender, created, instance, *args, **kwargs):
     if created:
         if instance.user_type =='teacher':
-            Teacher.objects.create(user=instance,when_joined='2022-01-01')
+            f_name = instance.first_name
+            l_name = instance.last_name
+            Teacher.objects.create(user=instance,when_joined='2022-01-01',full_name=f'{f_name} {l_name}')
             instance.save()
         elif instance.user_type == 'student':
-            Student.objects.create(user=instance)
+            f_name = instance.first_name
+            l_name = instance.last_name
+            Student.objects.create(user=instance,full_name=f'{f_name} {l_name}')
             instance.save()    

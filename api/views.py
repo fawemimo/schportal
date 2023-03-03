@@ -190,18 +190,6 @@ class InterestedFormViewSet(viewsets.ModelViewSet):
         ).select_related("course")
 
 
-class EnrollmentViewSet(viewsets.ModelViewSet):
-    http_method_names = ["get", "post", "patch", "delete"]
-
-    queryset = Enrollment.objects.all()
-    serializer_class = EnrollmentSerializer
-
-    def get_permissions(self):
-        if self.request.method in ["PATCH", "POST", "DELETE"]:
-            return [permissions.IsAdminUser()]
-        return [permissions.AllowAny()]
-
-
 class AssignmentViewSet(viewsets.ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
 
@@ -211,7 +199,7 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         if self.request.user.is_staff:
             return AssignmentAllocation.objects.all()
         return AssignmentAllocation.objects.filter(
-            student__user_id=self.request.user.id
+            batch__in=Batch.objects.all()
         ).filter(assignment__assignment_given=True)
 
     def get_permissions(self):

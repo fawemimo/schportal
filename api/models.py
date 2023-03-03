@@ -13,6 +13,8 @@ class User(AbstractUser):
         ("student", "Student"),
     )
     email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
     user_type = models.CharField(
         max_length=7, choices=user_type_choices, blank=True, null=True
     )
@@ -85,6 +87,7 @@ class Course(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+    full_name = models.CharField(max_length=255, blank=True, null=True)
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
     mobile_numbers = models.CharField(max_length=250)
     profile_pic = models.ImageField(upload_to="students_profilepix/")
@@ -99,6 +102,7 @@ class Student(models.Model):
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+    full_name = models.CharField(max_length=255, blank=True, null=True)
     teacher_idcard_id = models.CharField(max_length=50, blank=True, null=True)
     courses_taking = models.ManyToManyField(Course)
     when_joined = models.DateField()
@@ -141,8 +145,9 @@ class Schedule(models.Model):
 class Batch(models.Model):
     title = models.CharField(max_length=150)
     teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
     start_date = models.DateField()
-    end_date = models.DateField()
+    end_date = models.DateField(blank=True, null=True)
     students = models.ManyToManyField(Student)
 
     def __str__(self):
@@ -294,21 +299,9 @@ class InterestedForm(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.course.title}"
+    
 
-
-class Enrollment(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.PROTECT)
-    course = models.ForeignKey(Course, on_delete=models.PROTECT)
-    batch = models.ForeignKey(Batch, on_delete=models.PROTECT)
-    enrolled = models.BooleanField(default=True)
-    training_date = models.DateTimeField()
-
-    def __str__(self):
-        return f"{self.student} - {self.course}"
-
-
-class Assignment(models.Model):
-    batch = models.ForeignKey(Batch, on_delete=models.SET_NULL, null=True, blank=True)
+class Assignment(models.Model):    
     name = models.CharField(max_length=255)
     assignment_file = models.FileField(upload_to="assignment/%Y%M%d")
     assignment_given = models.BooleanField(default=False)
@@ -318,16 +311,15 @@ class Assignment(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-
 class AssignmentAllocation(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    batch = models.ForeignKey(Batch, on_delete=models.SET_NULL, null=True, blank=True)
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     supervisor = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     start_date = models.DateField()
     deadline = models.DateField()
 
     def __str__(self):
-        return f"{self.student.user}"
+        return f"{self.batch}"
 
 
 class Project(models.Model):
