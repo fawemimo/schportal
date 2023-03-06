@@ -89,12 +89,15 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     full_name = models.CharField(max_length=255, blank=True, null=True)
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
+    date_of_birth = models.CharField(max_length=50, blank=True, null=True)
     mobile_numbers = models.CharField(max_length=250)
     profile_pic = models.ImageField(upload_to="students_profilepix/")
     residential_address = models.CharField(max_length=250)
     contact_address = models.CharField(max_length=250)
     next_of_kin_fullname = models.CharField(max_length=150)
     next_of_kin_contact_address = models.CharField(max_length=250)
+    next_of_kin_mobile_number = models.CharField(max_length=250, blank=True, null=True)
+    relationship_with_next_kin = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user} - {self.student_idcard_id}"

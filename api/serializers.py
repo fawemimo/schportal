@@ -90,12 +90,15 @@ class StudentSerializer(serializers.ModelSerializer):
             "id",
             "user",
             "student_idcard_id",
+            "date_of_birth",
             "mobile_numbers",
             "profile_pic",
             "residential_address",
             "contact_address",
             "next_of_kin_fullname",
             "next_of_kin_contact_address",
+            "next_of_kin_mobile_number",
+            "relationship_with_next_kin"
         ]
 
 
