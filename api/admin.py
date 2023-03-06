@@ -334,6 +334,15 @@ class ProjectAllocationAdmin(admin.ModelAdmin):
         return obj.supervisor.user
 
 
+@admin.register(CourseManual)
+class CourseManualAdmin(admin.ModelAdmin):
+
+    list_display = ['title', 'manual', 'date_posted', 'date_updated']
+    search_fields = ['title']
+    list_filter = ['date_posted','date_updated']
+    list_per_page = 25
+
+
 @admin.register(CourseManualAllocation)
 class CourseManualAllocationAdmin(admin.ModelAdmin):
     list_display = ["student", "course_manual", "released_by", "when_released"]
