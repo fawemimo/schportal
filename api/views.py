@@ -494,5 +494,5 @@ class VirtualVsOthersViewSet(viewsets.ModelViewSet):
 class OurTeamViewSet(viewsets.ModelViewSet):
     http_method_names = ["get"]
 
-    queryset = OurTeam.objects.order_by('?')
+    queryset = OurTeam.objects.order_by("?")
     serializer_class = OurTeamSerializer
