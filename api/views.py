@@ -273,6 +273,9 @@ class CourseManualViewSet(viewsets.ModelViewSet):
     queryset = CourseManualAllocation.objects.select_related("course_manual").all()
     serializer_class = CourseManualAllocationSerializer
 
+    def get_serializer_context(self):
+        return {'student_id': self.kwargs.get('student_pk')}
+
     def get_permissions(self):
         if self.request.method in ["POST", "PATCH", "DELETE"]:
             return [permissions.IsAdminUser()]

@@ -151,7 +151,7 @@ class Batch(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
-    students = models.ManyToManyField(Student)
+    students = models.ManyToManyField(Student, blank=True, null=True)
 
     def __str__(self):
         return f"{self.title}"

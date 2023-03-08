@@ -266,7 +266,7 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(Batch)
 class BatchAdmin(admin.ModelAdmin):
     list_display = ["title", "course","total_students", "start_date", "end_date"]
-    search_fields = ["title"]
+    search_fields = ["title", "students"]
     list_select_related = ["teacher","course"]
 
     @admin.display(ordering="start_date")
