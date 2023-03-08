@@ -6,6 +6,7 @@ from .serializers import *
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.parsers import JSONParser
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -42,20 +43,32 @@ class TeacherViewSet(viewsets.ModelViewSet):
 
 
 class StudentViewSet(viewsets.ModelViewSet):
-    http_method_names = ["get"]
+    http_method_names = ["get", "patch"]
 
-    serializer_class = StudentSerializer
-    permission_classes = []
+    def get_serializer_class(self):
+        if self.request.method == "PATCH":
+            return UpdateStudentProfilePicSerializer
+        else:
+            return StudentSerializer
+        
+    def update(self, request, *args, **kwargs):
+        user = User.objects.get(id=self.request.user.id)
+        student = Student.objects.get(user=user.id)
+        serializer = UpdateStudentProfilePicSerializer(student, data=request.data) 
+           
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)    
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
             print()
             return Student.objects.filter(user_id=self.request.user.id)
 
-    # def get_permissions(self):
-    #     if self.request.method in ['PATCH', 'POST', 'GET']:
-    #         return [permissions.IsAuthenticated()]
-    #     return [permissions.IsAdminUser()]
+    def get_permissions(self):
+        if self.request.method in ["PATCH", "GET"]:
+            return [permissions.IsAuthenticated()]
+        return [permissions.IsAdminUser()]
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
@@ -274,7 +287,7 @@ class CourseManualViewSet(viewsets.ModelViewSet):
     serializer_class = CourseManualAllocationSerializer
 
     def get_serializer_context(self):
-        return {'student_id': self.kwargs.get('student_pk')}
+        return {"student_id": self.kwargs.get("student_pk")}
 
     def get_permissions(self):
         if self.request.method in ["POST", "PATCH", "DELETE"]:

@@ -98,8 +98,19 @@ class StudentSerializer(serializers.ModelSerializer):
             "next_of_kin_fullname",
             "next_of_kin_contact_address",
             "next_of_kin_mobile_number",
-            "relationship_with_next_kin"
+            "relationship_with_next_kin",
         ]
+
+
+class UpdateStudentProfilePicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ["profile_pic"]
+
+    def update(self,instance, validated_data):
+        instance.profile_pic = validated_data["profile_pic"]
+        instance.save()
+        return instance
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
@@ -309,6 +320,7 @@ class InterestedFormSerializer(serializers.ModelSerializer):
 
 class BatchSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
+
     class Meta:
         model = Batch
         fields = ("id", "title", "course")
@@ -331,7 +343,6 @@ class EnrollCourseSerializer(serializers.ModelSerializer):
 
 
 class AssignmentSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Assignment
         fields = ("id", "name", "assignment_file", "date_posted")
@@ -400,17 +411,24 @@ class CourseManualSerializer(serializers.ModelSerializer):
 
 
 class CourseManualAllocationSerializer(serializers.ModelSerializer):
-    batch = serializers.SerializerMethodField(source='student__batch_set')
+    batch = serializers.SerializerMethodField(source="student__batch_set")
     student = serializers.StringRelatedField(read_only=True)
     course_manual = CourseManualSerializer()
     released_by = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = CourseManualAllocation
-        fields = ["id","batch", "student", "course_manual", "released_by", "when_released"]
+        fields = [
+            "id",
+            "batch",
+            "student",
+            "course_manual",
+            "released_by",
+            "when_released",
+        ]
 
     def get_batch(self, obj):
-        return obj.student.batch_set.values('title','course__title')
+        return obj.student.batch_set.values("title", "course__title")
 
 
 class AddCourseCardSerializer(serializers.ModelSerializer):
@@ -745,11 +763,10 @@ class VirtualVsOthersSerializer(serializers.ModelSerializer):
 class HowItWorksSerializer(serializers.ModelSerializer):
     class Meta:
         model = HowItWork
-        fields = ["id", "how_it_work_class","content"]
+        fields = ["id", "how_it_work_class", "content"]
 
 
 class OurTeamSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = OurTeam
-        fields = ['id','image', 'full_name', 'designation', 'social_dump']
+        fields = ["id", "image", "full_name", "designation", "social_dump"]

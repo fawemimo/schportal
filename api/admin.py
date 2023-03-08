@@ -266,8 +266,9 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(Batch)
 class BatchAdmin(admin.ModelAdmin):
     list_display = ["title", "course","total_students", "start_date", "end_date"]
-    search_fields = ["title", "students"]
+    search_fields = ["title","students__user__first_name__istartswith"]
     list_select_related = ["teacher","course"]
+    autocomplete_fields = ['students']
 
     @admin.display(ordering="start_date")
     def total_students(self, obj):
