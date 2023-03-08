@@ -7,6 +7,7 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import JSONParser
+from django.shortcuts import get_object_or_404
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -52,12 +53,11 @@ class StudentViewSet(viewsets.ModelViewSet):
             return StudentSerializer
         
     def update(self, request, *args, **kwargs):
-        user = User.objects.get(id=self.request.user.id)
-        student = Student.objects.get(user=user.id)
+        # user = User.objects.get(id=self.request.user.id)
+        student = get_object_or_404(Student, id=self.kwargs.get('student_pk'))
         serializer = UpdateStudentProfilePicSerializer(student, data=request.data) 
-           
-        if serializer.is_valid():
-            serializer.save()
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data)    
 
     def get_queryset(self):
@@ -299,7 +299,7 @@ class CourseManualViewSet(viewsets.ModelViewSet):
             return CourseManualAllocation.objects.select_related("course_manual").all()
         elif self.request.user.is_active:
             return CourseManualAllocation.objects.filter(
-                student__user=self.request.user
+                batch__students__user=self.request.user
             ).select_related("course_manual")
         else:
             pass

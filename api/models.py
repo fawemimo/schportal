@@ -359,13 +359,14 @@ class CourseManual(models.Model):
 
 
 class CourseManualAllocation(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    # student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    batch = models.ForeignKey(Batch, on_delete=models.CASCADE, blank=True, null=True)
     course_manual = models.ForeignKey(CourseManual, on_delete=models.CASCADE)
     released_by = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     when_released = models.DateField()
 
     def __str__(self):
-        return f"{self.student.user}"
+        return f"{self.batch}"
 
 
 class ResourceType(models.Model):

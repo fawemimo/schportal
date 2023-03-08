@@ -320,11 +320,15 @@ class InterestedFormSerializer(serializers.ModelSerializer):
 
 class BatchSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
-
+    course_manuals = serializers.SerializerMethodField()
     class Meta:
         model = Batch
-        fields = ("id", "title", "course")
+        fields = ("id", "title", "course","course_manuals")
 
+    def get_course_manuals(self, obj):
+        return obj.coursemanualallocation_set.values('course_manual__manual','course_manual__title')
+        
+        # return obj.coursemanualallocation_set.filter(course_manual__course=obj.course).only('id').values('course_manual__manual','course_manual__title')
 
 class EnrollStudentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -411,25 +415,15 @@ class CourseManualSerializer(serializers.ModelSerializer):
 
 
 class CourseManualAllocationSerializer(serializers.ModelSerializer):
-    batch = serializers.SerializerMethodField(source="student__batch_set")
-    student = serializers.StringRelatedField(read_only=True)
-    course_manual = CourseManualSerializer()
-    released_by = serializers.StringRelatedField(read_only=True)
+    batch = BatchSerializer()
 
     class Meta:
         model = CourseManualAllocation
         fields = [
             "id",
-            "batch",
-            "student",
-            "course_manual",
-            "released_by",
-            "when_released",
+            "batch"
         ]
-
-    def get_batch(self, obj):
-        return obj.student.batch_set.values("title", "course__title")
-
+        
 
 class AddCourseCardSerializer(serializers.ModelSerializer):
     class Meta:

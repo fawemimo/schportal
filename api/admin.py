@@ -346,10 +346,10 @@ class CourseManualAdmin(admin.ModelAdmin):
 
 @admin.register(CourseManualAllocation)
 class CourseManualAllocationAdmin(admin.ModelAdmin):
-    list_display = ["student", "course_manual", "released_by", "when_released"]
+    list_display = ["course_manual", "released_by", "when_released"]
 
-    def student(self, obj):
-        return obj.student.user
+    # def student(self, obj):
+    #     return obj.student.user
 
     def course_manual(self, obj):
         return obj.course_manual.title
