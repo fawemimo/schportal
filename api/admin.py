@@ -226,7 +226,7 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ["full_name", "student_idcard_id", "batch_name"]
+    list_display = ["full_name","profile_pix", "student_idcard_id", "batch_name"]
     search_fields = ["user__first_name", "user__last_name__istartswith"]
    
     def batch_name(self, obj):
@@ -247,6 +247,16 @@ class StudentAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return queryset
         return queryset.filter(batch__teacher__user=request.user)
+
+    def profile_pix(self, instance):
+        if instance.profile_pic.name != '':
+            return format_html(f'<img src="{instance.profile_pic.url}" class="thumbnail"/>')
+        return 'No profile Pics Added'
+
+    class Media:
+        css = {
+            'all' : ['api/css/styles.css']
+        }       
 
 
 @admin.register(Assignment)

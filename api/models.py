@@ -6,6 +6,8 @@ from django.core.validators import FileExtensionValidator, MinValueValidator
 import math
 from decimal import Decimal
 
+from api.validate import validate_file_size
+
 
 class User(AbstractUser):
     user_type_choices = (
@@ -91,7 +93,7 @@ class Student(models.Model):
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
     date_of_birth = models.CharField(max_length=50, blank=True, null=True)
     mobile_numbers = models.CharField(max_length=250)
-    profile_pic = models.ImageField(upload_to="students_profilepix/")
+    profile_pic = models.ImageField(upload_to="students_profilepix/", validators= [validate_file_size, FileExtensionValidator(allowed_extensions=['jpg', 'png','jpeg'])])
     residential_address = models.CharField(max_length=250)
     contact_address = models.CharField(max_length=250)
     next_of_kin_fullname = models.CharField(max_length=150)

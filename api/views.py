@@ -43,8 +43,7 @@ class TeacherViewSet(viewsets.ModelViewSet):
 
 class StudentViewSet(viewsets.ModelViewSet):
     http_method_names = ["get", "patch"]
-
-    # serializer_class = StudentSerializer
+    
 
     def get_serializer_class(self):
         if self.request.method == "PATCH":
@@ -64,9 +63,8 @@ class StudentViewSet(viewsets.ModelViewSet):
 
 
 class StudentProfilePicViewSet(viewsets.ModelViewSet):
-    # http_method_names = ['patch','put']
+    http_method_names = ['get','patch','put']
 
-    # serializer_class = UpdateStudentProfilePicSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -75,21 +73,25 @@ class StudentProfilePicViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'PATCH':
             return UpdateStudentProfilePicSerializer
-        return UpdateStudentProfilePicSerializer
+        return UpdateStudentProfilePicSerializer     
     
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data)
-    
-    def update(self, request, *args, **kwargs):
-        # user = User.objects.get(id=self.request.user.id)
-        student = get_object_or_404(Student, user_id=self.request.user.id)
-        serializer = UpdateStudentProfilePicSerializer(student, data=request.data) 
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data) 
+    @action(detail=False, methods = ['GET','PATCH','PUT'], permission_classes=[permissions.IsAuthenticated])
+    def profile(self, request):
+        student = Student.objects.get(user__id=self.kwargs.get('user_pk'))
+        serializer = UpdateStudentProfilePicSerializer(student)
+
+        if request.method == 'GET':
+            serializer = UpdateStudentProfilePicSerializer(student)
+            return Response(serializer.data)
+        
+        elif request.method == 'PUT':
+            serializer = UpdateStudentProfilePicSerializer(student, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)  
+        
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 class ScheduleViewSet(viewsets.ModelViewSet):
@@ -229,7 +231,7 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 
     serializer_class = AssignmentBatchSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
+
     def get_queryset(self):
         if self.request.user.is_staff:
             return AssignmentAllocation.objects.all()

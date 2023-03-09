@@ -105,21 +105,13 @@ class StudentSerializer(serializers.ModelSerializer):
 class UpdateStudentProfilePicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ["profile_pic"]
+        fields = ["id","profile_pic"]
 
-    # def update(self,instance, validated_data):
-    #     instance.profile_pic = validated_data["profile_pic"]
-    #     instance.save()
-    #     return self.instance
+    def update(self,instance, validated_data):
+        instance.profile_pic = validated_data["profile_pic"]
+        return super(UpdateStudentProfilePicSerializer, self).update(instance, validated_data)
+        
     
-    # def save(self, **validated_data):
-    #     profile_pics = self.validated_data['profile_pic']
-
-    #     student = Student.objects.create(profile_pic=profile_pics, **validated_data)
-    #     student.save()
-    #     return student
-
-
 class ScheduleSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
     teacher = serializers.StringRelatedField()
