@@ -105,13 +105,15 @@ class StudentSerializer(serializers.ModelSerializer):
 class UpdateStudentProfilePicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ["id","profile_pic"]
+        fields = ["id", "profile_pic"]
 
-    def update(self,instance, validated_data):
+    def update(self, instance, validated_data):
         instance.profile_pic = validated_data["profile_pic"]
-        return super(UpdateStudentProfilePicSerializer, self).update(instance, validated_data)
-        
-    
+        return super(UpdateStudentProfilePicSerializer, self).update(
+            instance, validated_data
+        )
+
+
 class ScheduleSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
     teacher = serializers.StringRelatedField()
@@ -320,24 +322,33 @@ class InterestedFormSerializer(serializers.ModelSerializer):
 class BatchSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
     course_manuals = serializers.SerializerMethodField()
+
     class Meta:
         model = Batch
-        fields = ['id', 'title', 'course','course_manuals']
+        fields = ["id", "title", "course", "course_manuals"]
 
     def get_course_manuals(self, obj):
-        return obj.coursemanualallocation_set.values('course_manual__manual','course_manual__title')
-      
+        return obj.coursemanualallocation_set.values(
+            "course_manual__manual", "course_manual__title"
+        )
+
 
 class AssignmentBatchSerializer(serializers.ModelSerializer):
     assignment = serializers.SerializerMethodField()
     teacher = serializers.StringRelatedField()
+
     class Meta:
         model = Batch
-        fields = ['id', 'title','teacher', 'assignment']
+        fields = ["id", "title", "teacher", "assignment"]
 
     def get_assignment(self, obj):
-        return obj.assignmentallocation_set.values('assignment__name','assignment__assignment_file','assignment__assignment_given','assignment__date_posted')    
-    
+        return obj.assignmentallocation_set.values(
+            "assignment__name",
+            "assignment__assignment_file",
+            "assignment__assignment_given",
+            "assignment__date_posted",
+        )
+
 
 class EnrollStudentSerializer(serializers.ModelSerializer):
     class Meta:

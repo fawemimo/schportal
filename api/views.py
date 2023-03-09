@@ -77,7 +77,7 @@ class StudentProfilePicViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods = ['GET','PATCH','PUT'], permission_classes=[permissions.IsAuthenticated])
     def profile(self, request):
-        student = Student.objects.get(user__id=self.kwargs.get('user_pk'))
+        student = Student.objects.get(user_id=self.kwargs.get('user_pk'))
         serializer = UpdateStudentProfilePicSerializer(student)
 
         if request.method == 'GET':
@@ -227,18 +227,21 @@ class InterestedFormViewSet(viewsets.ModelViewSet):
 
 
 class AssignmentViewSet(viewsets.ModelViewSet):
-    http_method_names = ["get"]
+    http_method_names = ["get","post","patch"]
 
     serializer_class = AssignmentBatchSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
+    
     def get_queryset(self):
         if self.request.user.is_staff:
-            return AssignmentAllocation.objects.all()
-        return Batch.objects.filter(
-                students__user=self.request.user
-            ).prefetch_related('assignmentallocation_set')
+            return Batch.objects.prefetch_related('assignmentallocation_set')
+        return Batch.objects.filter(students__user=self.kwargs.get('user_pk')).prefetch_related('assignmentallocation_set')      
 
+    def get_permissions(self):
+        if self.request.method in ['PATCH','POST','DELETE']:
+            return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticated()]   
+      
 
 class ProjectViewSet(viewsets.ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
