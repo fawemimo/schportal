@@ -1,14 +1,12 @@
-from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
-from rest_framework import permissions
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.parsers import JSONParser
 from django.shortcuts import get_object_or_404
-
+from rest_framework.decorators import action
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -46,23 +44,17 @@ class TeacherViewSet(viewsets.ModelViewSet):
 class StudentViewSet(viewsets.ModelViewSet):
     http_method_names = ["get", "patch"]
 
+    # serializer_class = StudentSerializer
+
     def get_serializer_class(self):
         if self.request.method == "PATCH":
             return UpdateStudentProfilePicSerializer
         else:
-            return StudentSerializer
-        
-    def update(self, request, *args, **kwargs):
-        # user = User.objects.get(id=self.request.user.id)
-        student = get_object_or_404(Student, id=self.kwargs.get('student_pk'))
-        serializer = UpdateStudentProfilePicSerializer(student, data=request.data) 
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)    
+            return StudentSerializer 
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            print()
+            
             return Student.objects.filter(user_id=self.request.user.id)
 
     def get_permissions(self):
@@ -70,6 +62,35 @@ class StudentViewSet(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated()]
         return [permissions.IsAdminUser()]
 
+
+class StudentProfilePicViewSet(viewsets.ModelViewSet):
+    # http_method_names = ['patch','put']
+
+    # serializer_class = UpdateStudentProfilePicSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Student.objects.filter(user_id=self.request.user.id)
+
+    def get_serializer_class(self):
+        if self.request.method == 'PATCH':
+            return UpdateStudentProfilePicSerializer
+        return UpdateStudentProfilePicSerializer
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data)
+    
+    def update(self, request, *args, **kwargs):
+        # user = User.objects.get(id=self.request.user.id)
+        student = get_object_or_404(Student, user_id=self.request.user.id)
+        serializer = UpdateStudentProfilePicSerializer(student, data=request.data) 
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data) 
+    
 
 class ScheduleViewSet(viewsets.ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
@@ -281,26 +302,20 @@ class CoursesViewSet(viewsets.ModelViewSet):
 
 
 class CourseManualViewSet(viewsets.ModelViewSet):
-    http_method_names = ["get", "post", "patch", "delete"]
-
-    queryset = CourseManualAllocation.objects.select_related("course_manual").all()
-    serializer_class = CourseManualAllocationSerializer
+    http_method_names = ["get"]
+   
+    serializer_class = BatchSerializer
 
     def get_serializer_context(self):
         return {"student_id": self.kwargs.get("student_pk")}
-
-    def get_permissions(self):
-        if self.request.method in ["POST", "PATCH", "DELETE"]:
-            return [permissions.IsAdminUser()]
-        return [permissions.IsAuthenticated()]
 
     def get_queryset(self):
         if self.request.user.is_superuser:
             return CourseManualAllocation.objects.select_related("course_manual").all()
         elif self.request.user.is_active:
-            return CourseManualAllocation.objects.filter(
-                batch__students__user=self.request.user
-            ).select_related("course_manual")
+            return Batch.objects.filter(
+                students__user=self.request.user
+            ).prefetch_related('coursemanualallocation_set')
         else:
             pass
 

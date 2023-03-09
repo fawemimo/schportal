@@ -107,10 +107,17 @@ class UpdateStudentProfilePicSerializer(serializers.ModelSerializer):
         model = Student
         fields = ["profile_pic"]
 
-    def update(self,instance, validated_data):
-        instance.profile_pic = validated_data["profile_pic"]
-        instance.save()
-        return instance
+    # def update(self,instance, validated_data):
+    #     instance.profile_pic = validated_data["profile_pic"]
+    #     instance.save()
+    #     return self.instance
+    
+    # def save(self, **validated_data):
+    #     profile_pics = self.validated_data['profile_pic']
+
+    #     student = Student.objects.create(profile_pic=profile_pics, **validated_data)
+    #     student.save()
+    #     return student
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
@@ -327,9 +334,8 @@ class BatchSerializer(serializers.ModelSerializer):
 
     def get_course_manuals(self, obj):
         return obj.coursemanualallocation_set.values('course_manual__manual','course_manual__title')
+      
         
-        # return obj.coursemanualallocation_set.filter(course_manual__course=obj.course).only('id').values('course_manual__manual','course_manual__title')
-
 class EnrollStudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student

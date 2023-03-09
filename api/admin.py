@@ -226,13 +226,9 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ["name", "student_idcard_id", "batch_name"]
+    list_display = ["full_name", "student_idcard_id", "batch_name"]
     search_fields = ["user__first_name", "user__last_name__istartswith"]
-
-    @admin.display(description="Student Name")
-    def name(self, obj):
-        return (f"{obj.user.first_name} {obj.user.last_name}").upper()
-
+   
     def batch_name(self, obj):
         obj = obj.batch_set.values("title", "id")
         for x in obj:
