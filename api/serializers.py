@@ -330,12 +330,23 @@ class BatchSerializer(serializers.ModelSerializer):
     course_manuals = serializers.SerializerMethodField()
     class Meta:
         model = Batch
-        fields = ("id", "title", "course","course_manuals")
+        fields = ['id', 'title', 'course','course_manuals']
 
     def get_course_manuals(self, obj):
         return obj.coursemanualallocation_set.values('course_manual__manual','course_manual__title')
       
-        
+
+class AssignmentBatchSerializer(serializers.ModelSerializer):
+    assignment = serializers.SerializerMethodField()
+    teacher = serializers.StringRelatedField()
+    class Meta:
+        model = Batch
+        fields = ['id', 'title','teacher', 'assignment']
+
+    def get_assignment(self, obj):
+        return obj.assignmentallocation_set.values('assignment__name','assignment__assignment_file','assignment__assignment_given','assignment__date_posted')    
+    
+
 class EnrollStudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
@@ -419,17 +430,6 @@ class CourseManualSerializer(serializers.ModelSerializer):
         model = CourseManual
         fields = ["id", "title", "course", "manual", "date_posted"]
 
-
-class CourseManualAllocationSerializer(serializers.ModelSerializer):
-    batch = BatchSerializer()
-
-    class Meta:
-        model = CourseManualAllocation
-        fields = [
-            "id",
-            "batch"
-        ]
-        
 
 class AddCourseCardSerializer(serializers.ModelSerializer):
     class Meta:

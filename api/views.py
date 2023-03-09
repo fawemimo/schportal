@@ -225,21 +225,17 @@ class InterestedFormViewSet(viewsets.ModelViewSet):
 
 
 class AssignmentViewSet(viewsets.ModelViewSet):
-    http_method_names = ["get", "post", "patch", "delete"]
+    http_method_names = ["get"]
 
-    serializer_class = AssignmentAllocationSerializer
-
+    serializer_class = AssignmentBatchSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
     def get_queryset(self):
         if self.request.user.is_staff:
             return AssignmentAllocation.objects.all()
-        return AssignmentAllocation.objects.filter(
-            batch__in=Batch.objects.all()
-        ).filter(assignment__assignment_given=True)
-
-    def get_permissions(self):
-        if self.request.method in ["PATCH", "POST", "DELETE"]:
-            return [permissions.IsAdminUser()]
-        return [permissions.IsAuthenticated()]
+        return Batch.objects.filter(
+                students__user=self.request.user
+            ).prefetch_related('assignmentallocation_set')
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -305,10 +301,7 @@ class CourseManualViewSet(viewsets.ModelViewSet):
     http_method_names = ["get"]
    
     serializer_class = BatchSerializer
-
-    def get_serializer_context(self):
-        return {"student_id": self.kwargs.get("student_pk")}
-
+    
     def get_queryset(self):
         if self.request.user.is_superuser:
             return CourseManualAllocation.objects.select_related("course_manual").all()
