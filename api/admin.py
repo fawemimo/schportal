@@ -239,19 +239,12 @@ class StudentAdmin(admin.ModelAdmin):
                 + urlencode({"batch__id": str(x["id"])})
             )
 
-            return format_html(f'<a href="{url}">{x["title"].upper()}</a>')
-
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-
-        if request.user.is_superuser:
-            return queryset
-        return queryset.filter(batch__teacher__user=request.user)
+            return format_html(f'<a href="{url}">{x["title"].upper()}</a>')   
 
     def profile_pix(self, instance):
         if instance.profile_pic.name != '':
             return format_html(f'<img src="{instance.profile_pic.url}" class="thumbnail"/>')
-        return 'No profile Pics Added'
+        return 'No Profile Pics Added'
 
     class Media:
         css = {

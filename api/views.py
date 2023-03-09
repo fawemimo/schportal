@@ -73,11 +73,13 @@ class StudentProfilePicViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'PATCH':
             return UpdateStudentProfilePicSerializer
+        elif self.request.method == 'PUT':
+             return UpdateStudentProfilePicSerializer
         return UpdateStudentProfilePicSerializer     
     
     @action(detail=False, methods = ['GET','PATCH','PUT'], permission_classes=[permissions.IsAuthenticated])
     def profile(self, request):
-        student = Student.objects.get(user_id=self.kwargs.get('user_pk'))
+        student = Student.objects.get(user=self.kwargs.get('user_pk'))
         serializer = UpdateStudentProfilePicSerializer(student)
 
         if request.method == 'GET':
