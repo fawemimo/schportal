@@ -89,6 +89,7 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "user",
+            "full_name",
             "student_idcard_id",
             "date_of_birth",
             "mobile_numbers",
@@ -522,7 +523,7 @@ class UserSerializer(BaseUserSerializer):
     student = StudentSerializer(read_only=True)
 
     class Meta(BaseUserSerializer.Meta):
-        fields = ["id", "username", "email", "first_name", "last_name", "student"]
+        fields = ["id", "username", "email", "first_name", "last_name","date_joined", "student"]
 
 
 class VirtualClassSerializer(serializers.ModelSerializer):

@@ -72,6 +72,8 @@ class StudentProfilePicViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods = ['GET','POST'], permission_classes=[permissions.IsAuthenticated])
     def profile(self, request):
         student = Student.objects.get(user=self.request.user.id)
+        # student = Student.objects.get(user=self.kwargs.get('user_pk'))
+
         serializer = UpdateProfilePicSerializer(student)
 
         if request.method == 'GET':
