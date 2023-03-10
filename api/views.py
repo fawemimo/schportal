@@ -43,14 +43,8 @@ class TeacherViewSet(viewsets.ModelViewSet):
 
 class StudentViewSet(viewsets.ModelViewSet):
     http_method_names = ["get", "patch"]
-    
-
-    def get_serializer_class(self):
-        if self.request.method == "PATCH":
-            return UpdateStudentProfilePicSerializer
-        else:
-            return StudentSerializer 
-
+    serializer_class = StudentSerializer
+   
     def get_queryset(self):
         if self.request.user.is_authenticated:
             
