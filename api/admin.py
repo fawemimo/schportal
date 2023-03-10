@@ -146,12 +146,12 @@ class TeacherAdmin(admin.ModelAdmin):
             return f"Teacher has no user object"
         return f"{teacher.user.first_name} {teacher.user.last_name}"
 
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
+    # def get_queryset(self, request):
+    #     queryset = super().get_queryset(request)
 
-        if request.user.is_superuser:
-            return queryset
-        return queryset.filter(id=request.user.id)
+    #     if request.user.is_superuser:
+    #         return queryset
+    #     return queryset.filter(id=request.user.id)
 
 
 @admin.register(ShortQuiz)
@@ -202,26 +202,26 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
         else:
             return "No Attendance"
 
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
+    # def get_queryset(self, request):
+    #     queryset = super().get_queryset(request)
 
-        if request.user.is_superuser:
-            return queryset
-        elif request.user.is_staff:
-            return queryset.filter(batch__teacher__user=request.user.id)
+    #     if request.user.is_superuser:
+    #         return queryset
+    #     elif request.user.is_staff:
+    #         return queryset.filter(batch__teacher__user=request.user.id)
 
-    def save_model(self, request, obj, form, change):
-        obj.batch.teacher.user = request.user
-        return super().save_model(request, obj, form, change)
+    # def save_model(self, request, obj, form, change):
+    #     obj.batch.teacher.user = request.user
+    #     return super().save_model(request, obj, form, change)
 
-    def save_formset(self, request, form, formset, change):
-        formset.save()
-        form.instance.save()
+    # def save_formset(self, request, form, formset, change):
+    #     formset.save()
+    #     form.instance.save()
 
-    def get_form(self, request, obj=None, **kwargs):
-        request._obj_ = obj
+    # def get_form(self, request, obj=None, **kwargs):
+    #     request._obj_ = obj
 
-        return super().get_form(request, **kwargs)
+    #     return super().get_form(request, **kwargs)
 
 
 @admin.register(Student)
@@ -300,24 +300,24 @@ class AssignmentAllocationAdmin(admin.ModelAdmin):
     def supervisor(self, obj):
         return obj.supervisor.user
 
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        if request.user.is_superuser:
-            return queryset
-        return queryset.filter(supervisor__user=request.user)
+    # def get_queryset(self, request):
+    #     queryset = super().get_queryset(request)
+    #     if request.user.is_superuser:
+    #         return queryset
+    #     return queryset.filter(supervisor__user=request.user)
 
-    def save_model(self, request, obj, form, change):
-        if getattr(obj, "supervisor", None) is None:
-            obj.supervisor.user = request.user
-        obj.save()
+    # def save_model(self, request, obj, form, change):
+    #     if getattr(obj, "supervisor", None) is None:
+    #         obj.supervisor.user = request.user
+    #     obj.save()
 
-    def get_form(self, request, obj=None, **kwargs):
-        form_class = super(AssignmentAllocationAdmin, self).get_form(
-            request, obj, **kwargs
-        )
-        form_class(request.user)
+    # def get_form(self, request, obj=None, **kwargs):
+    #     form_class = super(AssignmentAllocationAdmin, self).get_form(
+    #         request, obj, **kwargs
+    #     )
+    #     form_class(request.user)
 
-        return form_class
+    #     return form_class
 
 
 @admin.register(ProjectAllocation)
@@ -346,10 +346,7 @@ class CourseManualAdmin(admin.ModelAdmin):
 @admin.register(CourseManualAllocation)
 class CourseManualAllocationAdmin(admin.ModelAdmin):
     list_display = ["course_manual", "released_by", "when_released"]
-
-    # def student(self, obj):
-    #     return obj.student.user
-
+    
     def course_manual(self, obj):
         return obj.course_manual.title
 
