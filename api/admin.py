@@ -300,25 +300,6 @@ class AssignmentAllocationAdmin(admin.ModelAdmin):
     def supervisor(self, obj):
         return obj.supervisor.user
 
-    # def get_queryset(self, request):
-    #     queryset = super().get_queryset(request)
-    #     if request.user.is_superuser:
-    #         return queryset
-    #     return queryset.filter(supervisor__user=request.user)
-
-    # def save_model(self, request, obj, form, change):
-    #     if getattr(obj, "supervisor", None) is None:
-    #         obj.supervisor.user = request.user
-    #     obj.save()
-
-    # def get_form(self, request, obj=None, **kwargs):
-    #     form_class = super(AssignmentAllocationAdmin, self).get_form(
-    #         request, obj, **kwargs
-    #     )
-    #     form_class(request.user)
-
-    #     return form_class
-
 
 @admin.register(ProjectAllocation)
 class ProjectAllocationAdmin(admin.ModelAdmin):

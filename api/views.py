@@ -63,7 +63,7 @@ class StudentViewSet(viewsets.ModelViewSet):
 
 
 class StudentProfilePicViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get','patch','put']
+    http_method_names = ['get','post']
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -71,23 +71,21 @@ class StudentProfilePicViewSet(viewsets.ModelViewSet):
         return Student.objects.filter(user_id=self.request.user.id)
 
     def get_serializer_class(self):
-        if self.request.method == 'PATCH':
-            return UpdateStudentProfilePicSerializer
-        elif self.request.method == 'PUT':
-             return UpdateStudentProfilePicSerializer
-        return UpdateStudentProfilePicSerializer     
+        if self.request.method == 'POST':
+            return UpdateProfilePicSerializer        
+        return UpdateProfilePicSerializer     
     
-    @action(detail=False, methods = ['GET','PATCH','PUT'], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods = ['GET','POST'], permission_classes=[permissions.IsAuthenticated])
     def profile(self, request):
-        student = Student.objects.get(user=self.kwargs.get('user_pk'))
-        serializer = UpdateStudentProfilePicSerializer(student)
+        student = Student.objects.get(user=self.request.user.id)
+        serializer = UpdateProfilePicSerializer(student)
 
         if request.method == 'GET':
-            serializer = UpdateStudentProfilePicSerializer(student)
+            serializer = UpdateProfilePicSerializer(student)
             return Response(serializer.data)
         
-        elif request.method == 'PUT':
-            serializer = UpdateStudentProfilePicSerializer(student, data=request.data)
+        elif request.method == 'POST':
+            serializer = UpdateProfilePicSerializer(student, data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)  
