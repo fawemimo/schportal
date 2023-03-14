@@ -175,6 +175,12 @@ class InterestsAdmin(admin.ModelAdmin):
         return obj.course.title
 
 
+@admin.register(Sponsorship)
+class SponsorshipAdmin(admin.ModelAdmin):
+    list_display = ['name_of_sponsor','selection','phone_number','email','number_of_student']
+    list_filter = ['selection']   
+    ordering = ['name_of_sponsor']
+
 @admin.register(StudentAttendance)
 class StudentAttendanceAdmin(admin.ModelAdmin):
     list_display = ["student_name", "batch_", "attendance", "timestamp"]
@@ -226,9 +232,9 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ["full_name","profile_pix", "student_idcard_id", "batch_name"]
+    list_display = ["full_name", "profile_pix", "student_idcard_id", "batch_name"]
     search_fields = ["user__first_name", "user__last_name__istartswith"]
-   
+
     def batch_name(self, obj):
         obj = obj.batch_set.values("title", "id")
         for x in obj:
@@ -239,24 +245,25 @@ class StudentAdmin(admin.ModelAdmin):
                 + urlencode({"batch__id": str(x["id"])})
             )
 
-            return format_html(f'<a href="{url}">{x["title"].upper()}</a>')   
+            return format_html(f'<a href="{url}">{x["title"].upper()}</a>')
 
     def profile_pix(self, instance):
-        if instance.profile_pic.name != '':
-            return format_html(f'<img src="{instance.profile_pic.url}" class="thumbnail"/>')
-        return 'No Profile Pics Added'
+        if instance.profile_pic.name != "":
+            return format_html(
+                f'<img src="{instance.profile_pic.url}" class="thumbnail"/>'
+            )
+        return "No Profile Pics Added"
 
     class Media:
-        css = {
-            'all' : ['api/css/styles.css']
-        }       
+        css = {"all": ["api/css/styles.css"]}
 
 
 @admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
-    list_display = [ "name", "assignment_file", "date_posted"]
-    search_fields = ["name"]    
-    
+    list_display = ["name", "assignment_file", "date_posted"]
+    search_fields = ["name"]
+
+
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ["name", "project_docs", "project_assigned", "date_posted"]
@@ -264,10 +271,10 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(Batch)
 class BatchAdmin(admin.ModelAdmin):
-    list_display = ["title", "course","total_students", "start_date", "end_date"]
-    search_fields = ["title","students__user__first_name__istartswith"]
-    list_select_related = ["teacher","course"]
-    autocomplete_fields = ['students']
+    list_display = ["title", "course", "total_students", "start_date", "end_date"]
+    search_fields = ["title", "students__user__first_name__istartswith"]
+    list_select_related = ["teacher", "course"]
+    autocomplete_fields = ["students"]
 
     @admin.display(ordering="start_date")
     def total_students(self, obj):
@@ -287,7 +294,7 @@ class BatchAdmin(admin.ModelAdmin):
 @admin.register(AssignmentAllocation)
 class AssignmentAllocationAdmin(admin.ModelAdmin):
     list_display = ["batch", "assignment", "supervisor", "deadline"]
-    list_display_link = ['assignment']
+    list_display_link = ["assignment"]
     autocomplete_fields = ["batch", "assignment"]
     list_select_related = ["assignment", "batch", "supervisor"]
 
@@ -318,16 +325,16 @@ class ProjectAllocationAdmin(admin.ModelAdmin):
 @admin.register(CourseManual)
 class CourseManualAdmin(admin.ModelAdmin):
 
-    list_display = ['title', 'manual', 'date_posted', 'date_updated']
-    search_fields = ['title']
-    list_filter = ['date_posted','date_updated']
+    list_display = ["title", "manual", "date_posted", "date_updated"]
+    search_fields = ["title"]
+    list_filter = ["date_posted", "date_updated"]
     list_per_page = 25
 
 
 @admin.register(CourseManualAllocation)
 class CourseManualAllocationAdmin(admin.ModelAdmin):
     list_display = ["course_manual", "released_by", "when_released"]
-    
+
     def course_manual(self, obj):
         return obj.course_manual.title
 
@@ -432,5 +439,59 @@ class VirtualHowItWorksAdmin(admin.ModelAdmin):
 @admin.register(OurTeam)
 class OurTeamAdmin(admin.ModelAdmin):
 
-    list_display = ['id','image', 'full_name', 'designation', 'social_dump']
-    list_display_link = ['id','full_name']
+    list_display = ["id", "image", "full_name", "designation", "social_dump"]
+    list_display_link = ["id", "full_name"]
+
+
+# JobPortal region
+
+
+@admin.register(Employer)
+class EmployerAdmin(admin.ModelAdmin):
+
+    list_display = ["full_name", "company_name", "date_created"]
+    date_hierarchy = "date_created"
+    search_fields = ["full_name", "company_name"]
+    ordering = [
+        "company_name",
+    ]
+    list_per_page = 25
+
+
+@admin.register(JobCategory)
+class JobCategoryAdmin(admin.ModelAdmin):
+
+    list_display = ["title", "experience", "job_type", "job_location", "date_created"]
+    list_filter = ["experience", "job_type", "job_location"]
+    list_editable = ["experience", "job_type", "job_location"]
+    search_fields = ["title"]
+    date_hierarchy = "date_created"
+    ordering = ["title"]
+    list_per_page = 25
+
+
+@admin.register(Job)
+class JobAdmin(admin.ModelAdmin):
+
+    list_display = ["employer", "job_title", "job_category", "save_as", "close_job"]
+    list_editable = ["save_as", "close_job"]
+    list_filter = ["date_posted", "date_updated"]
+    ordering = ["date_posted"]
+    date_hierarchy = "date_posted"
+    list_select_related = ["job_category","employer"]
+    autocomplete_fields = ["job_category","employer"]
+
+
+@admin.register(JobApplication)
+class JobApplicationAdmin(admin.ModelAdmin):
+
+    list_display = ["student", "job", "cv_upload", "date_applied"]
+    list_filter = ["years_of_experience"]
+    search_fields = ["student"]
+    autocomplete_fields = ["student"]
+    date_hierarchy = "date_applied"
+    ordering = ["date_applied"]
+    list_select_related = ["student", "job"]
+
+
+# end JobPortal region

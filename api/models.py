@@ -93,7 +93,13 @@ class Student(models.Model):
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
     date_of_birth = models.CharField(max_length=50, blank=True, null=True)
     mobile_numbers = models.CharField(max_length=250)
-    profile_pic = models.ImageField(upload_to="students_profilepix/", validators= [validate_file_size, FileExtensionValidator(allowed_extensions=['jpg', 'png','jpeg'])])
+    profile_pic = models.ImageField(
+        upload_to="students_profilepix/",
+        validators=[
+            validate_file_size,
+            FileExtensionValidator(allowed_extensions=["jpg", "png", "jpeg"]),
+        ],
+    )
     residential_address = models.CharField(max_length=250)
     contact_address = models.CharField(max_length=250)
     next_of_kin_fullname = models.CharField(max_length=150)
@@ -289,6 +295,23 @@ class OurTeam(models.Model):
         return str(self.id)
 
 
+class Sponsorship(models.Model):
+    choices_type = (
+        ("Individual", "Individual"),
+        ("Organisation", "Organisation"),
+    )
+    name_of_sponsor = models.CharField(max_length=255)
+    selection = models.CharField(max_length=50, choices=choices_type)
+    number_of_student = models.CharField(max_length=50)
+    email = models.EmailField(max_length=255)
+    phone_number = models.CharField(max_length=255)
+    remarks = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str(self):
+        return self.name_of_sponsor
+
+
 # endregion
 
 
@@ -304,9 +327,9 @@ class InterestedForm(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.course.title}"
-    
 
-class Assignment(models.Model):    
+
+class Assignment(models.Model):
     name = models.CharField(max_length=255)
     assignment_file = models.FileField(upload_to="assignment/%Y%M%d")
     assignment_given = models.BooleanField(default=False)
@@ -315,6 +338,7 @@ class Assignment(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
 
 class AssignmentAllocation(models.Model):
     batch = models.ForeignKey(Batch, on_delete=models.SET_NULL, null=True, blank=True)
@@ -521,11 +545,13 @@ class VirtualVsOther(models.Model):
 class HowItWork(models.Model):
 
     how_it_work_class_type = (
-        ('Physical Class', 'Physical Class'),
-        ('Virtual Class', 'Virtual Class')
+        ("Physical Class", "Physical Class"),
+        ("Virtual Class", "Virtual Class"),
     )
 
-    how_it_work_class = models.CharField(max_length=50, choices=how_it_work_class_type, blank=True, null=True)
+    how_it_work_class = models.CharField(
+        max_length=50, choices=how_it_work_class_type, blank=True, null=True
+    )
     content = models.TextField()
 
     def __str__(self):
@@ -533,3 +559,88 @@ class HowItWork(models.Model):
 
 
 # endregion
+
+
+# job portal region
+
+
+class Employer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=255)
+    company_name = models.CharField(max_length=255)
+    tagline = models.TextField()
+    company_logo = models.ImageField(
+        upload_to="JobPortal/Company",
+        validators=[
+            validate_file_size,
+            FileExtensionValidator(allowed_extensions=["svg", "jpg", "png", "jpeg"]),
+        ],
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user}"
+
+
+class JobCategory(models.Model):
+    EXPERIENCE_LEVEL = (
+        ("Experienced", "Experienced"),
+        ("Intermediate", "Intermediate"),
+        ("Internship", "Internship"),
+    )
+
+    JOB_TYPE = (
+        ("Full-time", "Full-time"),
+        ("Part-time", "Part-time"),
+        ("Contractor", "Contractor"),
+    )
+
+    JOB_LOCATION = (("On-site", "On-site"), ("Hybrid", "Hybrid"), ("Remote", "Remote"))
+
+    title = models.CharField(max_length=255)
+    experience = models.CharField(max_length=50, choices=EXPERIENCE_LEVEL)
+    job_type = models.CharField(max_length=50, choices=JOB_TYPE)
+    job_location = models.CharField(max_length=50, choices=JOB_LOCATION)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Job(models.Model):
+    STATUS = (("Draft", "Draft"), ("Published", "Published"))
+
+    employer = models.ForeignKey(Employer, on_delete=models.CASCADE)
+    job_category = models.ForeignKey(JobCategory, on_delete=models.CASCADE)
+    job_title = models.CharField(max_length=255)
+    save_as = models.CharField(max_length=50, choices=STATUS, default="Draft")
+    job_summary = models.TextField()
+    job_responsibilities = models.TextField()
+    close_job = models.BooleanField(default=False)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.employer}:- {self.job_title}"
+
+
+class JobApplication(models.Model):
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, blank=True, null=True
+    )
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    cv_upload = models.FileField(
+        upload_to="JobPortal/cv_upload",
+        validators=[
+            FileExtensionValidator(allowed_extensions=("pdf", "jpg", "jpeg", "png"))
+        ],
+    )
+    years_of_experience = models.CharField(max_length=50)
+    date_applied = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.student)
+
+
+# endportal region

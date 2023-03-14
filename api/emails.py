@@ -1,6 +1,4 @@
 from templated_mail.mail import BaseEmailMessage
-from django.core.mail import EmailMessage 
-from django.template.loader import render_to_string
 from django.conf import settings
 from datetime import date
 from api.models import Course
@@ -121,3 +119,22 @@ def send_financial_aid_email(aid_type,first_name,last_name,email,mobile):
         
     except Exception as e:
         return e    
+    
+
+def send_sponsorship_email( name_of_sponsor, selection, number_of_student, email, phone_number, remarks):
+    try:
+        message = BaseEmailMessage(template_name='api/email_response/sponsorship.html',
+            context = {
+                'name_of_sponsor':name_of_sponsor,
+                'selection':selection,
+                'email':email,
+                'phone_number':phone_number,
+                'number_of_student':number_of_student,
+                'remarks':remarks,
+            }
+        )
+
+        message.send([email,settings.EMAIL_HOST_USER])
+
+    except Exception as e:
+        return e     

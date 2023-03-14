@@ -77,6 +77,17 @@ router.register(
     "virtualvsothers", views.VirtualVsOthersViewSet, basename="virtualvsothers"
 )
 router.register('ourteams', views.OurTeamViewSet,basename='ourteams')
+router.register('sponsorhips', views.SponsorshipsViewSet, basename='sponsorships')
+
+
+# JOB PORTAL REGION
+router.register('jobs', views.JobViewSet,basename='jobs')
+router.register('employerjobs', views.EmployerPostedJobViewSet, basename='employerjobs')
+router.register('studentjobapplications', views.JobAppliedViewSet, basename='studentjobapplications')
+
+
+
+# END JOB PORTAL REGION
 
 
 # Nested routes

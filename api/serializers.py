@@ -5,6 +5,7 @@ from api.emails import (
     send_interested_email,
     send_kids_coding_email,
     send_short_quizze_email,
+    send_sponsorship_email,
     send_virtualclass_email,
 )
 from .models import *
@@ -23,7 +24,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["username"] = self.user.username
         data["first_name"] = self.user.first_name
         data["last_name"] = self.user.last_name
-        data["student_id"] = self.user.student.student_idcard_id
+        # data["student_id"] = self.user.student.student_idcard_id
 
         return data
 
@@ -318,6 +319,42 @@ class InterestedFormSerializer(serializers.ModelSerializer):
         return interestform
 
 
+class SponsorshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sponsorship
+        fields = [
+            "id",
+            "name_of_sponsor",
+            "selection",
+            "number_of_student",
+            "email",
+            "phone_number",
+            "remarks",
+            "date_created",
+        ]
+
+    def save(self, **kwargs):        
+        name_of_sponsor = self.validated_data["name_of_sponsor"]
+        selection = self.validated_data["selection"]
+        number_of_student = self.validated_data["number_of_student"]
+        email = self.validated_data["email"]
+        phone_number = self.validated_data["phone_number"]
+        remarks = self.validated_data["remarks"]
+
+        sponsorship = Sponsorship.objects.create(
+            name_of_sponsor=name_of_sponsor,
+            selection=selection,
+            number_of_student=number_of_student,
+            email=email,
+            phone_number=phone_number,
+            remarks=remarks,
+        )
+
+        send_sponsorship_email( name_of_sponsor, selection, number_of_student, email, phone_number, remarks)
+
+        return sponsorship
+
+
 class BatchSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
     course_manuals = serializers.SerializerMethodField()
@@ -523,7 +560,15 @@ class UserSerializer(BaseUserSerializer):
     student = StudentSerializer(read_only=True)
 
     class Meta(BaseUserSerializer.Meta):
-        fields = ["id", "username", "email", "first_name", "last_name","date_joined", "student"]
+        fields = [
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "date_joined",
+            "student",
+        ]
 
 
 class VirtualClassSerializer(serializers.ModelSerializer):
@@ -772,3 +817,97 @@ class OurTeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = OurTeam
         fields = ["id", "image", "full_name", "designation", "social_dump"]
+
+
+# JobPortal region
+
+
+class EmployerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employer
+        fields = [
+            "id",
+            "user",
+            "full_name",
+            "company_name",
+            "tagline",
+            "company_logo",
+            "date_created",
+            "date_updated",
+        ]
+
+
+class JobSerializer(serializers.ModelSerializer):
+    employer = EmployerSerializer()
+    job_category = serializers.StringRelatedField()
+
+    class Meta:
+        model = Job
+        fields = [
+            "id",
+            "employer",
+            "job_category",
+            "job_title",
+            "save_as",
+            "close_job",
+            "job_summary",
+            "job_responsibilities",
+            "date_posted",
+            "date_updated",
+        ]
+
+
+class StudentJobApplicationSerializer(serializers.ModelSerializer):
+    job_applied_for = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Student
+        fields = [
+            "id",
+            "user",
+            "full_name",
+            "date_of_birth",
+            "mobile_numbers",
+            "job_applied_for",
+        ]
+
+    def get_job_applied_for(self, obj):
+        return obj.jobapplication_set.values(
+            "job__job_category", "job__job_title", "job__date_posted"
+        )
+
+
+class EmployerPostedJobSerializer(serializers.ModelSerializer):
+    applicants = serializers.SerializerMethodField()
+    total_applicants = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Job
+        fields = [
+            "id",
+            "employer",
+            "job_category",
+            "job_title",
+            "job_summary",
+            "job_responsibilities",
+            "date_posted",
+            "date_updated",
+            "applicants",
+            "total_applicants",
+        ]
+
+    def get_total_applicants(self, obj):
+        return obj.jobapplication_set.count()
+
+    def get_applicants(self, obj):
+        return obj.jobapplication_set.values(
+            "id",
+            "student",
+            "job",
+            "cv_upload",
+            "years_of_experience",
+            "date_applied",
+        )
+
+
+# EndJobPortalRegion
