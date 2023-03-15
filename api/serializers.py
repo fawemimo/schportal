@@ -332,6 +332,7 @@ class SponsorshipSerializer(serializers.ModelSerializer):
             "id",
             "name_of_sponsor",
             "selection",
+            "organisation_name",
             "number_of_student",
             "email",
             "phone_number",

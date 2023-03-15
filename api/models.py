@@ -313,6 +313,7 @@ class Sponsorship(models.Model):
     )
     name_of_sponsor = models.CharField(max_length=255)
     selection = models.CharField(max_length=50, choices=choices_type)
+    organisation_name = models.CharField(max_length=255, blank=True, null=True)
     number_of_student = models.CharField(max_length=50)
     email = models.EmailField(max_length=255)
     phone_number = models.CharField(max_length=255)
@@ -493,8 +494,9 @@ class InternationalModel(models.Model):
 class FinancialAid(models.Model):
     aid_type_choices = (
         ("Student Loan", "Student Loan"),
-        ("Full Scholarship", "Full Scholarship"),
-        ("Partial Scholarship", "Partial Scholarship"),
+        ("Full Scholarship(Tuition + Laptop + Stipend)", "Full Scholarship(Tuition + Laptop + Stipend)"),
+        ("Scholarship Tier 1 (Tuition + Laptop)", "Scholarship Tier 1 (Tuition + Laptop)"),
+        ("Scholarship Tier 2 (Tuition)", "Scholarship Tier 2 (Tuition)"),
     )
 
     aid_type = models.CharField(max_length=50, choices=aid_type_choices)

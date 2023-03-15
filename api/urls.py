@@ -78,7 +78,7 @@ router.register(
     "virtualvsothers", views.VirtualVsOthersViewSet, basename="virtualvsothers"
 )
 router.register('ourteams', views.OurTeamViewSet,basename='ourteams')
-router.register('sponsorhips', views.SponsorshipsViewSet, basename='sponsorships')
+router.register('sponsorships', views.SponsorshipsViewSet, basename='sponsorships')
 
 
 # JOB PORTAL REGION
