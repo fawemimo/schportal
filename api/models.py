@@ -248,6 +248,17 @@ class NavLinkItem(models.Model):
         return self.item
 
 
+class AboutUsSection(models.Model):
+    our_vision = models.TextField()
+    our_mission = models.TextField()
+    our_mission_item = models.TextField()
+    why_anchorsoft = models.TextField()
+    ordering = models.CharField(max_length=10)
+
+    def __str__(self):
+        return str(self.id)
+
+
 # For any section that just requires a content dump
 # like the footer etc
 

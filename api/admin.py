@@ -51,6 +51,12 @@ class TechIconAdmin(admin.ModelAdmin):
     list_editable = ["published"]
 
 
+@admin.register(AboutUsSection)
+class AboutUsSectionAdmin(admin.ModelAdmin):
+    list_display = ['id','our_vision','ordering']
+    list_editable = ['ordering']
+
+
 @admin.register(CourseCategory)
 class CourseCategoryAdmin(admin.ModelAdmin):
     list_display = ["id", "title", "total_course"]

@@ -176,6 +176,12 @@ class SectionBannerSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class AboutUsSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AboutUsSection
+        fields = "__all__"
+
+
 class TestimonialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Testimonial
@@ -333,7 +339,7 @@ class SponsorshipSerializer(serializers.ModelSerializer):
             "date_created",
         ]
 
-    def save(self, **kwargs):        
+    def save(self, **kwargs):
         name_of_sponsor = self.validated_data["name_of_sponsor"]
         selection = self.validated_data["selection"]
         number_of_student = self.validated_data["number_of_student"]
@@ -350,7 +356,9 @@ class SponsorshipSerializer(serializers.ModelSerializer):
             remarks=remarks,
         )
 
-        send_sponsorship_email( name_of_sponsor, selection, number_of_student, email, phone_number, remarks)
+        send_sponsorship_email(
+            name_of_sponsor, selection, number_of_student, email, phone_number, remarks
+        )
 
         return sponsorship
 
@@ -908,6 +916,20 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
             "years_of_experience",
             "date_applied",
         )
+
+
+class JobApplicationSerializer(serializers.ModelSerializer):
+    job_id = serializers.IntegerField()
+    student = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = JobApplication
+        fields = ["id", "student", "job_id", "cv_upload", "years_of_experience"]
+
+    def validate_job_id(self, value):
+        if not Job.objects.filter(pk=value).exists():
+            raise serializers.ValidationError("The selected Job ID does not exist")
+        return value
 
 
 # EndJobPortalRegion

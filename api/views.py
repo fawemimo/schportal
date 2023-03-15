@@ -162,6 +162,12 @@ class NavLinkViewSet(viewsets.ModelViewSet):
     permission_classes = []
 
 
+class AboutUsSectionViewSet(viewsets.ModelViewSet):
+    http_method_names = ["get"]
+    queryset = AboutUsSection.objects.all()
+    serializer_class = AboutUsSectionSerializer
+
+
 class NavLinkItemViewSet(viewsets.ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
 
@@ -533,8 +539,7 @@ class SponsorshipsViewSet(viewsets.ModelViewSet):
     http_method_names = ["post"]
 
     queryset = Sponsorship.objects.all()
-    serializer_class =SponsorshipSerializer
-
+    serializer_class = SponsorshipSerializer
 
 
 # JobPortal region
@@ -565,8 +570,32 @@ class JobAppliedViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Student.objects.filter(user = self.request.user).prefetch_related('jobapplication_set')
+        return Student.objects.filter(user=self.request.user).prefetch_related(
+            "jobapplication_set"
+        )
 
+
+class StudentApplicationForJobViewSet(viewsets.ModelViewSet):
+    http_method_names = ["post"]
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return JobApplication.objects.get(student__user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return JobApplicationSerializer
+        return JobApplicationSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = JobApplicationSerializer(
+            data=request.data, context={"user_id": self.request.user.id}
+        )
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        serializer = JobApplicationSerializer(order)
+        return Response(serializer.data)
 
 
 # End JobPortal region

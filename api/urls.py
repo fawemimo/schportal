@@ -7,6 +7,7 @@ router.register("topbars", views.TopBarViewSet)
 router.register("mainbanners", views.MainBannerViewSet)
 router.register("sectionbanners", views.SectionBannerViewSet)
 router.register("testimonials", views.TestimonialViewSet)
+router.register("aboutus", views.AboutUsSectionViewSet)
 router.register("techicons", views.TechIconViewSet)
 router.register("featuredprojects", views.FeaturedProjectViewSet)
 router.register("componentdumps", views.ComponentDumpViewSet)
@@ -84,7 +85,7 @@ router.register('sponsorhips', views.SponsorshipsViewSet, basename='sponsorships
 router.register('jobs', views.JobViewSet,basename='jobs')
 router.register('employerjobs', views.EmployerPostedJobViewSet, basename='employerjobs')
 router.register('studentjobapplications', views.JobAppliedViewSet, basename='studentjobapplications')
-
+router.register('jobapplications', views.StudentApplicationForJobViewSet, basename='jobapplications')
 
 
 # END JOB PORTAL REGION
