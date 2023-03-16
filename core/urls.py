@@ -7,6 +7,7 @@ urlpatterns = [
     path('contmgr/', admin.site.urls),
     path('api/', include('api.urls')),
     path('', include('mainsite.urls')),
+    path('tinymce/', include('tinymce.urls')),
 ]
 
 if settings.DEBUG:

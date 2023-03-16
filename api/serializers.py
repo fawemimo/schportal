@@ -566,8 +566,6 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 
 
 class UserSerializer(BaseUserSerializer):
-    student = StudentSerializer(read_only=True)
-
     class Meta(BaseUserSerializer.Meta):
         fields = [
             "id",
@@ -576,7 +574,6 @@ class UserSerializer(BaseUserSerializer):
             "first_name",
             "last_name",
             "date_joined",
-            "student",
         ]
 
 
@@ -838,12 +835,27 @@ class EmployerSerializer(serializers.ModelSerializer):
             "id",
             "user",
             "full_name",
+            "location",
             "company_name",
             "tagline",
             "company_logo",
             "date_created",
             "date_updated",
         ]
+
+
+class UpdateEmployerSerializer(serializers.ModelSerializer):
+    # email = serializers.SerializerMethodField(source='user__email')
+    class Meta:
+        model = Employer
+        fields = ["id", "tagline", "location", "company_name", "company_logo"]
+
+    def update(self, instance, validated_data):
+        instance.company_logo = validated_data["company_logo"]
+        instance.company_name = validated_data["company_name"]
+        instance.location = validated_data["location"]
+        instance.tagline = validated_data["tagline"]
+        return super(UpdateEmployerSerializer, self).update(instance, validated_data)
 
 
 class JobSerializer(serializers.ModelSerializer):

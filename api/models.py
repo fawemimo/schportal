@@ -3,9 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.text import slugify
 from django.core.validators import FileExtensionValidator, MinValueValidator
-import math
-from decimal import Decimal
-
+from tinymce import models as tinymce_models
 from api.validate import validate_file_size
 
 
@@ -13,12 +11,13 @@ class User(AbstractUser):
     user_type_choices = (
         ("teacher", "Teacher"),
         ("student", "Student"),
+        ("employer", "Employer"),
     )
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     user_type = models.CharField(
-        max_length=7, choices=user_type_choices, blank=True, null=True
+        max_length=8, choices=user_type_choices, blank=True, null=True
     )
 
 
@@ -494,8 +493,14 @@ class InternationalModel(models.Model):
 class FinancialAid(models.Model):
     aid_type_choices = (
         ("Student Loan", "Student Loan"),
-        ("Full Scholarship(Tuition + Laptop + Stipends)", "Full Scholarship(Tuition + Laptop + Stipends)"),
-        ("Scholarship Tier 1 (Tuition + Laptop)", "Scholarship Tier 1 (Tuition + Laptop)"),
+        (
+            "Full Scholarship(Tuition + Laptop + Stipends)",
+            "Full Scholarship(Tuition + Laptop + Stipends)",
+        ),
+        (
+            "Scholarship Tier 1 (Tuition + Laptop)",
+            "Scholarship Tier 1 (Tuition + Laptop)",
+        ),
         ("Scholarship Tier 2 (Tuition)", "Scholarship Tier 2 (Tuition)"),
     )
 
@@ -580,6 +585,7 @@ class HowItWork(models.Model):
 class Employer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=255)
+    location = models.CharField(max_length=255, null=True, blank=True)
     company_name = models.CharField(max_length=255)
     tagline = models.TextField()
     company_logo = models.ImageField(
@@ -629,7 +635,7 @@ class Job(models.Model):
     job_title = models.CharField(max_length=255)
     save_as = models.CharField(max_length=50, choices=STATUS, default="Draft")
     job_summary = models.TextField()
-    job_responsibilities = models.TextField()
+    job_responsibilities = tinymce_models.HTMLField()
     close_job = models.BooleanField(default=False)
     date_posted = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)

@@ -543,23 +543,46 @@ class SponsorshipsViewSet(viewsets.ModelViewSet):
 
 # JobPortal region
 
+
 class EmployerViewSet(viewsets.ModelViewSet):
-    http_method_names = ["get","post"]
+    http_method_names = ["get", "patch", "head", "options", "post"]
 
-    serializer_class = EmployerSerializer
-    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+    permission_classes = [permissions.IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        user = request.data['user']
-        full_name = request.data['full_name']
-        company_name = request.data['company_name']
-        tagline = request.data['tagline']
-        company_logo = request.data['company_logo']
-        
-        employer = Employer.objects.create(user = user,full_name=full_name, company_name=company_name,tagline=tagline, company_logo=company_logo)
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return EmployerSerializer
+        elif self.request.method == "POST":
+            return UpdateEmployerSerializer
+        else:
+            return UpdateEmployerSerializer
 
-        return Response(employer.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        return Employer.objects.only("id").filter(user_id=self.request.user.id)
 
+    @action(
+        detail=False,
+        methods=["GET", "POST"],
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    def profile(self, request):
+        employer = Employer.objects.get(user=self.request.user.id)
+        # employer = employer.objects.get(user=self.kwargs.get('user_pk'))
+
+        serializer = UpdateEmployerSerializer(employer)
+
+        if request.method == "GET":
+            serializer = UpdateEmployerSerializer(employer)
+            return Response(serializer.data)
+
+        elif request.method == "POST":
+            serializer = UpdateEmployerSerializer(employer, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class JobViewSet(viewsets.ModelViewSet):
@@ -570,7 +593,7 @@ class JobViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class EmployerPostedJobViewSet(viewsets.ModelViewSet):
+class EmployerJobApplicantViewSet(viewsets.ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = EmployerPostedJobSerializer
@@ -580,7 +603,7 @@ class EmployerPostedJobViewSet(viewsets.ModelViewSet):
         return Job.objects.filter(employer__user=self.request.user)
 
 
-class JobAppliedViewSet(viewsets.ModelViewSet):
+class StudentAppliedJobViewSet(viewsets.ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = StudentJobApplicationSerializer

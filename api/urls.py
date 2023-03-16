@@ -77,15 +77,24 @@ router.register("howitworks", views.HowItWorksViewSet, basename="virtualhowitwor
 router.register(
     "virtualvsothers", views.VirtualVsOthersViewSet, basename="virtualvsothers"
 )
-router.register('ourteams', views.OurTeamViewSet,basename='ourteams')
-router.register('sponsorships', views.SponsorshipsViewSet, basename='sponsorships')
+router.register("ourteams", views.OurTeamViewSet, basename="ourteams")
+router.register("sponsorships", views.SponsorshipsViewSet, basename="sponsorships")
 
 
 # JOB PORTAL REGION
-router.register('jobs', views.JobViewSet,basename='jobs')
-router.register('employerjobs', views.EmployerPostedJobViewSet, basename='employerjobs')
-router.register('studentjobapplications', views.JobAppliedViewSet, basename='studentjobapplications')
-router.register('jobapplications', views.StudentApplicationForJobViewSet, basename='jobapplications')
+router.register("employers", views.EmployerViewSet, basename="employerprofile")
+router.register(
+    "employerjobapplicants",
+    views.EmployerJobApplicantViewSet,
+    basename="employerjobapplicants",
+)
+router.register("jobs", views.JobViewSet, basename="jobs")
+router.register(
+    "studentappliedjobs", views.StudentAppliedJobViewSet, basename="studentappliedjobs"
+)
+router.register(
+    "jobapplications", views.StudentApplicationForJobViewSet, basename="jobapplications"
+)
 
 
 # END JOB PORTAL REGION

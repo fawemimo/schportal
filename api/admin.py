@@ -53,8 +53,8 @@ class TechIconAdmin(admin.ModelAdmin):
 
 @admin.register(AboutUsSection)
 class AboutUsSectionAdmin(admin.ModelAdmin):
-    list_display = ['id','our_vision','ordering']
-    list_editable = ['ordering']
+    list_display = ["id", "our_vision", "ordering"]
+    list_editable = ["ordering"]
 
 
 @admin.register(CourseCategory)
@@ -183,9 +183,16 @@ class InterestsAdmin(admin.ModelAdmin):
 
 @admin.register(Sponsorship)
 class SponsorshipAdmin(admin.ModelAdmin):
-    list_display = ['name_of_sponsor','selection','phone_number','email','number_of_student']
-    list_filter = ['selection']   
-    ordering = ['name_of_sponsor']
+    list_display = [
+        "name_of_sponsor",
+        "selection",
+        "phone_number",
+        "email",
+        "number_of_student",
+    ]
+    list_filter = ["selection"]
+    ordering = ["name_of_sponsor"]
+
 
 @admin.register(StudentAttendance)
 class StudentAttendanceAdmin(admin.ModelAdmin):
@@ -455,7 +462,7 @@ class OurTeamAdmin(admin.ModelAdmin):
 @admin.register(Employer)
 class EmployerAdmin(admin.ModelAdmin):
 
-    list_display = ["full_name", "company_name", "date_created"]
+    list_display = ["full_name", "location", "company_name", "date_created"]
     date_hierarchy = "date_created"
     search_fields = ["full_name", "company_name"]
     ordering = [
@@ -484,8 +491,8 @@ class JobAdmin(admin.ModelAdmin):
     list_filter = ["date_posted", "date_updated"]
     ordering = ["date_posted"]
     date_hierarchy = "date_posted"
-    list_select_related = ["job_category","employer"]
-    autocomplete_fields = ["job_category","employer"]
+    list_select_related = ["job_category", "employer"]
+    autocomplete_fields = ["job_category", "employer"]
 
 
 @admin.register(JobApplication)

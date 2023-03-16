@@ -29,7 +29,8 @@ INSTALLED_APPS = [
     'django_filters',
     'api',
     'mainsite',
-    'djoser'
+    'djoser',
+    'tinymce'
 ]
 
 MIDDLEWARE = [
@@ -192,6 +193,9 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_USE_SSL=True
+
+# TinyMce Config
+TINYMCE_SPELLCHECKER = True
 
 
 try:
