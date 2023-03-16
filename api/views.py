@@ -2,10 +2,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
-from rest_framework import permissions, status
+from rest_framework import permissions, status, parsers
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 
 
@@ -543,6 +542,24 @@ class SponsorshipsViewSet(viewsets.ModelViewSet):
 
 
 # JobPortal region
+
+class EmployerViewSet(viewsets.ModelViewSet):
+    http_method_names = ["get","post"]
+
+    serializer_class = EmployerSerializer
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+
+    def create(self, request, *args, **kwargs):
+        user = request.data['user']
+        full_name = request.data['full_name']
+        company_name = request.data['company_name']
+        tagline = request.data['tagline']
+        company_logo = request.data['company_logo']
+        
+        employer = Employer.objects.create(user = user,full_name=full_name, company_name=company_name,tagline=tagline, company_logo=company_logo)
+
+        return Response(employer.data, status=status.HTTP_200_OK)
+
 
 
 class JobViewSet(viewsets.ModelViewSet):
