@@ -124,5 +124,4 @@ urlpatterns = [
         views.MyTokenObtainPairView.as_view(),
         name="token_obtain_pair",
     ),
-    
 ]

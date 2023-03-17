@@ -17,7 +17,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class BaseTokenObtainPairSerializer(TokenObtainPairSerializer):
-    
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
@@ -27,18 +26,16 @@ class BaseTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class StudentTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     def validate(self, attrs):
-      
+
         data = super().validate(attrs)
 
         data["id"] = self.user.id
         data["username"] = self.user.username
         data["first_name"] = self.user.first_name
-        data["last_name"] = self.user.last_name        
+        data["last_name"] = self.user.last_name
         data["user_type"] = self.user.user_type
 
         return data
-       
-            
 
     def validate_username(self, value):
         if not User.objects.filter(username=value).exists():
@@ -603,7 +600,15 @@ class StudentAttendanceSerializer(serializers.ModelSerializer):
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
-        fields = ["id","user_type", "username", "email", "password", "first_name", "last_name"]
+        fields = [
+            "id",
+            "user_type",
+            "username",
+            "email",
+            "password",
+            "first_name",
+            "last_name",
+        ]
 
 
 class VirtualClassSerializer(serializers.ModelSerializer):
@@ -895,7 +900,10 @@ class JobCategorySerializer(serializers.ModelSerializer):
 
 class JobSerializer(serializers.ModelSerializer):
     employer = EmployerSerializer()
-    job_category = JobCategorySerializer()
+    job_category = serializers.StringRelatedField()
+    job_location = serializers.SerializerMethodField()
+    experience = serializers.SerializerMethodField()
+    job_type = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
@@ -904,6 +912,9 @@ class JobSerializer(serializers.ModelSerializer):
             "employer",
             "job_category",
             "job_title",
+            "job_location",
+            "experience",
+            "job_type",
             "save_as",
             "close_job",
             "job_summary",
@@ -912,6 +923,14 @@ class JobSerializer(serializers.ModelSerializer):
             "date_updated",
         ]
 
+    def get_job_location(self, obj):
+        return obj.job_category.job_location
+    
+    def get_experience(self, obj):
+        return obj.job_category.experience
+
+    def get_job_type(self, obj):
+        return obj.job_category.job_type
 
 class StudentJobApplicationSerializer(serializers.ModelSerializer):
     job_applied_for = serializers.SerializerMethodField()
