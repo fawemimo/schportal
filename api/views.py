@@ -1,24 +1,25 @@
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import viewsets
+from .filters import *
 from .models import *
+from .paginations import *
 from .serializers import *
-from rest_framework import permissions, status, parsers
+from rest_framework.decorators import action
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, permissions, status
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.decorators import action
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
+    serializer_class = StudentTokenObtainPairSerializer
 
-
-class CourseCategoryViewSet(viewsets.ModelViewSet):
+class CourseCategoryViewSet(ModelViewSet):
     queryset = CourseCategory.objects.all()
     serializer_class = CourseCategorySerializer
     permission_classes = []
 
 
-class CourseViewSet(viewsets.ModelViewSet):
+class CourseViewSet(ModelViewSet):
     http_method_names = ["get", "patch", "post", "delete"]
     serializer_class = CourseSerializer
     lookup_field = "slug"
@@ -35,13 +36,13 @@ class CourseViewSet(viewsets.ModelViewSet):
         return Course.objects.order_by("ordering").all()
 
 
-class TeacherViewSet(viewsets.ModelViewSet):
+class TeacherViewSet(ModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
     permission_classes = [permissions.IsAdminUser]
 
 
-class StudentViewSet(viewsets.ModelViewSet):
+class StudentViewSet(ModelViewSet):
     http_method_names = ["get", "patch"]
     serializer_class = StudentSerializer
 
@@ -56,7 +57,7 @@ class StudentViewSet(viewsets.ModelViewSet):
         return [permissions.IsAdminUser()]
 
 
-class StudentProfilePicViewSet(viewsets.ModelViewSet):
+class StudentProfilePicViewSet(ModelViewSet):
     http_method_names = ["get", "post"]
 
     permission_classes = [permissions.IsAuthenticated]
@@ -94,7 +95,7 @@ class StudentProfilePicViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ScheduleViewSet(viewsets.ModelViewSet):
+class ScheduleViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
     serializer_class = ScheduleSerializer
 
@@ -113,7 +114,7 @@ class ScheduleViewSet(viewsets.ModelViewSet):
     permission_classes = []
 
 
-class TopBarViewSet(viewsets.ModelViewSet):
+class TopBarViewSet(ModelViewSet):
     queryset = TopBar.objects.all()
     serializer_class = TopBarSerializer
     permission_classes = []
@@ -125,49 +126,49 @@ class MainBannerViewSet(ModelViewSet):
     permission_classes = []
 
 
-class SectionBannerViewSet(viewsets.ModelViewSet):
+class SectionBannerViewSet(ModelViewSet):
     queryset = SectionBanner.objects.all()
     serializer_class = SectionBannerSerializer
     permission_classes = []
 
 
-class TestimonialViewSet(viewsets.ModelViewSet):
+class TestimonialViewSet(ModelViewSet):
     queryset = Testimonial.objects.filter(published=True).all()
     serializer_class = TestimonialSerializer
     permission_classes = []
 
 
-class TechIconViewSet(viewsets.ModelViewSet):
+class TechIconViewSet(ModelViewSet):
     queryset = TechIcon.objects.filter(published=True).all()
     serializer_class = TechIconSerializer
     permission_classes = []
 
 
-class FeaturedProjectViewSet(viewsets.ModelViewSet):
+class FeaturedProjectViewSet(ModelViewSet):
     queryset = FeaturedProject.objects.all()
     serializer_class = FeaturedProjectSerializer
     permission_classes = []
 
 
-class ComponentDumpViewSet(viewsets.ModelViewSet):
+class ComponentDumpViewSet(ModelViewSet):
     queryset = ComponentDump.objects.all()
     serializer_class = ComponentDumpSerializer
     permission_classes = []
 
 
-class NavLinkViewSet(viewsets.ModelViewSet):
+class NavLinkViewSet(ModelViewSet):
     queryset = NavLink.objects.all()
     serializer_class = NavLinkSerializer
     permission_classes = []
 
 
-class AboutUsSectionViewSet(viewsets.ModelViewSet):
+class AboutUsSectionViewSet(ModelViewSet):
     http_method_names = ["get"]
     queryset = AboutUsSection.objects.all()
     serializer_class = AboutUsSectionSerializer
 
 
-class NavLinkItemViewSet(viewsets.ModelViewSet):
+class NavLinkItemViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
 
     def get_queryset(self):
@@ -184,7 +185,7 @@ class NavLinkItemViewSet(viewsets.ModelViewSet):
     permission_classes = []
 
 
-class ShortQuizViewSet(viewsets.ModelViewSet):
+class ShortQuizViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
 
     queryset = ShortQuiz.objects.all()
@@ -192,7 +193,7 @@ class ShortQuizViewSet(viewsets.ModelViewSet):
     permission_classes = []
 
 
-class InquiryViewSet(viewsets.ModelViewSet):
+class InquiryViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch"]
 
     queryset = Inquiry.objects.all()
@@ -209,7 +210,7 @@ class InquiryViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class InterestedFormViewSet(viewsets.ModelViewSet):
+class InterestedFormViewSet(ModelViewSet):
     http_method_names = ["post", "get", "patch"]
 
     def get_serializer_class(self):
@@ -232,7 +233,7 @@ class InterestedFormViewSet(viewsets.ModelViewSet):
         ).select_related("course")
 
 
-class AssignmentViewSet(viewsets.ModelViewSet):
+class AssignmentViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch"]
 
     serializer_class = AssignmentBatchSerializer
@@ -250,7 +251,7 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         return [permissions.IsAuthenticated()]
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
+class ProjectViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
 
     serializer_class = ProjectAllocationSerializer
@@ -271,7 +272,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return [permissions.IsAuthenticated()]
 
 
-class CourseCardViewSet(viewsets.ModelViewSet):
+class CourseCardViewSet(ModelViewSet):
 
     http_method_names = ["get", "post", "patch", "delete"]
 
@@ -299,7 +300,7 @@ class CourseCardViewSet(viewsets.ModelViewSet):
         return [permissions.AllowAny()]
 
 
-class CoursesViewSet(viewsets.ModelViewSet):
+class CoursesViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     def get_queryset(self):
@@ -309,7 +310,7 @@ class CoursesViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class CourseManualViewSet(viewsets.ModelViewSet):
+class CourseManualViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = BatchSerializer
@@ -325,7 +326,7 @@ class CourseManualViewSet(viewsets.ModelViewSet):
             pass
 
 
-class ResourceViewSet(viewsets.ModelViewSet):
+class ResourceViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     queryset = Resource.objects.filter(published=True)
@@ -336,7 +337,7 @@ class ResourceViewSet(viewsets.ModelViewSet):
     lookup_value_regex = "[^/]+"
 
 
-class StudentAttendanceViewSet(viewsets.ModelViewSet):
+class StudentAttendanceViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = StudentAttendanceSerializer
@@ -349,7 +350,7 @@ class StudentAttendanceViewSet(viewsets.ModelViewSet):
             )
 
 
-class CourseHomepageFeatured(viewsets.ModelViewSet):
+class CourseHomepageFeatured(ModelViewSet):
     http_method_names = ["get"]
 
     queryset = (
@@ -363,21 +364,21 @@ class CourseHomepageFeatured(viewsets.ModelViewSet):
     lookup_value_regex = "[^/]+"
 
 
-class VirtualClassViewSet(viewsets.ModelViewSet):
+class VirtualClassViewSet(ModelViewSet):
     http_method_names = ["get", "post"]
 
     queryset = VirtualClass.objects.all()
     serializer_class = VirtualClassSerializer
 
 
-class KidsCodingViewSet(viewsets.ModelViewSet):
+class KidsCodingViewSet(ModelViewSet):
     http_method_names = ["get", "post"]
 
     queryset = KidsCoding.objects.all()
     serializer_class = KidsCodingSerializer
 
 
-class KidsCodingCourseViewSet(viewsets.ModelViewSet):
+class KidsCodingCourseViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = KidsCodingCourseSerializer
@@ -390,7 +391,7 @@ class KidsCodingCourseViewSet(viewsets.ModelViewSet):
         )
 
 
-class CourseDetailsViewSet(viewsets.ModelViewSet):
+class CourseDetailsViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     queryset = Course.objects.all()
@@ -410,7 +411,7 @@ class CourseDetailsViewSet(viewsets.ModelViewSet):
         )
 
 
-class CourseOutlineViewSet(viewsets.ModelViewSet):
+class CourseOutlineViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = CourseOutlineSerializer
@@ -424,7 +425,7 @@ class CourseOutlineViewSet(viewsets.ModelViewSet):
         return Course.objects.filter(slug=self.kwargs.get("slug"))
 
 
-class CourseDetailsFeaturedViewSet(viewsets.ModelViewSet):
+class CourseDetailsFeaturedViewSet(ModelViewSet):
     http_method_names = ["get"]
     serializer_class = CourseCardSerializer
 
@@ -441,7 +442,7 @@ class CourseDetailsFeaturedViewSet(viewsets.ModelViewSet):
         )
 
 
-class KidCourseDetailsFeaturedViewSet(viewsets.ModelViewSet):
+class KidCourseDetailsFeaturedViewSet(ModelViewSet):
     http_method_names = ["get"]
     serializer_class = CourseCardSerializer
 
@@ -458,7 +459,7 @@ class KidCourseDetailsFeaturedViewSet(viewsets.ModelViewSet):
         )
 
 
-class InternationalModelViewSet(viewsets.ModelViewSet):
+class InternationalModelViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = InternationalModelSerializer
@@ -470,7 +471,7 @@ class InternationalModelViewSet(viewsets.ModelViewSet):
     lookup_value_regex = "[^/]+"
 
 
-class FeaturedVirtualClassViewSet(viewsets.ModelViewSet):
+class FeaturedVirtualClassViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = CourseCardSerializer
@@ -485,56 +486,56 @@ class FeaturedVirtualClassViewSet(viewsets.ModelViewSet):
         )
 
 
-class AlumiConnectViewSet(viewsets.ModelViewSet):
+class AlumiConnectViewSet(ModelViewSet):
     http_method_name = ["get", "post"]
 
     queryset = AlumiConnect.objects.all()
     serializer_class = AlumiConnectSerializer
 
 
-class CommunityConnectViewSet(viewsets.ModelViewSet):
+class CommunityConnectViewSet(ModelViewSet):
     http_method_name = ["get"]
 
     queryset = CommunityConnect.objects.order_by("ordering")
     serializer_class = CommunityConnectSerializer
 
 
-class FinancialAidViewSet(viewsets.ModelViewSet):
+class FinancialAidViewSet(ModelViewSet):
     http_method_names = ["get", "post"]
 
     queryset = FinancialAid.objects.all()
     serializer_class = FinancialAidSerializer
 
 
-class TermsOfServiceViewSet(viewsets.ModelViewSet):
+class TermsOfServiceViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     queryset = TermsOfService.objects.all()
     serializer_class = TermsOfServiceSerializer
 
 
-class HowItWorksViewSet(viewsets.ModelViewSet):
+class HowItWorksViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     queryset = HowItWork.objects.all()
     serializer_class = HowItWorksSerializer
 
 
-class VirtualVsOthersViewSet(viewsets.ModelViewSet):
+class VirtualVsOthersViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     queryset = VirtualVsOther.objects.all()
     serializer_class = VirtualVsOthersSerializer
 
 
-class OurTeamViewSet(viewsets.ModelViewSet):
+class OurTeamViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     queryset = OurTeam.objects.order_by("?")
     serializer_class = OurTeamSerializer
 
 
-class SponsorshipsViewSet(viewsets.ModelViewSet):
+class SponsorshipsViewSet(ModelViewSet):
     http_method_names = ["post"]
 
     queryset = Sponsorship.objects.all()
@@ -544,7 +545,7 @@ class SponsorshipsViewSet(viewsets.ModelViewSet):
 # JobPortal region
 
 
-class EmployerViewSet(viewsets.ModelViewSet):
+class EmployerViewSet(ModelViewSet):
     http_method_names = ["get", "patch", "head", "options", "post"]
 
     permission_classes = [permissions.IsAuthenticated]
@@ -585,15 +586,27 @@ class EmployerViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class JobViewSet(viewsets.ModelViewSet):
+class JobViewSet(ModelViewSet):
     http_method_names = ["get"]
 
-    queryset = Job.objects.all()
+    queryset = (
+        Job.objects.filter(save_as="Published")
+        .exclude(close_job=True)
+        .select_related("job_category")
+    )
     serializer_class = JobSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    filterset_class = JobFilter
+    search_fields = ["job_title", "job_category__title", "employer__company_name"]
+    ordering_fields = ["date_posted", "date_updated"]
+    pagination_class = JobPagination
 
 
-class EmployerJobApplicantViewSet(viewsets.ModelViewSet):
+class EmployerJobApplicantViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = EmployerPostedJobSerializer
@@ -603,7 +616,7 @@ class EmployerJobApplicantViewSet(viewsets.ModelViewSet):
         return Job.objects.filter(employer__user=self.request.user)
 
 
-class StudentAppliedJobViewSet(viewsets.ModelViewSet):
+class StudentAppliedJobViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = StudentJobApplicationSerializer
@@ -615,7 +628,7 @@ class StudentAppliedJobViewSet(viewsets.ModelViewSet):
         )
 
 
-class StudentApplicationForJobViewSet(viewsets.ModelViewSet):
+class StudentApplicationForJobViewSet(ModelViewSet):
     http_method_names = ["post"]
 
     permission_classes = [permissions.IsAuthenticated]

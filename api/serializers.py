@@ -16,7 +16,37 @@ from djoser.serializers import (
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+class BaseTokenObtainPairSerializer(TokenObtainPairSerializer):
+    
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        return token
+
+
+class StudentTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
+    def validate(self, attrs):
+      
+        data = super().validate(attrs)
+
+        data["id"] = self.user.id
+        data["username"] = self.user.username
+        data["first_name"] = self.user.first_name
+        data["last_name"] = self.user.last_name        
+        data["user_type"] = self.user.user_type
+        
+        return data
+       
+            
+
+    def validate_username(self, value):
+        if not User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Username does not exist")
+        return value
+
+
+class EmployerTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
 
@@ -24,14 +54,14 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["username"] = self.user.username
         data["first_name"] = self.user.first_name
         data["last_name"] = self.user.last_name
-        # data["student_id"] = self.user.student.student_idcard_id
-
+        data["employer"] = self.user.employer.id
         return data
 
     def validate_username(self, value):
         if not User.objects.filter(username=value).exists():
             raise serializers.ValidationError("Username does not exist")
         return value
+    
 
 
 class CourseCategorySerializer(serializers.ModelSerializer):
@@ -858,9 +888,15 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
         return super(UpdateEmployerSerializer, self).update(instance, validated_data)
 
 
+class JobCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobCategory
+        fields = "__all__"
+
+
 class JobSerializer(serializers.ModelSerializer):
     employer = EmployerSerializer()
-    job_category = serializers.StringRelatedField()
+    job_category = JobCategorySerializer()
 
     class Meta:
         model = Job
