@@ -24,7 +24,7 @@ class BaseTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
-class StudentTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
+class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     def validate(self, attrs):
 
         data = super().validate(attrs)
@@ -33,7 +33,13 @@ class StudentTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         data["username"] = self.user.username
         data["first_name"] = self.user.first_name
         data["last_name"] = self.user.last_name
-        data["user_type"] = self.user.user_type
+
+        if self.user.user_type == "student":
+            student = Student.objects.get(user_id=self.user.id)
+            data["user_type"] = student.user.user_type
+        elif self.user.user_type == "employer":
+            employer = Employer.objects.get(user_id=self.user.id)
+            data["user_type"] = employer.user.user_type
 
         return data
 
@@ -42,21 +48,9 @@ class StudentTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
             raise serializers.ValidationError("Username does not exist")
         return value
 
-
-class EmployerTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
-
-        data["id"] = self.user.id
-        data["username"] = self.user.username
-        data["first_name"] = self.user.first_name
-        data["last_name"] = self.user.last_name
-        data["employer"] = self.user.employer.id
-        return data
-
-    def validate_username(self, value):
-        if not User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Username does not exist")
+    def validate_user_type(self, value):
+        if not User.objects.filter(user_type=value).exists():
+            raise serializers.ValidationError("User type does not exist")
         return value
 
 
@@ -925,12 +919,13 @@ class JobSerializer(serializers.ModelSerializer):
 
     def get_job_location(self, obj):
         return obj.job_category.job_location
-    
+
     def get_experience(self, obj):
         return obj.job_category.experience
 
     def get_job_type(self, obj):
         return obj.job_category.job_type
+
 
 class StudentJobApplicationSerializer(serializers.ModelSerializer):
     job_applied_for = serializers.SerializerMethodField()

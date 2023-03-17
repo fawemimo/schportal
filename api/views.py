@@ -11,7 +11,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = StudentTokenObtainPairSerializer
+    serializer_class = UserTokenObtainPairSerializer
+
 
 class CourseCategoryViewSet(ModelViewSet):
     queryset = CourseCategory.objects.all()
@@ -47,9 +48,8 @@ class StudentViewSet(ModelViewSet):
     serializer_class = StudentSerializer
 
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-
-            return Student.objects.filter(user_id=self.request.user.id)
+        if not self.request.user.user_type == "student":
+         return Student.objects.filter(user_id=self.request.user.id)
 
     def get_permissions(self):
         if self.request.method in ["PATCH", "GET"]:
