@@ -35,7 +35,7 @@ class StudentTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         data["first_name"] = self.user.first_name
         data["last_name"] = self.user.last_name        
         data["user_type"] = self.user.user_type
-        
+
         return data
        
             
@@ -61,7 +61,18 @@ class EmployerTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         if not User.objects.filter(username=value).exists():
             raise serializers.ValidationError("Username does not exist")
         return value
-    
+
+
+class UserSerializer(BaseUserSerializer):
+    class Meta(BaseUserSerializer.Meta):
+        fields = [
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "date_joined",
+        ]
 
 
 class CourseCategorySerializer(serializers.ModelSerializer):
@@ -113,7 +124,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user = UserSerializer()
 
     class Meta:
         model = Student
@@ -592,19 +603,7 @@ class StudentAttendanceSerializer(serializers.ModelSerializer):
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
-        fields = ["id", "username", "email", "password", "first_name", "last_name"]
-
-
-class UserSerializer(BaseUserSerializer):
-    class Meta(BaseUserSerializer.Meta):
-        fields = [
-            "id",
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-            "date_joined",
-        ]
+        fields = ["id","user_type", "username", "email", "password", "first_name", "last_name"]
 
 
 class VirtualClassSerializer(serializers.ModelSerializer):
