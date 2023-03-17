@@ -48,8 +48,8 @@ class StudentViewSet(ModelViewSet):
     serializer_class = StudentSerializer
 
     def get_queryset(self):
-        if not self.request.user.user_type == "student":
-         return Student.objects.filter(user_id=self.request.user.id)
+        if self.request.user.user_type == "student":
+            return Student.objects.filter(user_id=self.request.user.id)
 
     def get_permissions(self):
         if self.request.method in ["PATCH", "GET"]:
