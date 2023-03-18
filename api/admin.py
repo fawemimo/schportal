@@ -198,6 +198,7 @@ class SponsorshipAdmin(admin.ModelAdmin):
 class StudentAttendanceAdmin(admin.ModelAdmin):
     list_display = ["student_name", "batch_", "attendance", "timestamp"]
     list_select_related = ["student", "batch"]
+    autocomplete_fields = ["student", "batch"]
     list_filter = ["batch", "timestamp", "attendance_status"]
     list_per_page = 25
 

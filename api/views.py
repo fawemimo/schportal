@@ -1,6 +1,7 @@
 from .filters import *
 from .models import *
 from .paginations import *
+from .permissions import *
 from .serializers import *
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
@@ -53,14 +54,14 @@ class StudentViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.request.method in ["PATCH", "GET"]:
-            return [permissions.IsAuthenticated()]
+            return [IsStudentType()]
         return [permissions.IsAdminUser()]
 
 
 class StudentProfilePicViewSet(ModelViewSet):
-    http_method_names = ["get", "post"]
+    http_method_names = ["get", "post","patch","head","options"]
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsStudentType]
 
     def get_queryset(self):
         return Student.objects.filter(user_id=self.request.user.id)
@@ -68,12 +69,14 @@ class StudentProfilePicViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == "POST":
             return UpdateProfilePicSerializer
+        elif self.request.method == "GET":
+            return StudentSerializer
         return UpdateProfilePicSerializer
 
     @action(
         detail=False,
-        methods=["GET", "POST"],
-        permission_classes=[permissions.IsAuthenticated],
+        methods=["GET", "POST","PATCH"],
+        permission_classes=[IsStudentType]
     )
     def profile(self, request):
         student = Student.objects.get(user=self.request.user.id)
@@ -237,27 +240,20 @@ class AssignmentViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch"]
 
     serializer_class = AssignmentBatchSerializer
-
+    permission_classes = [IsStudentType]
+            
     def get_queryset(self):
         if self.request.user.is_staff:
             return Batch.objects.prefetch_related("assignmentallocation_set")
         return Batch.objects.filter(students__user=self.request.user).prefetch_related(
             "assignmentallocation_set"
         )
-
-    def get_permissions(self):
-        if self.request.method in ["PATCH", "POST", "DELETE"]:
-            return [permissions.IsAdminUser()]
-        return [permissions.IsAuthenticated()]
-
-
+    
 class ProjectViewSet(ModelViewSet):
-    http_method_names = ["get", "post", "patch", "delete"]
+    http_method_names = ["get"]
 
     serializer_class = ProjectAllocationSerializer
-
-    def get_serializer_context(self):
-        return {"student_id": self.kwargs.get("student_pk")}
+    permission_classes = [IsStudentType]
 
     def get_queryset(self):
         if self.request.user.is_staff:
@@ -265,11 +261,6 @@ class ProjectViewSet(ModelViewSet):
         return ProjectAllocation.objects.filter(
             student__user_id=self.request.user.id
         ).filter(project__project_assigned=True)
-
-    def get_permissions(self):
-        if self.request.method in ["POST", "PATCH", "DELETE"]:
-            return [permissions.IsAdminUser()]
-        return [permissions.IsAuthenticated()]
 
 
 class CourseCardViewSet(ModelViewSet):
@@ -314,7 +305,8 @@ class CourseManualViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = BatchSerializer
-
+    permission_classes = [IsStudentType]
+    
     def get_queryset(self):
         if self.request.user.is_superuser:
             return CourseManualAllocation.objects.select_related("course_manual").all()
@@ -341,7 +333,7 @@ class StudentAttendanceViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = StudentAttendanceSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsStudentType]
 
     def get_queryset(self):
         if self.request.user.is_active:
@@ -548,7 +540,7 @@ class SponsorshipsViewSet(ModelViewSet):
 class EmployerViewSet(ModelViewSet):
     http_method_names = ["get", "patch", "head", "options", "post"]
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsEmployerType]
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -564,7 +556,7 @@ class EmployerViewSet(ModelViewSet):
     @action(
         detail=False,
         methods=["GET", "POST"],
-        permission_classes=[permissions.IsAuthenticated],
+        permission_classes=[IsEmployerType],
     )
     def profile(self, request):
         employer = Employer.objects.get(user=self.request.user.id)
@@ -610,8 +602,7 @@ class EmployerJobApplicantViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = EmployerPostedJobSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
+    permission_classes = [IsEmployerType]
     def get_queryset(self):
         return Job.objects.filter(employer__user=self.request.user)
 
@@ -620,7 +611,7 @@ class StudentAppliedJobViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = StudentJobApplicationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsStudentType]
 
     def get_queryset(self):
         return Student.objects.filter(user=self.request.user).prefetch_related(
@@ -631,7 +622,7 @@ class StudentAppliedJobViewSet(ModelViewSet):
 class StudentApplicationForJobViewSet(ModelViewSet):
     http_method_names = ["post"]
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsStudentType]
 
     def get_queryset(self):
         return JobApplication.objects.get(student__user=self.request.user)
