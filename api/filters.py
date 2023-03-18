@@ -11,3 +11,11 @@ class JobFilter(FilterSet):
             'job_category__job_type':['exact'],
             'job_category__job_location':['exact']
         }
+
+class EmployerFilterSet(FilterSet):
+    pass
+    # class Meta:
+    #     model = Student
+    #     fields = {
+    #         ''
+    #     }        

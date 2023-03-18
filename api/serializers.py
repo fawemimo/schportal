@@ -976,6 +976,7 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
         return obj.jobapplication_set.values(
             "id",
             "student",
+            "student__date_of_birth",
             "job",
             "cv_upload",
             "years_of_experience",

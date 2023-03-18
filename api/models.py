@@ -645,9 +645,7 @@ class Job(models.Model):
 
 
 class JobApplication(models.Model):
-    student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, blank=True, null=True
-    )
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     cv_upload = models.FileField(
         upload_to="JobPortal/cv_upload",

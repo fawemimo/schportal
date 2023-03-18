@@ -604,6 +604,7 @@ class EmployerJobApplicantViewSet(ModelViewSet):
     serializer_class = EmployerPostedJobSerializer
     permission_classes = [IsEmployerType]
     pagination_class = JobPagination
+    filter_backends = [DjangoFilterBackend]
     
     def get_queryset(self):
         return Job.objects.filter(employer__user=self.request.user)
