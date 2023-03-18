@@ -603,6 +603,8 @@ class EmployerJobApplicantViewSet(ModelViewSet):
 
     serializer_class = EmployerPostedJobSerializer
     permission_classes = [IsEmployerType]
+    pagination_class = JobPagination
+    
     def get_queryset(self):
         return Job.objects.filter(employer__user=self.request.user)
 
@@ -612,6 +614,7 @@ class StudentAppliedJobViewSet(ModelViewSet):
 
     serializer_class = StudentJobApplicationSerializer
     permission_classes = [IsStudentType]
+    pagination_class = JobPagination
 
     def get_queryset(self):
         return Student.objects.filter(user=self.request.user).prefetch_related(
@@ -620,12 +623,12 @@ class StudentAppliedJobViewSet(ModelViewSet):
 
 
 class StudentApplicationForJobViewSet(ModelViewSet):
-    http_method_names = ["post"]
+    http_method_names = ["post","get"]
 
     permission_classes = [IsStudentType]
 
     def get_queryset(self):
-        return JobApplication.objects.get(student__user=self.request.user)
+        return JobApplication.objects.filter(student__user=self.request.user)
 
     def get_serializer_class(self):
         if self.request.method == "POST":
