@@ -676,7 +676,7 @@ class Billing(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     total_amount = models.CharField(max_length=255)
-    outstanding_amount = models.CharField(max_length=50)
+    outstanding_amount = models.CharField(max_length=255, blank=True, null=True)
     payment_completion_status = models.BooleanField(default=False)
     date_paid = models.DateTimeField(auto_now_add=True)
 
