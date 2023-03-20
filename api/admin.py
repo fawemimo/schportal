@@ -10,6 +10,7 @@ from .models import *
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
+    list_display_links = ['username','email']
     add_fieldsets = (
         (
             None,

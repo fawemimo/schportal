@@ -1,6 +1,8 @@
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Employer, User, Teacher, Student
+
+from .models import Billing, Employer, Student, Teacher, User
 
 
 @receiver(post_save, sender=User)
@@ -25,3 +27,15 @@ def create_teacher_profile(sender, created, instance, *args, **kwargs):
             l_name = instance.last_name
             Employer.objects.create(user=instance, full_name=f"{f_name} {l_name}")
             instance.save()
+
+
+@receiver(post_save, sender=Billing)
+def create_student(sender, instance, created, *args, **kwargs):
+    if created:
+        f_name = instance.first_name
+        l_name = instance.last_name
+        u_name = instance.email
+        username =str(u_name).split('@')[0]
+        user = User.objects.create(username=username,first_name=f_name, last_name=l_name, email=instance.email)
+        Student.objects.create(user=user,billings=instance ,full_name=f'{f_name} {l_name}')
+        instance.save()
