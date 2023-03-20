@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from datetime import datetime
 from rest_framework import filters, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -37,6 +38,24 @@ class CourseViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Course.objects.order_by("ordering").all()
+
+
+class AnnouncementViewSet(ModelViewSet):
+    serializer_class = AnnouncementSerializer
+
+    def perform_update(self, serializer):
+        instance = self.get_object()
+        self.request.data.get('is_published', True)
+        now = datetime.now()
+        if instance.expiration_date >= now:
+            update = serializer.save(is_published=False)
+        else:
+            update = serializer.save()    
+        return super().perform_update(serializer)
+
+    def get_queryset(self):
+
+        return Announcement.objects.filter(is_published=True)
 
 
 class TeacherViewSet(ModelViewSet):

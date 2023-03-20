@@ -80,7 +80,7 @@ router.register(
 )
 router.register("ourteams", views.OurTeamViewSet, basename="ourteams")
 router.register("sponsorships", views.SponsorshipsViewSet, basename="sponsorships")
-
+router.register("announcements", views.AnnouncementViewSet, basename="announcements")
 
 # JOB PORTAL REGION
 router.register("employers", views.EmployerViewSet, basename="employerprofile")

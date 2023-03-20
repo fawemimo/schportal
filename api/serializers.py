@@ -851,6 +851,23 @@ class OurTeamSerializer(serializers.ModelSerializer):
         fields = ["id", "image", "full_name", "designation", "social_dump"]
 
 
+class AnnouncementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Announcement
+        fields = ['id','title', 'announcement', 'date_created', 'expiration_date', 'is_published']
+
+    def update(self, instance, validated_data):
+        instance.is_published = validated_data['is_published']
+        now = datetime.datetime.now()
+        try:
+            if instance.expiration_date == now:
+                instance.is_published = False
+                return self.instance
+            
+        except Exception as e:
+            return None    
+        return super(AnnouncementSerializer, self).update(instance, validated_data)
+
 # JobPortal region
 
 

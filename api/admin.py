@@ -201,6 +201,13 @@ class SponsorshipAdmin(admin.ModelAdmin):
     ordering = ["name_of_sponsor"]
 
 
+@admin.register(Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = ['id','title', 'announcement', 'date_created', 'expiration_date', 'is_published']
+    list_filter = ['is_published']
+    list_editable = ['expiration_date','is_published']
+    
+
 @admin.register(StudentAttendance)
 class StudentAttendanceAdmin(admin.ModelAdmin):
     list_display = ["student_name", "batch_", "attendance", "timestamp"]
