@@ -136,6 +136,11 @@ class NavLinkItemAdmin(admin.ModelAdmin):
         return item.navlink.title
 
 
+@admin.register(ComponentDump)
+class ComponentDumpAdmin(admin.ModelAdmin):
+    list_display = ['id','title']
+    
+
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
     list_display = ["id", "fullname", "courses"]
