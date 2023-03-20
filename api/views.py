@@ -648,3 +648,13 @@ class StudentApplicationForJobViewSet(ModelViewSet):
 
 
 # End JobPortal region
+
+
+# Billing region
+
+class BillingPaymentViewSet(ModelViewSet):
+    http_method_names = ['post']
+    serializer_class = BillingPaymentSerializer
+    queryset = Billing.objects.all()
+
+# End Billing region

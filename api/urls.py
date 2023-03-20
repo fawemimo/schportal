@@ -101,6 +101,10 @@ router.register(
 # END JOB PORTAL REGION
 
 
+# Billing region
+router.register("billings", views.BillingPaymentViewSet, basename="billings")
+# End Billing region
+
 # Nested routes
 courses_router = routers.NestedDefaultRouter(router, "courses", lookup="course")
 courses_router.register("schedules", views.ScheduleViewSet, basename="course-schedules")

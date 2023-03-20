@@ -994,3 +994,14 @@ class JobApplicationSerializer(serializers.ModelSerializer):
 
 
 # EndJobPortalRegion
+
+
+
+# Billing Region
+
+class BillingPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Billing
+        fields = ['id','course', 'first_name', 'last_name', 'email', 'total_amount', 'outstanding_amount', 'payment_completion_status']
+
+# End Billing Region
