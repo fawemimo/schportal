@@ -1,9 +1,12 @@
+import uuid
 from datetime import datetime
+
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.utils.text import slugify
-from django.core.validators import FileExtensionValidator, MinValueValidator
 from tinymce import models as tinymce_models
+
 from api.validate import validate_file_size
 
 
@@ -661,3 +664,33 @@ class JobApplication(models.Model):
 
 
 # endportal region
+
+
+# Billing information region
+class Billing(models.Model):
+    transaction_ref = models.UUIDField(default=uuid.uuid4)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    student = models.ForeignKey(
+        Student, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    total_amount = models.CharField(max_length=255)
+    outstanding_amount = models.CharField(max_length=50)
+    payment_completion_status = models.BooleanField(default=False)
+    date_paid = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+
+class BillingDetail(models.Model):
+    billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
+    amount_paid = models.CharField(max_length=255)
+    date_paid = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.id)
+
+
+# End Billing Information region

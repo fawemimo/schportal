@@ -1,7 +1,8 @@
-import pytest 
-from api.models import *
-from rest_framework import status
+import pytest
 from model_bakery import baker
+from rest_framework import status
+
+from api.models import *
 
 
 @pytest.mark.django_db

@@ -1,8 +1,8 @@
 import os
 from datetime import timedelta
-from decouple import config
 from pathlib import Path
 
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -178,7 +178,7 @@ TINYMCE_SPELLCHECKER = True
 
 try:
     from .prod_settings import *
-    from .test_settings import *
     from .staging_settings import *
+    from .test_settings import *
 except ImportError:
     pass

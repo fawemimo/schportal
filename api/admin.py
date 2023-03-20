@@ -1,10 +1,11 @@
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import *
-from django import forms
 from django.db.models.aggregates import Count
-from django.utils.html import format_html, urlencode
 from django.urls import reverse
+from django.utils.html import format_html, urlencode
+
+from .models import *
 
 
 @admin.register(User)
@@ -514,3 +515,20 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
 
 # end JobPortal region
+
+
+# Billing region
+
+@admin.register(Billing)
+class BillingAdmin(admin.ModelAdmin):
+    list_display = ['transaction_ref','course','total_amount','outstanding_amount','payment_completion_status','date_paid']
+    list_filter = ['payment_completion_status']
+
+
+@admin.register(BillingDetail)
+class BillingDetailAdmin(admin.ModelAdmin):    
+    list_display = ['billing','amount_paid','date_paid']
+    list_filter = ['date_paid']
+    
+
+# End Billing

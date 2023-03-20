@@ -1,14 +1,15 @@
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, permissions, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from .filters import *
 from .models import *
 from .paginations import *
 from .permissions import *
 from .serializers import *
-from rest_framework.decorators import action
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, permissions, status
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 class MyTokenObtainPairView(TokenObtainPairView):

@@ -1,7 +1,7 @@
 import pytest
 from rest_framework.test import APIClient
-from api.models import *
 
+from api.models import *
 
 
 @pytest.fixture

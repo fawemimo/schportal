@@ -1,9 +1,10 @@
-import pytest
 import json
-from api.models import *
+
+import pytest
 from model_bakery import baker
 from rest_framework import status
 
+from api.models import *
 from api.utils import convert_to_dot_notation
 
 

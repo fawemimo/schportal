@@ -1,6 +1,8 @@
-from templated_mail.mail import BaseEmailMessage
-from django.conf import settings
 from datetime import date
+
+from django.conf import settings
+from templated_mail.mail import BaseEmailMessage
+
 from api.models import Course
 
 
