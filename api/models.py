@@ -91,6 +91,7 @@ class Course(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+    billings = models.OneToOneField("Billing", on_delete=models.CASCADE, blank=True, null=True, related_name = '+')
     full_name = models.CharField(max_length=255, blank=True, null=True)
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
     date_of_birth = models.CharField(max_length=50, blank=True, null=True)
