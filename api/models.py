@@ -252,7 +252,7 @@ class NavLinkItem(models.Model):
 
 
 class AboutUsSection(models.Model):
-    our_vision = models.TextField()
+    about_intro = models.TextField()
     our_mission = models.TextField()
     our_mission_item = models.TextField()
     why_anchorsoft = models.TextField()

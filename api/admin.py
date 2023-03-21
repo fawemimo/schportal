@@ -55,7 +55,7 @@ class TechIconAdmin(admin.ModelAdmin):
 
 @admin.register(AboutUsSection)
 class AboutUsSectionAdmin(admin.ModelAdmin):
-    list_display = ["id", "our_vision", "ordering"]
+    list_display = ["id", "about_intro", "ordering"]
     list_editable = ["ordering"]
 
 
