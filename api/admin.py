@@ -553,12 +553,17 @@ class BillingAdmin(admin.ModelAdmin):
     list_filter = ["payment_completion_status"]
     list_select_related = ["student", "course"]
     list_editable = ["student"]
+    autocomplete_fields = ["student"]
+    search_fields = ["student"]
 
 
 @admin.register(BillingDetail)
 class BillingDetailAdmin(admin.ModelAdmin):
     list_display = ["id", "billing", "amount_paid", "outstanding_amount", "date_paid"]
     list_filter = ["date_paid"]
+    # autocomplete_fields = ["billing__icontains"]
+    search_fields = ["billing__icontains"]
+    list_select_related = ["billing"]
 
 
 @admin.register(Payment)

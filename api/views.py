@@ -1,5 +1,6 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from datetime import datetime
+
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -45,8 +46,10 @@ class AnnouncementViewSet(ModelViewSet):
 
     def get_queryset(self):
         now = datetime.now()
-        return Announcement.objects.filter(is_published=True).exclude(expiration_date__date__lte=now, expiration_date__time__lte=now)
-    
+        return Announcement.objects.filter(is_published=True).exclude(
+            expiration_date__date__lte=now, expiration_date__time__lte=now
+        )
+
 
 class TeacherViewSet(ModelViewSet):
     queryset = Teacher.objects.all()
@@ -69,7 +72,7 @@ class StudentViewSet(ModelViewSet):
 
 
 class StudentProfilePicViewSet(ModelViewSet):
-    http_method_names = ["get", "post","patch","head","options"]
+    http_method_names = ["get", "post", "patch", "head", "options"]
 
     permission_classes = [IsStudentType]
 
@@ -85,8 +88,8 @@ class StudentProfilePicViewSet(ModelViewSet):
 
     @action(
         detail=False,
-        methods=["GET", "POST","PATCH"],
-        permission_classes=[IsStudentType]
+        methods=["GET", "POST", "PATCH"],
+        permission_classes=[IsStudentType],
     )
     def profile(self, request):
         student = Student.objects.get(user=self.request.user.id)
@@ -186,7 +189,7 @@ class StudentLoanSectionViewSet(ModelViewSet):
     queryset = StudentLoanSection.objects.all()
     serializer_class = StudentLoanSectionSerializer
 
-    
+
 class NavLinkItemViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
 
@@ -257,14 +260,15 @@ class AssignmentViewSet(ModelViewSet):
 
     serializer_class = AssignmentBatchSerializer
     permission_classes = [IsStudentType]
-            
+
     def get_queryset(self):
         if self.request.user.is_staff:
             return Batch.objects.prefetch_related("assignmentallocation_set")
         return Batch.objects.filter(students__user=self.request.user).prefetch_related(
             "assignmentallocation_set"
         )
-    
+
+
 class ProjectViewSet(ModelViewSet):
     http_method_names = ["get"]
 
@@ -322,7 +326,7 @@ class CourseManualViewSet(ModelViewSet):
 
     serializer_class = BatchSerializer
     permission_classes = [IsStudentType]
-    
+
     def get_queryset(self):
         if self.request.user.is_superuser:
             return CourseManualAllocation.objects.select_related("course_manual").all()
@@ -621,7 +625,7 @@ class EmployerJobApplicantViewSet(ModelViewSet):
     permission_classes = [IsEmployerType]
     pagination_class = JobPagination
     filter_backends = [DjangoFilterBackend]
-    
+
     def get_queryset(self):
         return Job.objects.filter(employer__user=self.request.user)
 
@@ -640,13 +644,13 @@ class StudentAppliedJobViewSet(ModelViewSet):
 
 
 class StudentApplicationForJobViewSet(ModelViewSet):
-    http_method_names = ["post","get"]
+    http_method_names = ["post", "get"]
 
     permission_classes = [IsStudentType]
 
     def get_permissions(self):
-        if not self.request.user.user_type == 'student':
-            return Response({'error':'User is not a student'})
+        if not self.request.user.user_type == "student":
+            return Response({"error": "User is not a student"})
         return [IsStudentType()]
 
     def get_queryset(self):
@@ -672,25 +676,25 @@ class StudentApplicationForJobViewSet(ModelViewSet):
 
 # Billing region
 def get_error_response(message):
-    return Response({
-        "message": message,
-        "error": True
-    }, status=status.HTTP_400_BAD_REQUEST)
+    return Response(
+        {"message": message, "error": True}, status=status.HTTP_400_BAD_REQUEST
+    )
+
 
 class BillingPaymentViewSet(ModelViewSet):
-    http_method_names = ['post', 'get']
-    serializer_class = BillingPaymentSerializer
+    http_method_names = ["post", "get"]
+    serializer_class = BillingSerializer
     queryset = Billing.objects.all()
 
 
-class StudentBillingsViewSet(ModelViewSet):
-   http_method_names = ['get']
+class BillingDetailsViewSet(ModelViewSet):
+    http_method_names = ["get"]
 
-   serializer_class = BillingPaymentSerializer
-   permission_classes = [IsStudentType]
+    serializer_class = BillingDetailSerializer
+    permission_classes = [IsStudentType]
 
-   def get_queryset(self):
-       return Billing.objects.filter(student__user=self.request.user)
-   
+    def get_queryset(self):
+        return BillingDetail.objects.filter(billing__student__user=self.request.user)
+
 
 # End Billing region

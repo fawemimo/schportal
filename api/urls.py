@@ -82,7 +82,7 @@ router.register(
 router.register("ourteams", views.OurTeamViewSet, basename="ourteams")
 router.register("sponsorships", views.SponsorshipsViewSet, basename="sponsorships")
 router.register("announcements", views.AnnouncementViewSet, basename="announcements")
-router.register("studentbillings", views.StudentBillingsViewSet, basename="studentbillings")
+
 
 
 # JOB PORTAL REGION
@@ -105,7 +105,11 @@ router.register(
 
 
 # Billing region
+
 router.register("billings", views.BillingPaymentViewSet, basename="billings")
+# router.register("billingdetails", views.BillingDetailsViewSet, basename="studentbillings")
+
+
 # End Billing region
 
 # Nested routes
@@ -120,11 +124,15 @@ coursemanual_router = routers.NestedDefaultRouter(
 )
 coursemanual_router.register("coursesview", views.CoursesViewSet, basename="course")
 
+billing_router =routers.NestedDefaultRouter(router, "billings", lookup="billing")
+billing_router.register("details",views.BillingDetailsViewSet, basename="billing-details")
+
 urlpatterns = [
     path("", include(router.urls)),
     path("", include(courses_router.urls)),
     path("", include(navlink_router.urls)),
     path("", include(coursemanual_router.urls)),
+    path("", include(billing_router.urls)),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.jwt")),
     path(

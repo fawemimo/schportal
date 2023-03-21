@@ -20,8 +20,6 @@ class BaseTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
-    
-
     def validate(self, attrs):
 
         data = super().validate(attrs)
@@ -31,7 +29,7 @@ class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         data["first_name"] = self.user.first_name
         data["last_name"] = self.user.last_name
         data["user_type"] = self.user.user_type
-        
+
         # if self.user.user_type == "student":
         #     student = Student.objects.get(user_id=self.user.id)
         #     data["user_type"] = student.user.user_type
@@ -215,8 +213,8 @@ class AboutUsSectionSerializer(serializers.ModelSerializer):
 class StudentLoanSectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentLoanSection
-        fields ="__all__"
-        
+        fields = "__all__"
+
 
 class TestimonialSerializer(serializers.ModelSerializer):
     class Meta:
@@ -860,7 +858,15 @@ class OurTeamSerializer(serializers.ModelSerializer):
 class AnnouncementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Announcement
-        fields = ['id','title', 'announcement', 'date_created', 'expiration_date', 'is_published']
+        fields = [
+            "id",
+            "title",
+            "announcement",
+            "date_created",
+            "expiration_date",
+            "is_published",
+        ]
+
 
 # JobPortal region
 
@@ -1012,30 +1018,83 @@ class JobApplicationSerializer(serializers.ModelSerializer):
         jobapplication = JobApplication(**validated_data)
         jobapplication.save()
         return jobapplication
-    
-    def save(self, **kwargs):
-        id = self.validated_data['id']
-        student_id = self.validated_data['student_id']
-        job_id = self.validated_data['job_id']
-        cv_upload = self.validated_data['cv_upload']
-        years_of_experience = self.validated_data['years_of_experience']
 
-        jobapplication = JobApplication.objects.create(id=id,student_id=student_id, job_id=job_id,cv_upload=cv_upload,years_of_experience=years_of_experience)
+    def save(self, **kwargs):
+        id = self.validated_data["id"]
+        student_id = self.validated_data["student_id"]
+        job_id = self.validated_data["job_id"]
+        cv_upload = self.validated_data["cv_upload"]
+        years_of_experience = self.validated_data["years_of_experience"]
+
+        jobapplication = JobApplication.objects.create(
+            id=id,
+            student_id=student_id,
+            job_id=job_id,
+            cv_upload=cv_upload,
+            years_of_experience=years_of_experience,
+        )
 
         return jobapplication
-
 
 
 # EndJobPortalRegion
 
 
-
 # Billing Region
 
-class BillingPaymentSerializer(serializers.ModelSerializer):
-    student = StudentSerializer(read_only=True)
+
+class BillingSerializer(serializers.ModelSerializer):
+    student_id = serializers.IntegerField()
+    course_id = serializers.IntegerField()
+
     class Meta:
         model = Billing
-        fields = ['id','student','course', 'first_name', 'last_name', 'email', 'total_amount',  'payment_completion_status']
+        fields = [
+            "id",
+            "student_id",
+            "course_id",
+            "first_name",
+            "last_name",
+            "email",
+            "total_amount",
+            "payment_completion_status",
+        ]
+
+    def create(self, validated_data):
+        billing = Billing(**validated_data)    
+        billing.save()
+        return billing
+    
+    def save(self, **kwargs):
+        # id = self.validated_data['id']
+        student_id = self.validated_data['student_id']
+        course_id = self.validated_data['course_id']
+        first_name = self.validated_data['first_name']
+        last_name = self.validated_data['last_name']
+        email = self.validated_data['email']
+        total_amount = self.validated_data['total_amount']
+        payment_completeion_status = self.validated_data['payment_completeion_status']
+
+        try:
+            billing = Billing.objects.filter(student_id=student_id).filter(course_id=course_id).exists()
+
+            if billing:
+                Billing.objects.create(student_id=billing.student_id,course_id=billing.course_id,payment_completeion_status=payment_completeion_status, first_name=billing.first_name,last_name=billing.last_name,email=billing.email,total_amount = total_amount)
+
+            else:
+                Billing.objects.create(student_id=student_id,course_id=course_id,payment_completeion_status=payment_completeion_status, first_name=first_name,last_name=last_name,email=email,total_amount = total_amount)   
+
+            return billing  
+        except Billing.DoesNotExist as e:
+            print(e)  
+
+
+class BillingDetailSerializer(serializers.ModelSerializer):
+    billing = BillingSerializer()
+
+    class Meta:
+        model = BillingDetail
+        fields = ["id", "billing", "amount_paid", "outstanding_amount", "date_paid"]
+
 
 # End Billing Region

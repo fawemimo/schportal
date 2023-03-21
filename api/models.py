@@ -111,7 +111,7 @@ class Student(models.Model):
     relationship_with_next_kin = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user} - {self.student_idcard_id}"
+        return f"{self.full_name}"
 
 
 class Teacher(models.Model):
