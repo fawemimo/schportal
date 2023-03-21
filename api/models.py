@@ -328,7 +328,7 @@ class Sponsorship(models.Model):
 
 
 class Announcement(models.Model):
-    cookie_id = models.UUIDField(default=uuid.uuid4, unique=True, blank=True,null=True)
+    # cookie_id = models.UUIDField(default=uuid.uuid4, unique=True, blank=True,null=True)
     title = models.CharField(max_length=255)
     announcement = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
