@@ -181,6 +181,12 @@ class AboutUsSectionViewSet(ModelViewSet):
     serializer_class = AboutUsSectionSerializer
 
 
+class StudentLoanSectionViewSet(ModelViewSet):
+    http_method_names = ["get"]
+    queryset = StudentLoanSection.objects.all()
+    serializer_class = StudentLoanSectionSerializer
+
+    
 class NavLinkItemViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
 
@@ -682,7 +688,7 @@ class StudentBillingsViewSet(ModelViewSet):
 
    serializer_class = BillingPaymentSerializer
    permission_classes = [IsStudentType]
-   
+
    def get_queryset(self):
        return Billing.objects.filter(student__user=self.request.user)
    

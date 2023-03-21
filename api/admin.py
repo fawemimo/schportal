@@ -10,7 +10,7 @@ from .models import *
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display_links = ['username','email']
+    list_display_links = ["username", "email"]
     add_fieldsets = (
         (
             None,
@@ -57,6 +57,12 @@ class TechIconAdmin(admin.ModelAdmin):
 class AboutUsSectionAdmin(admin.ModelAdmin):
     list_display = ["id", "about_intro", "ordering"]
     list_editable = ["ordering"]
+
+
+@admin.register(StudentLoanSection)
+class StudentLoanSectionAdmin(admin.ModelAdmin):
+    list_display = ["id", "is_published"]
+    list_editable = ["is_published"]
 
 
 @admin.register(CourseCategory)
@@ -140,8 +146,8 @@ class NavLinkItemAdmin(admin.ModelAdmin):
 
 @admin.register(ComponentDump)
 class ComponentDumpAdmin(admin.ModelAdmin):
-    list_display = ['id','title']
-    
+    list_display = ["id", "title"]
+
 
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
@@ -203,10 +209,17 @@ class SponsorshipAdmin(admin.ModelAdmin):
 
 @admin.register(Announcement)
 class AnnouncementAdmin(admin.ModelAdmin):
-    list_display = ['id','title', 'announcement', 'date_created', 'expiration_date', 'is_published']
-    list_filter = ['is_published']
-    list_editable = ['expiration_date','is_published']
-    
+    list_display = [
+        "id",
+        "title",
+        "announcement",
+        "date_created",
+        "expiration_date",
+        "is_published",
+    ]
+    list_filter = ["is_published"]
+    list_editable = ["expiration_date", "is_published"]
+
 
 @admin.register(StudentAttendance)
 class StudentAttendanceAdmin(admin.ModelAdmin):
@@ -527,16 +540,24 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
 # Billing region
 
+
 @admin.register(Billing)
 class BillingAdmin(admin.ModelAdmin):
-    list_display = ['transaction_ref','course','total_amount','outstanding_amount','payment_completion_status','date_paid']
-    list_filter = ['payment_completion_status']
+    list_display = [
+        "transaction_ref",
+        "course",
+        "total_amount",
+        "outstanding_amount",
+        "payment_completion_status",
+        "date_paid",
+    ]
+    list_filter = ["payment_completion_status"]
 
 
 @admin.register(BillingDetail)
-class BillingDetailAdmin(admin.ModelAdmin):    
-    list_display = ['billing','amount_paid','date_paid']
-    list_filter = ['date_paid']
-    
+class BillingDetailAdmin(admin.ModelAdmin):
+    list_display = ["billing", "amount_paid", "date_paid"]
+    list_filter = ["date_paid"]
+
 
 # End Billing

@@ -262,6 +262,16 @@ class AboutUsSection(models.Model):
         return str(self.id)
 
 
+class StudentLoanSection(models.Model):
+    is_published = models.BooleanField(default=False)
+    loan_intro = models.TextField()
+    how_it_works = models.TextField()
+    eligibility = models.TextField()
+
+    def __str__(self):
+        return str(self.id)
+    
+
 # For any section that just requires a content dump
 # like the footer etc
 

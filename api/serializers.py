@@ -212,6 +212,12 @@ class AboutUsSectionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class StudentLoanSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentLoanSection
+        fields ="__all__"
+        
+
 class TestimonialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Testimonial
