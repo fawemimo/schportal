@@ -3,10 +3,15 @@ from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from api.emails import (send_financial_aid_email, send_inquiries_email,
-                        send_interested_email, send_kids_coding_email,
-                        send_short_quizze_email, send_sponsorship_email,
-                        send_virtualclass_email)
+from api.emails import (
+    send_financial_aid_email,
+    send_inquiries_email,
+    send_interested_email,
+    send_kids_coding_email,
+    send_short_quizze_email,
+    send_sponsorship_email,
+    send_virtualclass_email,
+)
 
 from .models import *
 
@@ -1059,34 +1064,55 @@ class BillingSerializer(serializers.ModelSerializer):
             "total_amount",
             "payment_completion_status",
         ]
+        lookup_field = "student_id"
 
     def create(self, validated_data):
-        billing = Billing(**validated_data)    
+        billing = Billing(**validated_data)
         billing.save()
         return billing
-    
+
     def save(self, **kwargs):
         # id = self.validated_data['id']
-        student_id = self.validated_data['student_id']
-        course_id = self.validated_data['course_id']
-        first_name = self.validated_data['first_name']
-        last_name = self.validated_data['last_name']
-        email = self.validated_data['email']
-        total_amount = self.validated_data['total_amount']
-        payment_completeion_status = self.validated_data['payment_completeion_status']
+        student_id = self.validated_data["student_id"]
+        course_id = self.validated_data["course_id"]
+        first_name = self.validated_data["first_name"]
+        last_name = self.validated_data["last_name"]
+        email = self.validated_data["email"]
+        total_amount = self.validated_data["total_amount"]
+        payment_completeion_status = self.validated_data["payment_completeion_status"]
 
         try:
-            billing = Billing.objects.filter(student_id=student_id).filter(course_id=course_id).exists()
+            billing = (
+                Billing.objects.filter(student_id=student_id)
+                .filter(course_id=course_id)
+                .exists()
+            )
 
             if billing:
-                Billing.objects.create(student_id=billing.student_id,course_id=billing.course_id,payment_completeion_status=payment_completeion_status, first_name=billing.first_name,last_name=billing.last_name,email=billing.email,total_amount = total_amount)
+                Billing.objects.create(
+                    student_id=billing.student_id,
+                    course_id=billing.course_id,
+                    payment_completeion_status=payment_completeion_status,
+                    first_name=billing.first_name,
+                    last_name=billing.last_name,
+                    email=billing.email,
+                    total_amount=total_amount,
+                )
 
             else:
-                Billing.objects.create(student_id=student_id,course_id=course_id,payment_completeion_status=payment_completeion_status, first_name=first_name,last_name=last_name,email=email,total_amount = total_amount)   
+                Billing.objects.create(
+                    student_id=student_id,
+                    course_id=course_id,
+                    payment_completeion_status=payment_completeion_status,
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                    total_amount=total_amount,
+                )
 
-            return billing  
+            return billing
         except Billing.DoesNotExist as e:
-            print(e)  
+            print(e)
 
 
 class BillingDetailSerializer(serializers.ModelSerializer):

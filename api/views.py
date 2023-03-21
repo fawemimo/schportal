@@ -675,17 +675,17 @@ class StudentApplicationForJobViewSet(ModelViewSet):
 
 
 # Billing region
-def get_error_response(message):
-    return Response(
-        {"message": message, "error": True}, status=status.HTTP_400_BAD_REQUEST
-    )
 
 
 class BillingPaymentViewSet(ModelViewSet):
     http_method_names = ["post", "get"]
     serializer_class = BillingSerializer
     queryset = Billing.objects.all()
+    lookup_field = "student_id"
+    lookup_value_regex = "[^/]+"
 
+    def get_queryset(self):
+        return Billing.objects.all()
 
 class BillingDetailsViewSet(ModelViewSet):
     http_method_names = ["get"]
