@@ -43,20 +43,10 @@ class CourseViewSet(ModelViewSet):
 class AnnouncementViewSet(ModelViewSet):
     serializer_class = AnnouncementSerializer
 
-    def perform_update(self, serializer):
-        instance = self.get_object()
-        self.request.data.get('is_published', True)
-        now = datetime.now()
-        if instance.expiration_date >= now:
-            update = serializer.save(is_published=False)
-        else:
-            update = serializer.save()    
-        return super().perform_update(serializer)
-
     def get_queryset(self):
-
-        return Announcement.objects.filter(is_published=True)
-
+        now = datetime.now()
+        return Announcement.objects.filter(is_published=True).exclude(expiration_date__date__lte=now, expiration_date__time__lte=now)
+    
 
 class TeacherViewSet(ModelViewSet):
     queryset = Teacher.objects.all()
@@ -647,6 +637,11 @@ class StudentApplicationForJobViewSet(ModelViewSet):
     http_method_names = ["post","get"]
 
     permission_classes = [IsStudentType]
+
+    def get_permissions(self):
+        if not self.request.user.user_type == 'student':
+            return Response({'error':'User is not a student'})
+        return [IsStudentType()]
 
     def get_queryset(self):
         return JobApplication.objects.filter(student__user=self.request.user)

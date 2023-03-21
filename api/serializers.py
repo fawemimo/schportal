@@ -856,18 +856,6 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         model = Announcement
         fields = ['id','title', 'announcement', 'date_created', 'expiration_date', 'is_published']
 
-    def update(self, instance, validated_data):
-        instance.is_published = validated_data['is_published']
-        now = datetime.datetime.now()
-        try:
-            if instance.expiration_date == now:
-                instance.is_published = False
-                return self.instance
-            
-        except Exception as e:
-            return None    
-        return super(AnnouncementSerializer, self).update(instance, validated_data)
-
 # JobPortal region
 
 
@@ -998,16 +986,38 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
 
 class JobApplicationSerializer(serializers.ModelSerializer):
     job_id = serializers.IntegerField()
-    student = serializers.StringRelatedField(read_only=True)
+    student_id = serializers.IntegerField()
 
     class Meta:
         model = JobApplication
-        fields = ["id", "student", "job_id", "cv_upload", "years_of_experience"]
+        fields = ["id", "student_id", "job_id", "cv_upload", "years_of_experience"]
 
     def validate_job_id(self, value):
         if not Job.objects.filter(pk=value).exists():
             raise serializers.ValidationError("The selected Job ID does not exist")
         return value
+
+    def validate_student_id(self, value):
+        if not Student.objects.filter(pk=value).exists():
+            raise serializers.ValidationError("The selected Student ID does not exist")
+        return value
+
+    def create(self, validated_data):
+        jobapplication = JobApplication(**validated_data)
+        jobapplication.save()
+        return jobapplication
+    
+    def save(self, **kwargs):
+        id = self.validated_data['id']
+        student_id = self.validated_data['student_id']
+        job_id = self.validated_data['job_id']
+        cv_upload = self.validated_data['cv_upload']
+        years_of_experience = self.validated_data['years_of_experience']
+
+        jobapplication = JobApplication.objects.create(id=id,student_id=student_id, job_id=job_id,cv_upload=cv_upload,years_of_experience=years_of_experience)
+
+        return jobapplication
+
 
 
 # EndJobPortalRegion

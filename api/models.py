@@ -328,6 +328,7 @@ class Sponsorship(models.Model):
 
 
 class Announcement(models.Model):
+    cookie_id = models.UUIDField(default=uuid.uuid4, unique=True, blank=True,null=True)
     title = models.CharField(max_length=255)
     announcement = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
@@ -337,6 +338,13 @@ class Announcement(models.Model):
     def __str__(self):
         return self.title
     
+    def save(self, *args, **kwargs):
+        now = datetime.now()
+        if self.expiration_date == now:
+            self.is_published = False
+            
+
+        super(Announcement, self).save(args, kwargs)     
 
 # endregion
 
