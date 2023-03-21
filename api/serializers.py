@@ -1027,8 +1027,9 @@ class JobApplicationSerializer(serializers.ModelSerializer):
 # Billing Region
 
 class BillingPaymentSerializer(serializers.ModelSerializer):
+    student = StudentSerializer(read_only=True)
     class Meta:
         model = Billing
-        fields = ['id','course', 'first_name', 'last_name', 'email', 'total_amount', 'outstanding_amount', 'payment_completion_status']
+        fields = ['id','student','course', 'first_name', 'last_name', 'email', 'total_amount', 'outstanding_amount', 'payment_completion_status']
 
 # End Billing Region
