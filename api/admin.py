@@ -545,19 +545,37 @@ class JobApplicationAdmin(admin.ModelAdmin):
 class BillingAdmin(admin.ModelAdmin):
     list_display = [
         "transaction_ref",
+        "student",
         "course",
         "total_amount",
-        "outstanding_amount",
         "payment_completion_status",
-        "date_paid",
     ]
     list_filter = ["payment_completion_status"]
+    list_select_related = ["student", "course"]
+    list_editable = ["student"]
 
 
 @admin.register(BillingDetail)
 class BillingDetailAdmin(admin.ModelAdmin):
-    list_display = ["billing", "amount_paid", "date_paid"]
+    list_display = ["id", "billing", "amount_paid", "outstanding_amount", "date_paid"]
     list_filter = ["date_paid"]
+
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = [
+        "transaction_ref",
+        "course",
+        "name",
+        "phone_number",
+        "total_amount",
+        "paid_amount",
+        "date_paid",
+    ]
+    list_filter = ["date_paid"]
+
+    def name(self, obj):
+        return f"{obj.fist_name} {obj.last_name}"
 
 
 # End Billing

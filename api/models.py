@@ -706,10 +706,8 @@ class Billing(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True, blank=True, null=True)
-    total_amount = models.CharField(max_length=255)
-    outstanding_amount = models.CharField(max_length=255, blank=True, null=True)
-    payment_completion_status = models.BooleanField(default=False)
-    date_paid = models.DateTimeField(auto_now_add=True)
+    total_amount = models.CharField(max_length=255)    
+    payment_completion_status = models.BooleanField(default=False)    
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -717,11 +715,28 @@ class Billing(models.Model):
 
 class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
-    amount_paid = models.CharField(max_length=255)
+    amount_paid = models.CharField(max_length=50)
+    outstanding_amount = models.CharField(max_length=50, null=True, blank=True)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
+
+
+class Payment(models.Model):
+    transaction_ref = models.UUIDField(default=uuid.uuid4, unique=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)
+    phone_number = models.CharField(max_length=20)
+    total_amount = models.CharField(max_length=255)
+    paid_amount = models.CharField(max_length=255)
+    date_paid = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
 
 
 # End Billing Information region
