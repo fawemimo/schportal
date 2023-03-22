@@ -19,7 +19,8 @@ def create_teacher_profile(sender, created, instance, *args, **kwargs):
         elif instance.user_type == "student":
             f_name = instance.first_name
             l_name = instance.last_name
-            Student.objects.create(user=instance, full_name=f"{f_name} {l_name}")
+            mobile_numbers = instance.mobile_numbers
+            Student.objects.create(user=instance, full_name=f"{f_name} {l_name}", mobile_numbers=mobile_numbers)
             instance.save()
 
         elif instance.user_type == "employer":

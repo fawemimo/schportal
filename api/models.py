@@ -19,9 +19,11 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    mobile_numbers = models.CharField(max_length=50, blank=True, null=True)
     user_type = models.CharField(
         max_length=8, choices=user_type_choices, blank=True, null=True
     )
+
 
 
 # region core models - mainsite

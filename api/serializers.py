@@ -2,7 +2,7 @@ from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+from django.contrib.auth.hashers import make_password
 from api.emails import (
     send_financial_aid_email,
     send_inquiries_email,
@@ -600,17 +600,64 @@ class StudentAttendanceSerializer(serializers.ModelSerializer):
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={"input_type": "password", "placeholder": "enter your password"},
+    )
+    password2 = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={"input_type": "password", "placeholder": "password confirmation"},
+        source = "password"
+    )
+    mobile_numbers = serializers.CharField(write_only=True)
     class Meta(BaseUserCreateSerializer.Meta):
         fields = [
             "id",
             "user_type",
             "username",
-            "email",
             "password",
+            "password2",
             "first_name",
             "last_name",
+            "email",
+            "mobile_numbers",
         ]
+    
+    def validate_email(self, value):
+        email = value.lower()
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError("User with this email already exists")
+        return value
 
+    def validate_username(self, value):
+        username = value.lower()
+        if User.objects.filter(username=username).exists():
+            raise serializers.ValidationError("User with this username already exists")
+        return value
+    
+    def validate_user_type(self, value):
+        user_type = value.lower()
+        if not user_type == 'student':
+            raise serializers.ValidationError('Student can only register')
+        return value
+    
+    def validate_password(self, value):
+        data = self.get_initial()
+        password = data.get('password')
+        password2 = value
+        if password != password2:
+            raise serializers.ValidationError('Passwords must match')
+        return value
+
+    def validate_password2(self, value):
+        data = self.get_initial()
+        password = data.get('password')
+        password2 = value
+        if password != password2:
+            raise serializers.ValidationError('Passwords must match')
+        return value
 
 class VirtualClassSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
