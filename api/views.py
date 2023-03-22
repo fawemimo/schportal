@@ -681,11 +681,12 @@ class BillingPaymentViewSet(ModelViewSet):
     http_method_names = ["post", "get"]
     serializer_class = BillingSerializer
     queryset = Billing.objects.all()
+    permission_classes = [IsStudentType]
     lookup_field = "student_id"
     lookup_value_regex = "[^/]+"
 
     def get_queryset(self):
-        return Billing.objects.all()
+        return Billing.objects.filter(student__user=self.request.user)
 
 class BillingDetailsViewSet(ModelViewSet):
     http_method_names = ["get"]
