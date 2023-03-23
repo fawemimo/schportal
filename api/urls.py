@@ -107,7 +107,7 @@ router.register(
 # Billing region
 
 router.register("billings", views.BillingPaymentViewSet, basename="billings")
-# router.register("billingdetails", views.BillingDetailsViewSet, basename="studentbillings")
+router.register("billingdetails", views.BillingDetailsViewSet, basename="studentbillings")
 
 
 # End Billing region

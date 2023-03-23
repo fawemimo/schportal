@@ -35,7 +35,7 @@ class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         data["last_name"] = self.user.last_name
         data["email"] = self.user.email
         data["user_type"] = self.user.user_type
-        
+
         return data
 
     def validate_username(self, value):
@@ -1088,6 +1088,46 @@ class JobApplicationSerializer(serializers.ModelSerializer):
 
 # Billing Region
 
+class PostBillingSerializer(serializers.ModelSerializer):
+    student_id = serializers.IntegerField()
+    course_id = serializers.IntegerField()
+
+    class Meta:
+        model = Billing
+        fields = [
+            "id",
+            "student_id",
+            "course_id",     
+            "email"       ,
+            "total_amount",
+            "total_amount_paid",
+        ]
+
+        def validate_student_id(self, value):
+            if not Student.objects.filter(id=value).exists():
+                raise serializers.ValidationError("Student ID does not exist")
+            return value
+
+        def validate_course_id(self, value):
+            if not Course.objects.filter(id=value).exists():
+                raise serializers.ValidationError("Course ID does not exist")
+            return value
+        
+        def save(self, **kwargs):
+            course_id = self.validated_data["course_id"]
+            total_amount_paid = self.validated_data['total_amount_paid']
+            total_amount = self.validated_data["total_amount"]
+            student_obj_id = self.context['student_id']
+            student_obj = Student.objects.only('id')
+
+            try:
+                billing = Billing.objects.create(student_id=student_obj_id, course_id=course_id, total_amount_paid=total_amount_paid, total_amount=total_amount,first_name= student_obj.user.first_name,last_name= student_obj.user.last_name,email= student_obj.user.email)
+                
+                billing.save()
+                return billing
+            except Exception as e:
+                return None
+
 
 class BillingSerializer(serializers.ModelSerializer):
     student_id = serializers.IntegerField()
@@ -1103,57 +1143,11 @@ class BillingSerializer(serializers.ModelSerializer):
             "last_name",
             "email",
             "total_amount",
+            "total_amount_paid",
             "payment_completion_status",
         ]
+        
         lookup_field = "student_id"
-
-    def create(self, validated_data):
-        billing = Billing(**validated_data)
-        billing.save()
-        return billing
-
-    def save(self, **kwargs):
-        # id = self.validated_data['id']
-        student_id = self.validated_data["student_id"]
-        course_id = self.validated_data["course_id"]
-        first_name = self.validated_data["first_name"]
-        last_name = self.validated_data["last_name"]
-        email = self.validated_data["email"]
-        total_amount = self.validated_data["total_amount"]
-        payment_completeion_status = self.validated_data["payment_completeion_status"]
-
-        try:
-            billing = (
-                Billing.objects.filter(student_id=student_id)
-                .filter(course_id=course_id)
-                .exists()
-            )
-
-            if billing:
-                Billing.objects.create(
-                    student_id=billing.student_id,
-                    course_id=billing.course_id,
-                    payment_completeion_status=payment_completeion_status,
-                    first_name=billing.first_name,
-                    last_name=billing.last_name,
-                    email=billing.email,
-                    total_amount=total_amount,
-                )
-
-            else:
-                Billing.objects.create(
-                    student_id=student_id,
-                    course_id=course_id,
-                    payment_completeion_status=payment_completeion_status,
-                    first_name=first_name,
-                    last_name=last_name,
-                    email=email,
-                    total_amount=total_amount,
-                )
-
-            return billing
-        except Billing.DoesNotExist as e:
-            print(e)
 
 
 class BillingDetailSerializer(serializers.ModelSerializer):
@@ -1162,6 +1156,19 @@ class BillingDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillingDetail
         fields = ["id", "billing", "amount_paid", "outstanding_amount", "date_paid"]
+
+
+class PostBillingDetailSerializer(serializers.ModelSerializer):
+    billing_id = serializers.IntegerField()
+
+    class Meta:
+        model = BillingDetail
+        fields = ["id", "billing_id", "amount_paid"]
+
+    def validate_billing(self, value):
+        if not Billing.objects.filter(id=value):
+            raise serializers.ValidationError('Billing ID  is not found')
+    
 
 
 # End Billing Region

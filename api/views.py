@@ -697,12 +697,20 @@ class BillingPaymentViewSet(ModelViewSet):
     lookup_field = "student_id"
     lookup_value_regex = "[^/]+"
 
+    def get_serializer_class(self):
+        if self.request.method =='GET':
+            return BillingSerializer
+        elif self.request.method =='POST':
+            return PostBillingSerializer
+        
     def get_queryset(self):
         return Billing.objects.filter(student__user=self.request.user)
 
+    def get_serializer_context(self):
+        return {'student_id': self.kwargs.get('student_pk')}
 
 class BillingDetailsViewSet(ModelViewSet):
-    http_method_names = ["get"]
+    http_method_names = ["get", "post"]
 
     serializer_class = BillingDetailSerializer
     permission_classes = [IsStudentType]
@@ -710,5 +718,9 @@ class BillingDetailsViewSet(ModelViewSet):
     def get_queryset(self):
         return BillingDetail.objects.filter(billing__student__user=self.request.user)
 
-
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return PostBillingDetailSerializer
+        elif self.request.method == 'GET':
+            return PostBillingDetailSerializer
 # End Billing region
