@@ -699,6 +699,8 @@ class JobApplication(models.Model):
 
 
 # Billing information region
+
+
 class Billing(models.Model):
     transaction_ref = models.UUIDField(default=uuid.uuid4)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)

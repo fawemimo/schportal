@@ -176,6 +176,9 @@ EMAIL_USE_SSL = True
 TINYMCE_SPELLCHECKER = True
 
 
+# SQUAD CONFIG
+SQUAD_SECRET_KEY = config('SQUAD_SECRET_KEY')
+os.environ['SQUAD_SECRET_KEY'] = 'sandbox_sk_edfb29632b5cc0597c3f91afc710991574ad90e33ec4'
 try:
     from .prod_settings import *
     from .staging_settings import *

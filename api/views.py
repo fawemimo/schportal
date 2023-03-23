@@ -1,5 +1,8 @@
+import requests
+import os
 from datetime import datetime
-
+from decouple import config
+from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status
 from rest_framework.decorators import action
@@ -69,6 +72,15 @@ class StudentViewSet(ModelViewSet):
         if self.request.method in ["PATCH", "GET"]:
             return [IsStudentType()]
         return [permissions.IsAdminUser()]
+
+    @action(detail=False, methods=["GET"])
+    def payments_secret(self, request):       
+        #  squad authoriztion key
+        request = {
+            "Authorization": os.getenv('SQUAD_SECRET_KEY')
+        }
+        print(request)
+        return Response(request, status=status.HTTP_200_OK)
 
 
 class StudentProfilePicViewSet(ModelViewSet):
@@ -687,6 +699,7 @@ class BillingPaymentViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Billing.objects.filter(student__user=self.request.user)
+
 
 class BillingDetailsViewSet(ModelViewSet):
     http_method_names = ["get"]

@@ -33,15 +33,9 @@ class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         data["username"] = self.user.username
         data["first_name"] = self.user.first_name
         data["last_name"] = self.user.last_name
+        data["email"] = self.user.email
         data["user_type"] = self.user.user_type
-
-        # if self.user.user_type == "student":
-        #     student = Student.objects.get(user_id=self.user.id)
-        #     data["user_type"] = student.user.user_type
-        # elif self.user.user_type == "employer":
-        #     employer = Employer.objects.get(user_id=self.user.id)
-        #     data["user_type"] = employer.user.user_type
-
+        
         return data
 
     def validate_username(self, value):
