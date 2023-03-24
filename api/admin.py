@@ -544,6 +544,7 @@ class JobApplicationAdmin(admin.ModelAdmin):
 @admin.register(Billing)
 class BillingAdmin(admin.ModelAdmin):
     list_display = [
+        "id",
         "transaction_ref",
         "student",
         "course",

@@ -74,12 +74,9 @@ class StudentViewSet(ModelViewSet):
         return [permissions.IsAdminUser()]
 
     @action(detail=False, methods=["GET"])
-    def payments_secret(self, request):       
+    def payments_secret(self, request):
         #  squad authoriztion key
-        request = {
-            "Authorization": os.getenv('SQUAD_SECRET_KEY')
-        }
-        print(request)
+        request = {"Authorization": config("SQUAD_SECRET_KEY")}
         return Response(request, status=status.HTTP_200_OK)
 
 
@@ -698,16 +695,17 @@ class BillingPaymentViewSet(ModelViewSet):
     lookup_value_regex = "[^/]+"
 
     def get_serializer_class(self):
-        if self.request.method =='GET':
+        if self.request.method == "GET":
             return BillingSerializer
-        elif self.request.method =='POST':
+        elif self.request.method == "POST":
             return PostBillingSerializer
-        
+
     def get_queryset(self):
         return Billing.objects.filter(student__user=self.request.user)
 
     def get_serializer_context(self):
-        return {'student_id': self.kwargs.get('student_pk')}
+        return {"student_id": self.kwargs.get("student_pk")}
+
 
 class BillingDetailsViewSet(ModelViewSet):
     http_method_names = ["get", "post"]
@@ -719,8 +717,13 @@ class BillingDetailsViewSet(ModelViewSet):
         return BillingDetail.objects.filter(billing__student__user=self.request.user)
 
     def get_serializer_class(self):
-        if self.request.method == 'POST':
+        if self.request.method == "POST":
             return PostBillingDetailSerializer
-        elif self.request.method == 'GET':
-            return PostBillingDetailSerializer
+        elif self.request.method == "GET":
+            return BillingDetailSerializer
+
+    def get_serializer_context(self):
+        return {"billing_id": self.kwargs.get("billing_pk")}
+
+
 # End Billing region

@@ -1165,10 +1165,27 @@ class PostBillingDetailSerializer(serializers.ModelSerializer):
         model = BillingDetail
         fields = ["id", "billing_id", "amount_paid"]
 
-    def validate_billing(self, value):
+    def validate_billing_id(self, value):
         if not Billing.objects.filter(id=value):
             raise serializers.ValidationError('Billing ID  is not found')
+        return value
     
+    def save(self, **kwargs):
+        billing_id = self.validated_data['billing_id']
+        amount_paid = self.validated_data['amount_paid']
+        
+        try:
+            # create the billing details wrt billing_id
+            billingdetails = BillingDetail.objects.create(billing_id=billing_id, amount_paid=amount_paid,outstanding_amount='')
 
+            billingdetails.save()
+            return billingdetails
+        except Exception as e:
+            print(e)
+    
+    def create(self, validated_data):
+        billingdetails = BillingDetail(**validated_data)
+        billingdetails.save()
+        return billingdetails
 
 # End Billing Region
