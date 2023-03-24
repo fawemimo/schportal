@@ -914,6 +914,13 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         ]
 
 
+class ScholarshipSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScholarshipSection
+        fields  = "__all__"
+
+
+        
 # JobPortal region
 
 

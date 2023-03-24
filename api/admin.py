@@ -221,6 +221,12 @@ class AnnouncementAdmin(admin.ModelAdmin):
     list_editable = ["expiration_date", "is_published"]
 
 
+@admin.register(ScholarshipSection)
+class ScholarshipSectionAdmin(admin.ModelAdmin):   
+
+    list_display = ['id', 'scholarship_intro']
+    
+
 @admin.register(StudentAttendance)
 class StudentAttendanceAdmin(admin.ModelAdmin):
     list_display = ["student_name", "batch_", "attendance", "timestamp"]

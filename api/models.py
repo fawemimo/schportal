@@ -357,6 +357,16 @@ class Announcement(models.Model):
 
         super(Announcement, self).save(args, kwargs)     
 
+
+class ScholarshipSection(models.Model):
+    scholarship_intro = models.TextField()
+    access_text = models.TextField()
+    wings = models.TextField()
+
+    def __str__(self):
+        return str(self.id)
+    
+    
 # endregion
 
 

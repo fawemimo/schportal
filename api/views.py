@@ -54,6 +54,11 @@ class AnnouncementViewSet(ModelViewSet):
         )
 
 
+class ScholarshipSectionViewSet(ModelViewSet):
+    http_method_names = ["get"]
+    serializer_class = ScholarshipSectionSerializer
+    queryset = ScholarshipSection.objects.all()
+
 class TeacherViewSet(ModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
