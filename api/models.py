@@ -354,7 +354,6 @@ class Announcement(models.Model):
         now = datetime.now()
         if self.expiration_date == now:
             self.is_published = False
-            
 
         super(Announcement, self).save(args, kwargs)     
 
@@ -702,7 +701,17 @@ class JobApplication(models.Model):
 
 
 class Billing(models.Model):
+    PENDING = 'pending'
+    FAILED = 'failed'
+    SUCCESS = 'success'
+
+    PAYMENT_COMPLETION_STATUS = (
+        (PENDING, 'pending'),
+        (FAILED, 'failed'),
+        (SUCCESS, 'success')
+    )
     transaction_ref = models.UUIDField(default=uuid.uuid4)
+    squad_transaction_ref = models.CharField(max_length=255, blank=True, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     student = models.ForeignKey(
         Student, on_delete=models.SET_NULL, null=True, blank=True
@@ -712,10 +721,10 @@ class Billing(models.Model):
     email = models.EmailField(max_length=255, unique=True, blank=True, null=True)
     total_amount_paid = models.CharField(max_length=50, blank=True, null=True)
     total_amount = models.CharField(max_length=255)    
-    payment_completion_status = models.BooleanField(default=False)    
+    payment_completion_status = models.CharField(default=PENDING, choices=PAYMENT_COMPLETION_STATUS, max_length=50, blank=True, null=True)    
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return str(self.id)
 
 
 class BillingDetail(models.Model):
@@ -726,6 +735,14 @@ class BillingDetail(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    def save(self, *args, **kwargs):
+        billing = Billing.objects.get(id=self.billing.id)
+        outstanding = billing.billingdetail_set.only('id').values('outstanding_amount').first()
+        if outstanding is not None:
+            x = outstanding['outstanding_amount']        
+            self.outstanding_amount = int(x) - int(self.amount_paid)
+        super(BillingDetail, self).save(*args, **kwargs)
 
 
 class Payment(models.Model):

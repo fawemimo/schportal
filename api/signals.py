@@ -33,5 +33,9 @@ def create_teacher_profile(sender, created, instance, *args, **kwargs):
 @receiver(post_save, sender=Billing)
 def create_billing_details(sender, instance,created,*args,**kwargs):
     if created:
-        BillingDetail.objects.create(billing=instance)
+        total_amount = instance.total_amount
+        total_amount_paid = instance.total_amount_paid
+        outstanding = int(total_amount) - int(total_amount_paid)
+        BillingDetail.objects.create(billing=instance,outstanding_amount=outstanding, amount_paid=total_amount_paid)
         instance.save()
+

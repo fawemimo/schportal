@@ -724,6 +724,11 @@ class BillingDetailsViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {"billing_id": self.kwargs.get("billing_pk")}
-
+    
+    def create(self, request, *args, **kwargs):
+        serializer = PostBillingDetailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data)
 
 # End Billing region

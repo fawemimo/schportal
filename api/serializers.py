@@ -1096,6 +1096,8 @@ class PostBillingSerializer(serializers.ModelSerializer):
         model = Billing
         fields = [
             "id",
+            "payment_completion_status",
+            "squad_transaction_ref",
             "student_id",
             "course_id",     
             "email"       ,
@@ -1114,6 +1116,8 @@ class PostBillingSerializer(serializers.ModelSerializer):
             return value
         
         def save(self, **kwargs):
+            payment_completion_status = self.validated_data["payment_completion_status"]
+            squad_transaction_ref = self.validated_data["squad_transaction_ref"]
             course_id = self.validated_data["course_id"]
             total_amount_paid = self.validated_data['total_amount_paid']
             total_amount = self.validated_data["total_amount"]
@@ -1121,9 +1125,9 @@ class PostBillingSerializer(serializers.ModelSerializer):
             student_obj = Student.objects.only('id')
 
             try:
-                billing = Billing.objects.create(student_id=student_obj_id, course_id=course_id, total_amount_paid=total_amount_paid, total_amount=total_amount,first_name= student_obj.user.first_name,last_name= student_obj.user.last_name,email= student_obj.user.email)
-                
+                billing = Billing.objects.create(student_id=student_obj_id, course_id=course_id,squad_transaction_ref=squad_transaction_ref,total_amount_paid=total_amount_paid, total_amount=total_amount,first_name= student_obj.user.first_name,last_name= student_obj.user.last_name,email= student_obj.user.email,payment_completion_status=payment_completion_status)
                 billing.save()
+                
                 return billing
             except Exception as e:
                 return None
@@ -1174,18 +1178,14 @@ class PostBillingDetailSerializer(serializers.ModelSerializer):
         billing_id = self.validated_data['billing_id']
         amount_paid = self.validated_data['amount_paid']
         
-        try:
-            # create the billing details wrt billing_id
-            billingdetails = BillingDetail.objects.create(billing_id=billing_id, amount_paid=amount_paid,outstanding_amount='')
+        # try:
+        # create the billing details wrt billing_id
+        billingdetails = BillingDetail.objects.create(billing_id=billing_id, amount_paid=amount_paid,outstanding_amount='')
 
-            billingdetails.save()
-            return billingdetails
-        except Exception as e:
-            print(e)
-    
-    def create(self, validated_data):
-        billingdetails = BillingDetail(**validated_data)
         billingdetails.save()
         return billingdetails
+        # except Exception as e:
+        #     print(e)    
+    
 
 # End Billing Region
