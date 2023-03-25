@@ -33,9 +33,9 @@ class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         data["user_type"] = self.user.user_type
 
         try:
-            if self.request.user.user_type == "student":
+            if self.user.user_type == "student":
                 data["student_id"] = self.user.student.id
-            elif self.request.user.user_type == "employer":
+            elif self.user.user_type == "employer":
                 data["employer_id"] = self.user.employer.id
             else:
                 pass
