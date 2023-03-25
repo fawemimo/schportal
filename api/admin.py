@@ -10,7 +10,8 @@ from .models import *
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display_links = ["username", "email"]
+    list_display = ["id", "username", "email"]
+    list_display_links = ["id","username", "email"]
     add_fieldsets = (
         (
             None,
@@ -279,7 +280,7 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ["full_name", "profile_pix", "student_idcard_id", "batch_name"]
+    list_display = ["id","full_name", "profile_pix", "student_idcard_id", "batch_name"]
     search_fields = ["user__first_name", "user__last_name__istartswith"]
 
     def batch_name(self, obj):

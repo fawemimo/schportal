@@ -693,8 +693,6 @@ class StudentApplicationForJobViewSet(ModelViewSet):
 
 class BillingPaymentViewSet(ModelViewSet):
     http_method_names = ["post", "get"]
-    serializer_class = BillingSerializer
-    queryset = Billing.objects.all()
     permission_classes = [IsStudentType]
     lookup_field = "student_id"
     lookup_value_regex = "[^/]+"
@@ -706,7 +704,7 @@ class BillingPaymentViewSet(ModelViewSet):
             return PostBillingSerializer
 
     def get_queryset(self):
-        return Billing.objects.filter(student__user=self.request.user)
+        return Billing.objects.filter(student__user=self.request.user).prefetch_related('billingdetail_set')
 
     def get_serializer_context(self):
         return {"student_id": self.kwargs.get("student_pk")}
@@ -719,7 +717,7 @@ class BillingDetailsViewSet(ModelViewSet):
     permission_classes = [IsStudentType]
 
     def get_queryset(self):
-        return BillingDetail.objects.filter(billing__student__user=self.request.user)
+        return BillingDetail.objects.filter(billing__student__user=self.request.user).select_related('billing')
 
     def get_serializer_class(self):
         if self.request.method == "POST":

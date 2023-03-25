@@ -36,6 +36,16 @@ class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         data["email"] = self.user.email
         data["user_type"] = self.user.user_type
 
+        try:
+            if self.request.user.user_type == 'student':
+                data['student_id'] = self.user.student.id
+            elif self.request.user.user_type == 'employer':
+                data['employer_id'] = self.user.employer.id
+            else:
+                pass        
+
+        except Exception as e:
+            print(e)        
         return data
 
     def validate_username(self, value):
@@ -1123,21 +1133,22 @@ class PostBillingSerializer(serializers.ModelSerializer):
             return value
         
         def save(self, **kwargs):
-            payment_completion_status = self.validated_data["payment_completion_status"]
-            squad_transaction_ref = self.validated_data["squad_transaction_ref"]
-            course_id = self.validated_data["course_id"]
-            total_amount_paid = self.validated_data['total_amount_paid']
-            total_amount = self.validated_data["total_amount"]
-            student_obj_id = self.context['student_id']
-            student_obj = Student.objects.only('id')
-
             try:
-                billing = Billing.objects.create(student_id=student_obj_id, course_id=course_id,squad_transaction_ref=squad_transaction_ref,total_amount_paid=total_amount_paid, total_amount=total_amount,first_name= student_obj.user.first_name,last_name= student_obj.user.last_name,email= student_obj.user.email,payment_completion_status=payment_completion_status)
-                billing.save()
-                
-                return billing
-            except Exception as e:
-                return None
+                payment_completion_status = self.validated_data["payment_completion_status"]
+                squad_transaction_ref = self.validated_data["squad_transaction_ref"]
+                course_id = self.validated_data["course_id"]
+                total_amount_paid = self.validated_data['total_amount_paid']
+                total_amount = self.validated_data["total_amount"]
+                student_obj = Student.objects.only('id')
+
+            
+                if self.context['student_id']:
+                    billing = Billing.objects.create(student_id=self.context['student_id'], course_id=course_id,squad_transaction_ref=squad_transaction_ref,total_amount_paid=total_amount_paid, total_amount=total_amount,first_name= student_obj.user.first_name,last_name= student_obj.user.last_name,email= student_obj.user.email,payment_completion_status=payment_completion_status)
+                    billing.save()
+                    
+                    return billing
+            except ValueError as e:
+                return e
 
 
 class BillingSerializer(serializers.ModelSerializer):
@@ -1185,14 +1196,14 @@ class PostBillingDetailSerializer(serializers.ModelSerializer):
         billing_id = self.validated_data['billing_id']
         amount_paid = self.validated_data['amount_paid']
         
-        # try:
-        # create the billing details wrt billing_id
-        billingdetails = BillingDetail.objects.create(billing_id=billing_id, amount_paid=amount_paid,outstanding_amount='')
+        try:
+            # create the billing details wrt billing_id
+            billingdetails = BillingDetail.objects.create(billing_id=billing_id, amount_paid=amount_paid,outstanding_amount='')
 
-        billingdetails.save()
-        return billingdetails
-        # except Exception as e:
-        #     print(e)    
+            billingdetails.save()
+            return billingdetails
+        except ValueError as e:
+            return e
     
 
 # End Billing Region
