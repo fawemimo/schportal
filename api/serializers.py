@@ -1120,7 +1120,6 @@ class PostBillingSerializer(serializers.ModelSerializer):
             "total_amount_paid",
         ]
         
-
         def validate_student_id(self, value):
             if not Student.objects.filter(id=value).exists():
                 raise serializers.ValidationError("Student ID does not exist")
@@ -1132,7 +1131,7 @@ class PostBillingSerializer(serializers.ModelSerializer):
             return value
 
         def save(self, **kwargs):
-            try:
+            
                 payment_completion_status = self.validated_data[
                     "payment_completion_status"
                 ]
@@ -1142,7 +1141,7 @@ class PostBillingSerializer(serializers.ModelSerializer):
                 total_amount = self.validated_data["total_amount"]
                 student_obj = Student.objects.only("id")
 
-                if self.context["student_id"]:
+                try:
                     billing = Billing.objects.create(
                         student_id=self.context["student_id"],
                         course_id=course_id,
@@ -1157,8 +1156,8 @@ class PostBillingSerializer(serializers.ModelSerializer):
                     billing.save()
 
                     return billing
-            except ValueError as e:
-                return e
+                except ValueError as e:
+                    return e
 
 
 class BillingSerializer(serializers.ModelSerializer):

@@ -87,6 +87,7 @@ class CourseCategoryAdmin(admin.ModelAdmin):
 class CourseAdmin(admin.ModelAdmin):
 
     list_display = [
+        "id",
         "course_code",
         "title",
         "is_virtual_class",
