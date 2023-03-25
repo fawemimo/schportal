@@ -732,7 +732,7 @@ class BillingPaymentViewSet(ModelViewSet):
     def get_serializer_context(self):
         return {
             "student_id": self.kwargs.get("student_pk"),
-            "user_id": self.kwargs.get("user_pk"),
+            "course_id": self.kwargs.get("course_pk"),
         }
 
 

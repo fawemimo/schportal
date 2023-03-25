@@ -1,13 +1,17 @@
-from django.contrib.auth.hashers import make_password
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from api.emails import (send_financial_aid_email, send_inquiries_email,
-                        send_interested_email, send_kids_coding_email,
-                        send_short_quizze_email, send_sponsorship_email,
-                        send_virtualclass_email)
+from api.emails import (
+    send_financial_aid_email,
+    send_inquiries_email,
+    send_interested_email,
+    send_kids_coding_email,
+    send_short_quizze_email,
+    send_sponsorship_email,
+    send_virtualclass_email,
+)
 
 from .models import *
 
@@ -1119,45 +1123,52 @@ class PostBillingSerializer(serializers.ModelSerializer):
             "total_amount",
             "total_amount_paid",
         ]
-        
-        def validate_student_id(self, value):
-            if not Student.objects.filter(id=value).exists():
-                raise serializers.ValidationError("Student ID does not exist")
-            return value
 
-        def validate_course_id(self, value):
-            if not Course.objects.filter(id=value).exists():
-                raise serializers.ValidationError("Course ID does not exist")
-            return value
+    def create(self, validated_data):
+        student_id = self.context["student_id"]
+        course_id = self.context["course_id"]
 
-        def save(self, **kwargs):
-            
-                payment_completion_status = self.validated_data[
-                    "payment_completion_status"
-                ]
-                squad_transaction_ref = self.validated_data["squad_transaction_ref"]
-                course_id = self.validated_data["course_id"]
-                total_amount_paid = self.validated_data["total_amount_paid"]
-                total_amount = self.validated_data["total_amount"]
-                student_obj = Student.objects.only("id")
+        return Billing.objects.create(
+            student_id=student_id, course_id=course_id, **validated_data
+        )
 
-                try:
-                    billing = Billing.objects.create(
-                        student_id=self.context["student_id"],
-                        course_id=course_id,
-                        squad_transaction_ref=squad_transaction_ref,
-                        total_amount_paid=total_amount_paid,
-                        total_amount=total_amount,
-                        first_name=student_obj.user.first_name,
-                        last_name=student_obj.user.last_name,
-                        email=student_obj.user.email,
-                        payment_completion_status=payment_completion_status,
-                    )
-                    billing.save()
+    def validate_student_id(self, value):
+        if not Student.objects.filter(id=value).exists():
+            raise serializers.ValidationError("Student ID does not exist")
+        return value
 
-                    return billing
-                except ValueError as e:
-                    return e
+    def validate_course_id(self, value):
+        if not Course.objects.filter(id=value).exists():
+            raise serializers.ValidationError("Course ID does not exist")
+        return value
+
+    def save(self, **kwargs):
+
+        payment_completion_status = self.validated_data["payment_completion_status"]
+        squad_transaction_ref = self.validated_data["squad_transaction_ref"]
+        course_id = self.validated_data["course_id"]
+        total_amount_paid = self.validated_data["total_amount_paid"]
+        total_amount = self.validated_data["total_amount"]
+        email = self.validated_data["email"]
+        student_id = self.validated_data['student_id']
+        student = Student.objects.get(id = student_id)
+        try:
+            billing = Billing.objects.create(
+                student_id=student_id,
+                course_id=course_id,
+                squad_transaction_ref=squad_transaction_ref,
+                total_amount_paid=total_amount_paid,
+                total_amount=total_amount,
+                first_name=student.user.first_name,
+                last_name=student.user.last_name,
+                email=email,
+                payment_completion_status=payment_completion_status,
+            )
+            billing.save()
+
+            return billing
+        except ValueError as e:
+            return e
 
 
 class BillingSerializer(serializers.ModelSerializer):
