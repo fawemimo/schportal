@@ -13,7 +13,7 @@ router.register("studentloanbanners", views.StudentLoanSectionViewSet, basename=
 router.register("techicons", views.TechIconViewSet)
 router.register("featuredprojects", views.FeaturedProjectViewSet)
 router.register("componentdumps", views.ComponentDumpViewSet)
-router.register("coursecategories", views.CourseCategoryViewSet)
+router.register("coursecategories", views.CourseCategoryViewSet, basename='coursecategories')
 router.register("courses", views.CourseViewSet, basename="courses")
 router.register("teachers", views.TeacherViewSet)
 router.register("students", views.StudentViewSet, basename="students")

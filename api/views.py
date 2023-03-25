@@ -1,8 +1,6 @@
-import requests
-import os
 from datetime import datetime
+
 from decouple import config
-from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status
 from rest_framework.decorators import action
@@ -22,9 +20,11 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 class CourseCategoryViewSet(ModelViewSet):
-    queryset = CourseCategory.objects.all()
     serializer_class = CourseCategorySerializer
     permission_classes = []
+
+    def get_queryset(self):
+        return CourseCategory.objects.prefetch_related("course_set")
 
 
 class CourseViewSet(ModelViewSet):
@@ -38,10 +38,8 @@ class CourseViewSet(ModelViewSet):
             return AddCourseSerializer
         return CourseSerializer
 
-    permission_classes = []
-
     def get_queryset(self):
-        return Course.objects.order_by("ordering").all()
+        return Course.objects.order_by("ordering").select_related("coursecategory")
 
 
 class AnnouncementViewSet(ModelViewSet):
@@ -59,6 +57,7 @@ class ScholarshipSectionViewSet(ModelViewSet):
     serializer_class = ScholarshipSectionSerializer
     queryset = ScholarshipSection.objects.all()
 
+
 class TeacherViewSet(ModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
@@ -71,7 +70,9 @@ class StudentViewSet(ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.user_type == "student":
-            return Student.objects.filter(user_id=self.request.user.id)
+            return Student.objects.filter(user_id=self.request.user.id).select_related(
+                "user"
+            )
 
     def get_permissions(self):
         if self.request.method in ["PATCH", "GET"]:
@@ -91,7 +92,9 @@ class StudentProfilePicViewSet(ModelViewSet):
     permission_classes = [IsStudentType]
 
     def get_queryset(self):
-        return Student.objects.filter(user_id=self.request.user.id)
+        return Student.objects.filter(user_id=self.request.user.id).select_related(
+            "user"
+        )
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -138,7 +141,7 @@ class ScheduleViewSet(ModelViewSet):
         return (
             Schedule.objects.filter(course_id__slug=self.kwargs["course_slug"])
             .filter(active=True)
-            .all()
+            .select_related("course")
         )
 
     permission_classes = []
@@ -292,9 +295,11 @@ class ProjectViewSet(ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_staff:
             return ProjectAllocation.objects.all()
-        return ProjectAllocation.objects.filter(
-            student__user_id=self.request.user.id
-        ).filter(project__project_assigned=True)
+        return (
+            ProjectAllocation.objects.filter(student__user_id=self.request.user.id)
+            .filter(project__project_assigned=True)
+            .select_related("student", "project", "supervisor")
+        )
 
 
 class CourseCardViewSet(ModelViewSet):
@@ -305,6 +310,7 @@ class CourseCardViewSet(ModelViewSet):
         Course.objects.filter(published=True)
         .filter(kids_coding=False)
         .order_by("ordering")
+        .select_related("coursecategory")
     )
     lookup_field = "slug"
     lookup_value_regex = "[^/]+"
@@ -329,10 +335,12 @@ class CoursesViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     def get_queryset(self):
-        return Course.objects.filter(enrollment__student__user_id=self.request.user.id)
+        return Course.objects.filter(
+            enrollment__student__user_id=self.request.user.id
+        ).select_related("coursecategory")
 
     serializer_class = EnrollCourseSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsStudentType]
 
 
 class CourseManualViewSet(ModelViewSet):
@@ -371,8 +379,10 @@ class StudentAttendanceViewSet(ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_active:
-            return StudentAttendance.objects.filter(
-                student__user_id=self.request.user.id
+            return (
+                StudentAttendance.objects.filter(student__user_id=self.request.user.id)
+                .select_related("student")
+                .select_related("batch")
             )
 
 
@@ -383,6 +393,7 @@ class CourseHomepageFeatured(ModelViewSet):
         Course.objects.order_by("ordering")
         .filter(frontpage_featured=True)
         .filter(published=True)
+        .select_related("coursecategory")
     )
     serializer_class = CourseCardSerializer
 
@@ -393,7 +404,7 @@ class CourseHomepageFeatured(ModelViewSet):
 class VirtualClassViewSet(ModelViewSet):
     http_method_names = ["get", "post"]
 
-    queryset = VirtualClass.objects.all()
+    queryset = VirtualClass.objects.select_related("course")
     serializer_class = VirtualClassSerializer
 
 
@@ -414,13 +425,13 @@ class KidsCodingCourseViewSet(ModelViewSet):
             Course.objects.filter(kids_coding=True)
             .filter(published=True)
             .order_by("ordering")
+            .select_related("coursecategory")
         )
 
 
 class CourseDetailsViewSet(ModelViewSet):
     http_method_names = ["get"]
 
-    queryset = Course.objects.all()
     serializer_class = CourseCardSerializer
 
     lookup_field = "slug"
@@ -434,6 +445,7 @@ class CourseDetailsViewSet(ModelViewSet):
             Course.objects.order_by("ordering")
             .filter(frontpage_featured=True)
             .filter(published=True)
+            .select_related("coursecategory")
         )
 
 
@@ -448,7 +460,9 @@ class CourseOutlineViewSet(ModelViewSet):
         return {"slug": self.kwargs.get("slug")}
 
     def get_queryset(self):
-        return Course.objects.filter(slug=self.kwargs.get("slug"))
+        return Course.objects.filter(slug=self.kwargs.get("slug")).select_related(
+            "coursecategory"
+        )
 
 
 class CourseDetailsFeaturedViewSet(ModelViewSet):
@@ -465,6 +479,7 @@ class CourseDetailsFeaturedViewSet(ModelViewSet):
             .filter(published=True)
             .filter(kids_coding=False)
             .exclude(slug=slug)
+            .select_related("coursecategory")
         )
 
 
@@ -482,6 +497,7 @@ class KidCourseDetailsFeaturedViewSet(ModelViewSet):
             .filter(published=True)
             .filter(kids_coding=True)
             .exclude(slug=slug)
+            .select_related("coursecategory")
         )
 
 
@@ -509,6 +525,7 @@ class FeaturedVirtualClassViewSet(ModelViewSet):
             Course.objects.filter(is_virtual_class=True)
             .filter(published=True)
             .order_by("ordering")
+            .select_related("coursecategory")
         )
 
 
@@ -641,7 +658,9 @@ class EmployerJobApplicantViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend]
 
     def get_queryset(self):
-        return Job.objects.filter(employer__user=self.request.user)
+        return Job.objects.filter(employer__user=self.request.user).select_related(
+            "employer"
+        )
 
 
 class StudentAppliedJobViewSet(ModelViewSet):
@@ -668,7 +687,9 @@ class StudentApplicationForJobViewSet(ModelViewSet):
         return [IsStudentType()]
 
     def get_queryset(self):
-        return JobApplication.objects.filter(student__user=self.request.user)
+        return JobApplication.objects.filter(
+            student__user=self.request.user
+        ).select_related("student", "job")
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -704,10 +725,15 @@ class BillingPaymentViewSet(ModelViewSet):
             return PostBillingSerializer
 
     def get_queryset(self):
-        return Billing.objects.filter(student__user=self.request.user).prefetch_related('billingdetail_set')
+        return Billing.objects.filter(student__user=self.request.user).prefetch_related(
+            "billingdetail_set"
+        )
 
     def get_serializer_context(self):
-        return {"student_id": self.kwargs.get("student_pk")}
+        return {
+            "student_id": self.kwargs.get("student_pk"),
+            "user_id": self.kwargs.get("user_pk"),
+        }
 
 
 class BillingDetailsViewSet(ModelViewSet):
@@ -717,7 +743,11 @@ class BillingDetailsViewSet(ModelViewSet):
     permission_classes = [IsStudentType]
 
     def get_queryset(self):
-        return BillingDetail.objects.filter(billing__student__user=self.request.user).select_related('billing')
+        return (
+            BillingDetail.objects.filter(billing__student__user=self.request.user)
+            .select_related("billing")
+            .order_by("-date_paid")
+        )
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -727,11 +757,12 @@ class BillingDetailsViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {"billing_id": self.kwargs.get("billing_pk")}
-    
+
     def create(self, request, *args, **kwargs):
         serializer = PostBillingDetailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data)
+
 
 # End Billing region
