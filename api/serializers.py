@@ -1119,7 +1119,6 @@ class PostBillingSerializer(serializers.ModelSerializer):
             "squad_transaction_ref",
             "student_id",
             "course_id",
-            "email",
             "total_amount",
             "total_amount_paid",
         ]
@@ -1149,7 +1148,6 @@ class PostBillingSerializer(serializers.ModelSerializer):
         course_id = self.validated_data["course_id"]
         total_amount_paid = self.validated_data["total_amount_paid"]
         total_amount = self.validated_data["total_amount"]
-        email = self.validated_data["email"]
         student_id = self.validated_data['student_id']
         student = Student.objects.get(id = student_id)
         try:
@@ -1161,7 +1159,7 @@ class PostBillingSerializer(serializers.ModelSerializer):
                 total_amount=total_amount,
                 first_name=student.user.first_name,
                 last_name=student.user.last_name,
-                email=email,
+                email=student.user.email,
                 payment_completion_status=payment_completion_status,
             )
             billing.save()

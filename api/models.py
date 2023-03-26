@@ -728,7 +728,7 @@ class Billing(models.Model):
     )
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255, unique=True, blank=True, null=True)
+    email = models.EmailField(max_length=255, blank=True, null=True)
     total_amount_paid = models.CharField(max_length=50, blank=True, null=True)
     total_amount = models.CharField(max_length=255)    
     payment_completion_status = models.CharField(default=PENDING, choices=PAYMENT_COMPLETION_STATUS, max_length=50, blank=True, null=True)    
