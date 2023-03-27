@@ -731,28 +731,32 @@ class Billing(models.Model):
     email = models.EmailField(max_length=255, blank=True, null=True)
     total_amount_paid = models.CharField(max_length=50, blank=True, null=True)
     total_amount = models.CharField(max_length=255)    
+    outstanding_amount = models.CharField(max_length=50, null=True, blank=True)
     payment_completion_status = models.CharField(default=PENDING, choices=PAYMENT_COMPLETION_STATUS, max_length=50, blank=True, null=True)    
 
     def __str__(self):
         return str(self.id)
 
+    # def save(self, *args,**kwargs):
+    #     outstanding = self.tot
+
 
 class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
     amount_paid = models.CharField(max_length=50)
-    outstanding_amount = models.CharField(max_length=50, null=True, blank=True)
+    # outstanding_amount = models.CharField(max_length=50, null=True, blank=True)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
 
-    def save(self, *args, **kwargs):
-        billing = Billing.objects.get(id=self.billing.id)
-        outstanding = billing.billingdetail_set.only('id').values('outstanding_amount').first()
-        if outstanding is not None:
-            x = outstanding['outstanding_amount']        
-            self.outstanding_amount = int(x) - int(self.amount_paid)
-        super(BillingDetail, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     billing = Billing.objects.get(id=self.billing.id)
+    #     outstanding = billing.billingdetail_set.only('id').values('outstanding_amount').first()
+    #     if outstanding is not None:
+    #         x = outstanding['outstanding_amount']        
+    #         self.outstanding_amount = int(x) - int(self.amount_paid)
+    #     super(BillingDetail, self).save(*args, **kwargs)
 
 
 class Payment(models.Model):

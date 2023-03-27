@@ -568,7 +568,7 @@ class BillingAdmin(admin.ModelAdmin):
 
 @admin.register(BillingDetail)
 class BillingDetailAdmin(admin.ModelAdmin):
-    list_display = ["id", "billing", "amount_paid", "outstanding_amount", "date_paid"]
+    list_display = ["id", "billing", "amount_paid", "date_paid"]
     list_filter = ["date_paid"]
     # autocomplete_fields = ["billing__icontains"]
     search_fields = ["billing__icontains"]

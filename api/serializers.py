@@ -1159,6 +1159,7 @@ class PostBillingSerializer(serializers.ModelSerializer):
                 total_amount=total_amount,
                 first_name=student.user.first_name,
                 last_name=student.user.last_name,
+                outstanding_amount='',
                 email=student.user.email,
                 payment_completion_status=payment_completion_status,
             )
@@ -1170,37 +1171,30 @@ class PostBillingSerializer(serializers.ModelSerializer):
 
 
 class BillingSerializer(serializers.ModelSerializer):
-    student_id = serializers.IntegerField()
-    course_id = serializers.IntegerField()
+    student = serializers.StringRelatedField()
+    course = serializers.StringRelatedField()
+    
 
     class Meta:
         model = Billing
         fields = [
             "id",
-            "student_id",
-            "course_id",
+            "student",
+            "course",
             "first_name",
             "last_name",
             "email",
             "total_amount",
-            "total_amount_paid",
+            "outstanding_amount",
             "payment_completion_status",
         ]
 
-        lookup_field = "student_id"
 
-
-class BillingDetailSerializer(serializers.ModelSerializer):
-    billing = BillingSerializer()
-    course_name = serializers.SerializerMethodField()
+class BillingDetailSerializer(serializers.ModelSerializer): 
 
     class Meta:
         model = BillingDetail
-        fields = ["id","course_name", "billing", "amount_paid", "outstanding_amount", "date_paid"]
-
-    def get_course_name(self, obj):
-        return obj.billing.course.title
-
+        fields = ["id","amount_paid","date_paid"]
 
 class PostBillingDetailSerializer(serializers.ModelSerializer):
     billing_id = serializers.IntegerField()
@@ -1221,7 +1215,7 @@ class PostBillingDetailSerializer(serializers.ModelSerializer):
         try:
             # create the billing details wrt billing_id
             billingdetails = BillingDetail.objects.create(
-                billing_id=billing_id, amount_paid=amount_paid, outstanding_amount=""
+                billing_id=billing_id, amount_paid=amount_paid
             )
 
             billingdetails.save()

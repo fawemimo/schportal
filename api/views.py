@@ -714,9 +714,7 @@ class StudentApplicationForJobViewSet(ModelViewSet):
 
 class BillingPaymentViewSet(ModelViewSet):
     http_method_names = ["post", "get"]
-    permission_classes = [IsStudentType]
-    lookup_field = "student_id"
-    lookup_value_regex = "[^/]+"
+    permission_classes = [IsStudentType]    
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -747,6 +745,7 @@ class BillingDetailsViewSet(ModelViewSet):
             BillingDetail.objects.filter(billing__student__user=self.request.user)
             .select_related("billing")
             .order_by("-date_paid")
+            .filter(billing_id=self.kwargs.get("billing_pk"))
         )
 
     def get_serializer_class(self):
