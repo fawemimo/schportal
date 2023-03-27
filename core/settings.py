@@ -33,6 +33,11 @@ INSTALLED_APPS = [
     "tinymce",
 ]
 
+if DEBUG:
+    INSTALLED_APPS += ["debug_toolbar"]
+    INTERNAL_IPS = ["127.0.0.1"]
+
+
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -44,6 +49,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if DEBUG:
+    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
 ROOT_URLCONF = "core.urls"
 
@@ -182,7 +190,7 @@ if DEBUG:
 else:
     SQUAD_SECRET_KEY_PROD = config('SQUAD_SECRET_KEY_PROD')
 
-    
+
 try:
     from .prod_settings import *
     from .staging_settings import *
