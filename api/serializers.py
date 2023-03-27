@@ -1192,10 +1192,14 @@ class BillingSerializer(serializers.ModelSerializer):
 
 class BillingDetailSerializer(serializers.ModelSerializer):
     billing = BillingSerializer()
+    course_name = serializers.SerializerMethodField()
 
     class Meta:
         model = BillingDetail
-        fields = ["id", "billing", "amount_paid", "outstanding_amount", "date_paid"]
+        fields = ["id","course_name", "billing", "amount_paid", "outstanding_amount", "date_paid"]
+
+    def get_course_name(self, obj):
+        return obj.billing.course.title
 
 
 class PostBillingDetailSerializer(serializers.ModelSerializer):
