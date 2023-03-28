@@ -276,7 +276,6 @@ class AboutUsSection(models.Model):
 class StudentLoanSection(models.Model):
     is_published = models.BooleanField(default=False)
     loan_intro = models.TextField()
-    how_it_works = models.TextField()
     eligibility = models.TextField()
 
     def __str__(self):
