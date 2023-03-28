@@ -249,7 +249,14 @@ class AlbumSectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = AlbumSection
         fields = "__all__"
-                
+
+
+class AlumiConnectSectionSerailizer(serializers.ModelSerializer):
+    class Meta:
+        model = AlumiConnectSection
+        fields = "__all__"
+        
+                        
 class ComponentDumpSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComponentDump

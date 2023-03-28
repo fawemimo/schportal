@@ -102,7 +102,13 @@ class CareerSectionAdmin(admin.ModelAdmin):
 class AlbumSectionAdmin(admin.ModelAdmin):
     list_display = ["id", "is_published"]
     list_filter = ["is_published"]
-    
+
+
+@admin.register(AlumiConnectSection)
+class AlumiConnectSectionAdmin(admin.ModelAdmin):
+    list_display = ["id", "is_published"]
+    list_filter = ["is_published"]
+
 
 @admin.register(CourseCategory)
 class CourseCategoryAdmin(admin.ModelAdmin):
@@ -145,6 +151,11 @@ class CourseAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return Course.objects.order_by("ordering")
 
+
+# @admin.register(Enrollment)
+# class EnrollmentAdmin(admin.ModelAdmin):
+#     list_display = ["id", "course","full_name","mobile_number"]
+#     list_select_related = ["course"]
 
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
@@ -621,22 +632,5 @@ class BillingDetailAdmin(admin.ModelAdmin):
     list_select_related = ["billing"]
     list_per_page = 25
     paginator = CachingPaginator
-
-@admin.register(Payment)
-class PaymentAdmin(admin.ModelAdmin):
-    list_display = [
-        "transaction_ref",
-        "course",
-        "name",
-        "phone_number",
-        "total_amount",
-        "paid_amount",
-        "date_paid",
-    ]
-    list_filter = ["date_paid"]
-
-    def name(self, obj):
-        return f"{obj.fist_name} {obj.last_name}"
-
 
 # End Billing

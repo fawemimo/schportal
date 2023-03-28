@@ -23,6 +23,8 @@ router.register("inquiries", views.InquiryViewSet)
 router.register("profilepics", views.StudentProfilePicViewSet, basename="profilepics")
 router.register("careersections", views.CareerSectionViewSet)
 router.register("albumsections", views.AlbumSectionViewSet)
+router.register("alumiconnectsections", views.AlumiConnectSectionViewSet)
+
 
 # new viewset implemented
 router.register("assignments", views.AssignmentViewSet, basename="assignment")

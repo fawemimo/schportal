@@ -66,6 +66,12 @@ class AlbumSectionViewSet(ModelViewSet):
     queryset = AlbumSection.objects.all()
 
 
+class AlumiConnectSectionViewSet(ModelViewSet):
+    http_method_names = ["get"]
+    serializer_class = AlumiConnectSectionSerailizer
+    queryset = AlumiConnectSection.objects.all()
+
+
 class ScholarshipSectionViewSet(ModelViewSet):
     http_method_names = ["get"]
     serializer_class = ScholarshipSectionSerializer

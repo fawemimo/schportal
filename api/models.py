@@ -170,6 +170,15 @@ class Batch(models.Model):
         return f"{self.title}"
 
 
+# class Enrollment(models.Model):
+#     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+#     full_name = models.CharField(max_length=255)
+#     email = models.EmailField(max_length=255)
+#     mobile_number = models.CharField(max_length=50)
+
+#     def __str__(self):
+#         return self.full_name
+
 class TopBar(models.Model):
     title = models.CharField(max_length=150)
     published = models.BooleanField(default=False)
@@ -292,6 +301,14 @@ class AlbumSection(models.Model):
     def __str__(self):
         return str(self.id)
 
+
+class AlumiConnectSection(models.Model):
+    is_published = models.BooleanField(default=False)
+    intro = models.TextField()
+    content = models.TextField()
+
+    def __str__(self):
+        return str(self.id)
 
 # For any section that just requires a content dump
 # like the footer etc
@@ -776,22 +793,6 @@ class BillingDetail(models.Model):
             x = outstanding['outstanding_amount']        
             self.outstanding_amount = int(x) - int(self.amount_paid)
         super(BillingDetail, self).save(*args, **kwargs)
-
-
-class Payment(models.Model):
-    transaction_ref = models.UUIDField(default=uuid.uuid4, unique=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255)
-    phone_number = models.CharField(max_length=20)
-    total_amount = models.CharField(max_length=255)
-    paid_amount = models.CharField(max_length=255)
-    date_paid = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return f'{self.first_name} {self.last_name}'
-
 
 
 # End Billing Information region
