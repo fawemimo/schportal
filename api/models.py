@@ -589,6 +589,11 @@ class FinancialAid(models.Model):
     last_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)
     mobile = models.CharField(max_length=50)
+    residential_address = models.CharField(max_length=255, blank=True, null=True)
+    guarantor_full_name = models.CharField(max_length=255, blank=True, null=True)
+    guarantor_residential_contact_address = models.CharField(max_length=255, blank=True, null=True)
+    relationship_with_guarantor = models.CharField(max_length=255, blank=True, null=True)
+    guarantor_mobile = models.CharField(max_length=255, blank=True, null=True)
     date_posted = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

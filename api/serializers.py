@@ -875,6 +875,11 @@ class FinancialAidSerializer(serializers.ModelSerializer):
             "last_name",
             "email",
             "mobile",
+            "residential_address",
+            "guarantor_full_name",
+            "guarantor_residential_contact_address",
+            "relationship_with_guarantor",
+            "guarantor_mobile",
             "date_posted",
         ]
 
@@ -889,6 +894,11 @@ class FinancialAidSerializer(serializers.ModelSerializer):
         last_name = self.validated_data["last_name"]
         email = self.validated_data["email"]
         mobile = self.validated_data["mobile"]
+        residential_address = self.validated_data["residential_address"]
+        guarantor_full_name = self.validated_data["guarantor_full_name"]
+        guarantor_residential_contact_address = self.validated_data["guarantor_residential_contact_address"]
+        relationship_with_guarantor = self.validated_data["relationship_with_guarantor"]
+        guarantor_mobile = self.validated_data["guarantor_mobile"]
 
         financial_aid = FinancialAid.objects.create(
             aid_type=aid_type,
@@ -896,9 +906,14 @@ class FinancialAidSerializer(serializers.ModelSerializer):
             last_name=last_name,
             email=email,
             mobile=mobile,
+            residential_address =residential_address,
+            guarantor_full_name=guarantor_full_name,
+            guarantor_residential_contact_address=guarantor_residential_contact_address,
+            relationship_with_guarantor=relationship_with_guarantor,
+            guarantor_mobile=guarantor_mobile,
         )
 
-        send_financial_aid_email(aid_type, first_name, last_name, email, mobile)
+        send_financial_aid_email(aid_type,first_name,last_name,email,mobile,relationship_with_guarantor,residential_address,guarantor_full_name,guarantor_residential_contact_address,guarantor_mobile)
 
         return financial_aid
 
