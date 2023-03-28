@@ -486,7 +486,7 @@ class InternationalModelAdmin(admin.ModelAdmin):
         "flag",
         "country_code",
         "topbar_src",
-        "intro_txt",
+        "why_choose_virtual",
     ]
 
 
@@ -497,7 +497,7 @@ class FeaturedProjectAdmin(admin.ModelAdmin):
 
 @admin.register(FinancialAid)
 class FinancialAidAdmin(admin.ModelAdmin):
-    list_display = ["name", "email", "mobile", "date_posted"]
+    list_display = ["name","course", "email", "mobile", "date_posted"]
     list_filter = ["date_posted"]
 
     def name(self, obj):

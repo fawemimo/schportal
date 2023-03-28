@@ -559,7 +559,7 @@ class InternationalModel(models.Model):
     )
     country_code = models.CharField(max_length=255)
     topbar_src = models.TextField()
-    intro_txt = models.TextField()
+    why_choose_virtual = models.TextField()
 
     def __str__(self):
         return self.country_name
@@ -584,6 +584,7 @@ class FinancialAid(models.Model):
     )
 
     aid_type = models.CharField(max_length=50, choices=aid_type_choices)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)

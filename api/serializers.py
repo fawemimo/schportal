@@ -834,7 +834,7 @@ class InternationalModelSerializer(serializers.ModelSerializer):
             "flag",
             "country_code",
             "topbar_src",
-            "intro_txt",
+            "why_choose_virtual",
         ]
 
     lookup_field = "country_name"
@@ -871,6 +871,7 @@ class FinancialAidSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "aid_type",
+            "course",
             "first_name",
             "last_name",
             "email",
@@ -890,6 +891,7 @@ class FinancialAidSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         aid_type = self.validated_data["aid_type"]
+        course = self.validated_data["course"]
         first_name = self.validated_data["first_name"]
         last_name = self.validated_data["last_name"]
         email = self.validated_data["email"]
@@ -902,6 +904,7 @@ class FinancialAidSerializer(serializers.ModelSerializer):
 
         financial_aid = FinancialAid.objects.create(
             aid_type=aid_type,
+            course=course,
             first_name=first_name,
             last_name=last_name,
             email=email,
@@ -913,7 +916,7 @@ class FinancialAidSerializer(serializers.ModelSerializer):
             guarantor_mobile=guarantor_mobile,
         )
 
-        send_financial_aid_email(aid_type,first_name,last_name,email,mobile,relationship_with_guarantor,residential_address,guarantor_full_name,guarantor_residential_contact_address,guarantor_mobile)
+        send_financial_aid_email(aid_type,course,first_name,last_name,email,mobile,relationship_with_guarantor,residential_address,guarantor_full_name,guarantor_residential_contact_address,guarantor_mobile)
 
         return financial_aid
 

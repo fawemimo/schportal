@@ -104,12 +104,13 @@ def send_short_quizze_email(fullname,email,mobile,tartiary_education,tartiary_st
         print(e)
 
 
-def send_financial_aid_email(aid_type,first_name,last_name,email,mobile,relationship_with_guarantor,residential_address,guarantor_full_name,guarantor_residential_contact_address,guarantor_mobile):
+def send_financial_aid_email(aid_type,course,first_name,last_name,email,mobile,relationship_with_guarantor,residential_address,guarantor_full_name,guarantor_residential_contact_address,guarantor_mobile):
     
     try:
         message = BaseEmailMessage(template_name='api/email_response/financial_aid.html',
             context = {
                 'aid_type':aid_type,
+                'course':course,
                 'first_name':first_name,
                 'last_name':last_name,
                 'email':email,
