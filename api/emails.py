@@ -27,7 +27,7 @@ def send_interested_email(course_id,full_name,email,mobile):
     try:
         message = BaseEmailMessage(template_name='api/email_response/interested_emails.html',
         context = {
-            'course':course.title.upper(),
+            'course':course.title,
             'startdate':course.schedule_set.values('startdate'),
             'course_id':course_id,
             'full_name':full_name,
