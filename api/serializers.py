@@ -1,17 +1,13 @@
+from django.db.models import *
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from api.emails import (
-    send_financial_aid_email,
-    send_inquiries_email,
-    send_interested_email,
-    send_kids_coding_email,
-    send_short_quizze_email,
-    send_sponsorship_email,
-    send_virtualclass_email,
-)
+from api.emails import (send_financial_aid_email, send_inquiries_email,
+                        send_interested_email, send_kids_coding_email,
+                        send_short_quizze_email, send_sponsorship_email,
+                        send_virtualclass_email)
 
 from .models import *
 
@@ -1159,7 +1155,6 @@ class PostBillingSerializer(serializers.ModelSerializer):
                 total_amount=total_amount,
                 first_name=student.user.first_name,
                 last_name=student.user.last_name,
-                outstanding_amount='',
                 email=student.user.email,
                 payment_completion_status=payment_completion_status,
             )
@@ -1172,8 +1167,8 @@ class PostBillingSerializer(serializers.ModelSerializer):
 
 class BillingSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
-    course = serializers.StringRelatedField()
-    
+    course = serializers.StringRelatedField()    
+    grand_outstanding = serializers.SerializerMethodField()
 
     class Meta:
         model = Billing
@@ -1185,10 +1180,15 @@ class BillingSerializer(serializers.ModelSerializer):
             "last_name",
             "email",
             "total_amount",
-            "outstanding_amount",
             "payment_completion_status",
+            "grand_outstanding",
         ]
 
+    def get_grand_outstanding(self, obj):
+        billings = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(amount_paid=Sum('amount_paid'))
+        total_amount_paid = billings['amount_paid']
+        cal = obj.total_amount - total_amount_paid
+        return cal
 
 class BillingDetailSerializer(serializers.ModelSerializer): 
 
@@ -1201,7 +1201,7 @@ class PostBillingDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BillingDetail
-        fields = ["id", "billing_id", "amount_paid"]
+        fields = ["id", "billing_id", "amount_paid","program_type"]
 
     def validate_billing_id(self, value):
         if not Billing.objects.filter(id=value):
@@ -1211,11 +1211,12 @@ class PostBillingDetailSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         billing_id = self.validated_data["billing_id"]
         amount_paid = self.validated_data["amount_paid"]
+        program_type = self.validated_data["program_type"]
 
         try:
             # create the billing details wrt billing_id
             billingdetails = BillingDetail.objects.create(
-                billing_id=billing_id, amount_paid=amount_paid
+                billing_id=billing_id, amount_paid=amount_paid, program_type=program_type
             )
 
             billingdetails.save()

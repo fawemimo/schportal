@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.core.cache import cache
+from django.core.paginator import Paginator
 from django.db.models.aggregates import Count
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
@@ -8,10 +10,33 @@ from django.utils.html import format_html, urlencode
 from .models import *
 
 
+class CachingPaginator(Paginator):
+    def _get_count(self):
+
+        if not hasattr(self, "_count"):
+            self._count = None
+
+        if self._count is None:
+            try:
+                key = "adm:{0}:count".format(hash(self.object_list.query.__str__()))
+                self._count = cache.get(key, -1)
+                if self._count == -1:
+                    self._count = super().count
+                    cache.set(key, self._count, 3600)
+
+            except:
+                self._count = len(self.object_list)
+        return self._count
+
+    count = property(_get_count)
+
+
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ["id", "username", "email"]
+    list_display = ["id","first_name","last_name","username", "email"]
     list_display_links = ["id","username", "email"]
+    list_filter = ["user_type","is_staff","is_superuser","is_active"]
+    ordering = ["-id"]
     add_fieldsets = (
         (
             None,
@@ -283,6 +308,9 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 class StudentAdmin(admin.ModelAdmin):
     list_display = ["id","full_name", "profile_pix", "student_idcard_id", "batch_name"]
     search_fields = ["user__first_name", "user__last_name__istartswith"]
+    list_per_page = 25
+    paginator = CachingPaginator
+    list_select_related = ["user"]
 
     def batch_name(self, obj):
         obj = obj.batch_set.values("title", "id")
@@ -346,6 +374,7 @@ class AssignmentAllocationAdmin(admin.ModelAdmin):
     list_display_link = ["assignment"]
     autocomplete_fields = ["batch", "assignment"]
     list_select_related = ["assignment", "batch", "supervisor"]
+    paginator = CachingPaginator
 
     def batch(self, obj):
         return obj.title
@@ -564,16 +593,21 @@ class BillingAdmin(admin.ModelAdmin):
     list_editable = ["student"]
     autocomplete_fields = ["student"]
     search_fields = ["student"]
-
+    list_per_page = 25
+    paginator = CachingPaginator
 
 @admin.register(BillingDetail)
 class BillingDetailAdmin(admin.ModelAdmin):
-    list_display = ["id", "billing", "amount_paid", "date_paid"]
+    list_display = ["id", "billing","student_name", "amount_paid","outstanding_amount", "date_paid"]
+
+    def student_name(self, obj):
+        return obj.billing.student
+    
     list_filter = ["date_paid"]
-    # autocomplete_fields = ["billing__icontains"]
     search_fields = ["billing__icontains"]
     list_select_related = ["billing"]
-
+    list_per_page = 25
+    paginator = CachingPaginator
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):

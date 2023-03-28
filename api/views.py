@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from decouple import config
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status
 from rest_framework.decorators import action
@@ -172,7 +174,7 @@ class TestimonialViewSet(ModelViewSet):
 
 
 class TechIconViewSet(ModelViewSet):
-    queryset = TechIcon.objects.filter(published=True).all()
+    queryset = TechIcon.objects.filter(published=True)
     serializer_class = TechIconSerializer
     permission_classes = []
 
@@ -363,7 +365,7 @@ class CourseManualViewSet(ModelViewSet):
 class ResourceViewSet(ModelViewSet):
     http_method_names = ["get"]
 
-    queryset = Resource.objects.filter(published=True)
+    queryset = Resource.objects.filter(published=True).select_related('resource_type')
     serializer_class = ResourceSerializer
     permission_classes = []
 
@@ -725,13 +727,17 @@ class BillingPaymentViewSet(ModelViewSet):
     def get_queryset(self):
         return Billing.objects.filter(student__user=self.request.user).prefetch_related(
             "billingdetail_set"
-        )
+        ).select_related('student', 'course')
 
     def get_serializer_context(self):
         return {
             "student_id": self.kwargs.get("student_pk"),
             "course_id": self.kwargs.get("course_pk"),
         }
+    
+    @method_decorator(cache_page(60*2))
+    def dispatch(self, request, *args, **kwargs):
+       return super().dispatch(request, *args, **kwargs)
 
 
 class BillingDetailsViewSet(ModelViewSet):
@@ -762,6 +768,10 @@ class BillingDetailsViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data)
+    
+    @method_decorator(cache_page(60*2))
+    def dispatch(self, request, *args, **kwargs):
+       return super().dispatch(request, *args, **kwargs)
 
 
 # End Billing region

@@ -97,7 +97,7 @@ class Student(models.Model):
     full_name = models.CharField(max_length=255, blank=True, null=True)
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
     date_of_birth = models.CharField(max_length=50, blank=True, null=True)
-    mobile_numbers = models.CharField(max_length=250)
+    mobile_numbers = models.CharField(max_length=250,blank=True, null=True)
     profile_pic = models.ImageField(
         upload_to="students_profilepix/",
         validators=[
@@ -105,10 +105,10 @@ class Student(models.Model):
             FileExtensionValidator(allowed_extensions=["jpg", "png", "jpeg"]),
         ],
     )
-    residential_address = models.CharField(max_length=250)
-    contact_address = models.CharField(max_length=250)
-    next_of_kin_fullname = models.CharField(max_length=150)
-    next_of_kin_contact_address = models.CharField(max_length=250)
+    residential_address = models.CharField(max_length=250,blank=True, null=True)
+    contact_address = models.CharField(max_length=250,blank=True, null=True)
+    next_of_kin_fullname = models.CharField(max_length=150,blank=True, null=True)
+    next_of_kin_contact_address = models.CharField(max_length=250,blank=True, null=True)
     next_of_kin_mobile_number = models.CharField(max_length=250, blank=True, null=True)
     relationship_with_next_kin = models.CharField(max_length=255, blank=True, null=True)
 
@@ -729,34 +729,42 @@ class Billing(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, blank=True, null=True)
-    total_amount_paid = models.CharField(max_length=50, blank=True, null=True)
-    total_amount = models.CharField(max_length=255)    
-    outstanding_amount = models.CharField(max_length=50, null=True, blank=True)
+    total_amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
+    total_amount = models.PositiveBigIntegerField(blank=True, null=True)    
+    # outstanding_amount = models.PositiveBigIntegerField(null=True, blank=True)
     payment_completion_status = models.CharField(default=PENDING, choices=PAYMENT_COMPLETION_STATUS, max_length=50, blank=True, null=True)    
 
     def __str__(self):
         return str(self.id)
 
-    # def save(self, *args,**kwargs):
-    #     outstanding = self.tot
-
+    # def save(self, *args,**kwargs):        
+    #     billingdetails = BillingDetail.objects.filter(billing_id=self.id) 
+    #     amount_paid = sum([int(x.amount_paid) for x in billingdetails])
+    #     outstanding = int(self.total_amount) - int(amount_paid)
+    #     self.outstanding_amount = outstanding
+    #     super(Billing, self).save(*args, **kwargs)
 
 class BillingDetail(models.Model):
+    PROGRAM_TYPE_CHOICES = (
+        ('Onsite', 'Onsite'),
+        ('Virtual', 'Virtual')
+    )
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
-    amount_paid = models.CharField(max_length=50)
-    # outstanding_amount = models.CharField(max_length=50, null=True, blank=True)
+    program_type = models.CharField(max_length=50, choices=PROGRAM_TYPE_CHOICES, blank=True,null=True)
+    amount_paid = models.PositiveBigIntegerField()
+    outstanding_amount = models.PositiveBigIntegerField(null=True, blank=True)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
 
-    # def save(self, *args, **kwargs):
-    #     billing = Billing.objects.get(id=self.billing.id)
-    #     outstanding = billing.billingdetail_set.only('id').values('outstanding_amount').first()
-    #     if outstanding is not None:
-    #         x = outstanding['outstanding_amount']        
-    #         self.outstanding_amount = int(x) - int(self.amount_paid)
-    #     super(BillingDetail, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        billing = Billing.objects.get(id=self.billing.id)
+        outstanding = billing.billingdetail_set.only('id').values('outstanding_amount').first()
+        if outstanding is not None:
+            x = outstanding['outstanding_amount']        
+            self.outstanding_amount = int(x) - int(self.amount_paid)
+        super(BillingDetail, self).save(*args, **kwargs)
 
 
 class Payment(models.Model):
