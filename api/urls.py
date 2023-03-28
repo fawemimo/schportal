@@ -21,7 +21,8 @@ router.register("navlinks", views.NavLinkViewSet)
 router.register("shortquizes", views.ShortQuizViewSet)
 router.register("inquiries", views.InquiryViewSet)
 router.register("profilepics", views.StudentProfilePicViewSet, basename="profilepics")
-
+router.register("careersections", views.CareerSectionViewSet)
+router.register("albumsections", views.AlbumSectionViewSet)
 
 # new viewset implemented
 router.register("assignments", views.AssignmentViewSet, basename="assignment")

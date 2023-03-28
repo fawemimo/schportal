@@ -274,6 +274,25 @@ class StudentLoanSection(models.Model):
         return str(self.id)
     
 
+class CareerSection(models.Model):
+    is_published = models.BooleanField(default=False)
+    intro_banner = models.TextField()
+    our_story = models.TextField()
+    mission_values = models.TextField()
+    team_description = models.TextField()
+
+    def __str__(self):
+        return str(self.id)
+    
+
+class AlbumSection(models.Model):
+    is_published = models.BooleanField(default=False)
+    album_photo = models.TextField()
+
+    def __str__(self):
+        return str(self.id)
+
+
 # For any section that just requires a content dump
 # like the footer etc
 
@@ -730,19 +749,11 @@ class Billing(models.Model):
     last_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, blank=True, null=True)
     total_amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
-    total_amount = models.PositiveBigIntegerField(blank=True, null=True)    
-    # outstanding_amount = models.PositiveBigIntegerField(null=True, blank=True)
+    total_amount = models.PositiveBigIntegerField(blank=True, null=True)
     payment_completion_status = models.CharField(default=PENDING, choices=PAYMENT_COMPLETION_STATUS, max_length=50, blank=True, null=True)    
 
     def __str__(self):
         return str(self.id)
-
-    # def save(self, *args,**kwargs):        
-    #     billingdetails = BillingDetail.objects.filter(billing_id=self.id) 
-    #     amount_paid = sum([int(x.amount_paid) for x in billingdetails])
-    #     outstanding = int(self.total_amount) - int(amount_paid)
-    #     self.outstanding_amount = outstanding
-    #     super(Billing, self).save(*args, **kwargs)
 
 class BillingDetail(models.Model):
     PROGRAM_TYPE_CHOICES = (

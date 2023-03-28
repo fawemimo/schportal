@@ -54,6 +54,18 @@ class AnnouncementViewSet(ModelViewSet):
         )
 
 
+class CareerSectionViewSet(ModelViewSet):
+    http_method_names = ["get"]
+    serializer_class = CareerSectionSerializer
+    queryset = CareerSection.objects.all()
+
+
+class AlbumSectionViewSet(ModelViewSet):
+    http_method_names = ["get"]
+    serializer_class = AlbumSectionSerializer
+    queryset = AlbumSection.objects.all()
+
+
 class ScholarshipSectionViewSet(ModelViewSet):
     http_method_names = ["get"]
     serializer_class = ScholarshipSectionSerializer

@@ -91,6 +91,19 @@ class StudentLoanSectionAdmin(admin.ModelAdmin):
     list_editable = ["is_published"]
 
 
+@admin.register(CareerSection)
+class CareerSectionAdmin(admin.ModelAdmin):
+
+    list_display = ["id", "is_published"]
+    list_filter = ["is_published"]
+
+
+@admin.register(AlbumSection)
+class AlbumSectionAdmin(admin.ModelAdmin):
+    list_display = ["id", "is_published"]
+    list_filter = ["is_published"]
+    
+
 @admin.register(CourseCategory)
 class CourseCategoryAdmin(admin.ModelAdmin):
     list_display = ["id", "title", "total_course"]

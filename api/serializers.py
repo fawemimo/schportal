@@ -239,6 +239,17 @@ class FeaturedProjectSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CareerSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CareerSection
+        fields = "__all__"
+
+
+class AlbumSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AlbumSection
+        fields = "__all__"
+                
 class ComponentDumpSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComponentDump
