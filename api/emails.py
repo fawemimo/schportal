@@ -3,7 +3,7 @@ from datetime import date
 from django.conf import settings
 from templated_mail.mail import BaseEmailMessage
 
-from api.models import Course
+from api.models import Course, Schedule
 
 
 def send_inquiries_email(fullname,email,mobile,message):
@@ -24,10 +24,13 @@ def send_inquiries_email(fullname,email,mobile,message):
 
 def send_interested_email(course_id,full_name,email,mobile):
     course = Course.objects.get(id=course_id)
+    schedule = Schedule.objects.get(course_id=course.id)
+    
     try:
         message = BaseEmailMessage(template_name='api/email_response/interested_emails.html',
         context = {
             'course':course.title,
+            'program_type': schedule.program_type,
             'startdate':course.schedule_set.values('startdate'),
             'course_id':course_id,
             'full_name':full_name,
