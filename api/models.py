@@ -4,6 +4,7 @@ from datetime import datetime
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
+from django.db.models import Sum
 from django.utils.text import slugify
 from tinymce import models as tinymce_models
 
@@ -785,19 +786,21 @@ class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
     program_type = models.CharField(max_length=50, choices=PROGRAM_TYPE_CHOICES, blank=True,null=True)
     amount_paid = models.PositiveBigIntegerField()
-    outstanding_amount = models.PositiveBigIntegerField(null=True, blank=True)
+    outstanding_amount = models.PositiveBigIntegerField(null=True, blank=True, editable=False)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
 
-    def save(self, *args, **kwargs):
-        billing = Billing.objects.get(id=self.billing.id)
-        outstanding = billing.billingdetail_set.only('id').values('outstanding_amount').first()
-        if outstanding is not None:
-            x = outstanding['outstanding_amount']        
-            self.outstanding_amount = int(x) - int(self.amount_paid)
-        super(BillingDetail, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     billing = Billing.objects.get(id=self.billing.id)
+    #     outstanding = billing.billingdetail_set.only('id').aggregate(sum_total_amount_paid=Sum('amount_paid'))
+    #     print('outstanding', outstanding['sum_total_amount_paid'])
+        # SUM OF TOTAL AMOUNT PAID - TOTAL AMOUNT
+        # if outstanding is not None:        
+        #     total_amount = billing.total_amount - outstanding['sum_total_amount_paid']
+        #     self.outstanding_amount = total_amount
+        # super(BillingDetail, self).save(*args, **kwargs)
 
 
 # End Billing Information region

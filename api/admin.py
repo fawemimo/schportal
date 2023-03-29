@@ -25,7 +25,7 @@ class CachingPaginator(Paginator):
                     cache.set(key, self._count, 3600)
 
             except:
-                self._count = len(self.object_list)
+                self._count = self.object_list.count()
         return self._count
 
     count = property(_get_count)
@@ -622,15 +622,16 @@ class BillingAdmin(admin.ModelAdmin):
 
 @admin.register(BillingDetail)
 class BillingDetailAdmin(admin.ModelAdmin):
-    list_display = ["id", "billing","student_name", "amount_paid","outstanding_amount", "date_paid"]
-
     def student_name(self, obj):
         return obj.billing.student
+
+    def get_queryset(self, request) :
+        return  BillingDetail.objects.select_related('billing')
     
+    list_display = ["id", "billing","student_name", "amount_paid","outstanding_amount", "date_paid"] 
     list_filter = ["date_paid"]
     search_fields = ["billing__icontains"]
     list_select_related = ["billing"]
     list_per_page = 25
-    paginator = CachingPaginator
 
 # End Billing

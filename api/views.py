@@ -753,9 +753,9 @@ class BillingPaymentViewSet(ModelViewSet):
             "course_id": self.kwargs.get("course_pk"),
         }
     
-    @method_decorator(cache_page(60*2))
-    def dispatch(self, request, *args, **kwargs):
-       return super().dispatch(request, *args, **kwargs)
+    # @method_decorator(cache_page(1*60))
+    # def dispatch(self, request, *args, **kwargs):
+    #    return super().dispatch(request, *args, **kwargs)
 
 
 class BillingDetailsViewSet(ModelViewSet):
@@ -787,9 +787,9 @@ class BillingDetailsViewSet(ModelViewSet):
         self.perform_create(serializer)
         return Response(serializer.data)
     
-    @method_decorator(cache_page(60*2))
-    def dispatch(self, request, *args, **kwargs):
-       return super().dispatch(request, *args, **kwargs)
+    # @method_decorator(cache_page(1*60))
+    # def dispatch(self, request, *args, **kwargs):
+    #    return super().dispatch(request, *args, **kwargs)
 
 
 # End Billing region
