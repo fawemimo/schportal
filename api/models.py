@@ -792,15 +792,18 @@ class BillingDetail(models.Model):
     def __str__(self):
         return str(self.id)
 
-    # def save(self, *args, **kwargs):
-    #     billing = Billing.objects.get(id=self.billing.id)
-    #     outstanding = billing.billingdetail_set.only('id').aggregate(sum_total_amount_paid=Sum('amount_paid'))
-    #     print('outstanding', outstanding['sum_total_amount_paid'])
-        # SUM OF TOTAL AMOUNT PAID - TOTAL AMOUNT
-        # if outstanding is not None:        
-        #     total_amount = billing.total_amount - outstanding['sum_total_amount_paid']
-        #     self.outstanding_amount = total_amount
-        # super(BillingDetail, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        billing = Billing.objects.get(id=self.billing.id)
+        billings = billing.billingdetail_set.filter(billing_id=self.billing.id).aggregate(amount_paid=Sum('amount_paid'))
+        try:
+            
+            total_amount_paid = billings['amount_paid']
+            cal = self.billing.total_amount - total_amount_paid
+            self.outstanding_amount = cal
+        except Exception as e:
+            return None
+
+        super(BillingDetail, self).save(*args, **kwargs)
 
 
 # End Billing Information region
