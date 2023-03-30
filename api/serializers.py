@@ -44,11 +44,6 @@ class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
             print(e)
         return data
 
-    def validate_username(self, value):
-        if not User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Username does not exist")
-        return value
-
     def validate_user_type(self, value):
         if not User.objects.filter(user_type=value).exists():
             raise serializers.ValidationError("User type does not exist")
