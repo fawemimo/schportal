@@ -807,3 +807,23 @@ class BillingDetail(models.Model):
 
 
 # End Billing Information region
+
+
+# BLOG MODEL REGION 
+
+# class BlogBaseModel(models.Model):
+#     seo_keywords = models.TextField()
+#     date_created = models.DateTimeField(auto_now_add=True)
+#     date_updated = models.DateTimeField(auto_now=True)
+#     slug = models.SlugField(blank=True, null=True)
+
+#     class Meta:
+#         ordering = ('-date_created')
+#         abstract = True
+
+
+# class BlogCategory(BlogBaseModel):
+
+
+
+# END BLOG MODEL REGION 

@@ -102,7 +102,7 @@ router.register(
 router.register(
     "jobapplications", views.StudentApplicationForJobViewSet, basename="jobapplications"
 )
-
+router.register('jobcategories', views.JobCategoryViewSet, basename='jobcategories')
 
 # END JOB PORTAL REGION
 

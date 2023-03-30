@@ -667,6 +667,12 @@ class JobViewSet(ModelViewSet):
     search_fields = ["job_title", "job_category__title", "employer__company_name"]
     ordering_fields = ["date_posted", "date_updated"]
     pagination_class = JobPagination
+    
+class JobCategoryViewSet(ModelViewSet):
+    http_method_name = ['get']
+    serializer_class = JobCategorySerializer
+    queryset = JobCategory.objects.all()
+
 
 
 class EmployerJobApplicantViewSet(ModelViewSet):
