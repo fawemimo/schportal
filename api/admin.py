@@ -635,3 +635,25 @@ class BillingDetailAdmin(admin.ModelAdmin):
     list_per_page = 25
 
 # End Billing
+
+
+# BLOG REGION
+@admin.register(BlogCategory)
+class BlogCategoryAdmin(admin.ModelAdmin):
+
+    list_display = ['id','title', 'seo_keywords', 'date_created', 'date_updated']
+    list_filter = ['date_created','date_updated']    
+    search_fields = ['title']
+    prepopulated_fields = {"slug": ("title",)}
+
+
+@admin.register(BlogPost)
+class BlogPostAdmin(admin.ModelAdmin):
+    list_display = ['id','title','status', 'blog_category', 'date_created', 'date_updated']
+    list_filter = ['date_created','date_updated']    
+    search_fields = ['title','content']
+    list_editable = ['status']
+    list_select_related = ['blog_category']
+    prepopulated_fields = {"slug": ("title",)}
+      
+# END BLOG REGION

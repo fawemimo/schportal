@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Sum
 from django.utils.text import slugify
 from tinymce import models as tinymce_models
+from api.choices import OPTIONS
 
 from api.validate import validate_file_size
 
@@ -811,19 +812,32 @@ class BillingDetail(models.Model):
 
 # BLOG MODEL REGION 
 
-# class BlogBaseModel(models.Model):
-#     seo_keywords = models.TextField()
-#     date_created = models.DateTimeField(auto_now_add=True)
-#     date_updated = models.DateTimeField(auto_now=True)
-#     slug = models.SlugField(blank=True, null=True)
+class BlogBaseModel(models.Model):
+    title = models.CharField(max_length=50)
+    slug = models.SlugField(blank=True, null=True)
+    seo_keywords = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
 
-#     class Meta:
-#         ordering = ('-date_created')
-#         abstract = True
+    class Meta:
+        ordering = ['-date_created']
+        abstract = True
+
+    def __str__(self):
+        return self.title
+
+class BlogCategory(BlogBaseModel):
+    pass
 
 
-# class BlogCategory(BlogBaseModel):
+class BlogPost(BlogBaseModel): 
+    blog_category = models.ForeignKey(BlogCategory, on_delete=models.CASCADE)  
+    content = tinymce_models.HTMLField()
+    image_1 = models.ImageField(upload_to='blog', blank=True, null=True)
+    image_2 = models.ImageField(upload_to='blog', blank=True, null=True)
+    image_3 = models.ImageField(upload_to='blog', blank=True, null=True)
+    status = models.CharField(max_length=50, choices=OPTIONS)
 
-
+# class 
 
 # END BLOG MODEL REGION 

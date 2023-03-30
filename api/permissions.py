@@ -12,7 +12,7 @@ class IsStudentType(permissions.BasePermission):
                     {"error": "Unauthorized user"}, status=status.HTTP_401_UNAUTHORIZED
                 )
         except Exception as e:
-            print(e)
+            return None
 
 
 class IsEmployerType(permissions.BasePermission):
@@ -25,4 +25,4 @@ class IsEmployerType(permissions.BasePermission):
                     {"error": "Unauthorized user"}, status=status.HTTP_401_UNAUTHORIZED
                 )
         except Exception as e:
-            print(e)
+            return None
