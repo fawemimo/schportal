@@ -831,6 +831,7 @@ class BlogCategory(BlogBaseModel):
 
 
 class BlogPost(BlogBaseModel): 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     blog_category = models.ForeignKey(BlogCategory, on_delete=models.CASCADE)  
     content = tinymce_models.HTMLField()
     image_1 = models.ImageField(upload_to='blog', blank=True, null=True)
@@ -838,6 +839,8 @@ class BlogPost(BlogBaseModel):
     image_3 = models.ImageField(upload_to='blog', blank=True, null=True)
     status = models.CharField(max_length=50, choices=OPTIONS)
 
-# class 
+    @property
+    def short_content(self):
+        return f'{self.content[:200]}....'
 
 # END BLOG MODEL REGION 

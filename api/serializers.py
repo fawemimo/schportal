@@ -1257,3 +1257,14 @@ class PostBillingDetailSerializer(serializers.ModelSerializer):
 
 
 # End Billing Region
+
+
+# Blog Region
+
+class BlogPostSerializer(serializers.ModelSerializer):
+    blog_category = serializers.StringRelatedField()
+    class Meta:
+        model = BlogPost
+        fields = ['id','user','blog_category','title', 'slug','content','short_content','image_1','image_2','image_3','status','seo_keywords', 'date_created', 'date_updated']
+
+# End Blog Region

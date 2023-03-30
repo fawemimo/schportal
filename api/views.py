@@ -666,7 +666,7 @@ class JobViewSet(ModelViewSet):
     filterset_class = JobFilter
     search_fields = ["job_title", "job_category__title", "employer__company_name"]
     ordering_fields = ["date_posted", "date_updated"]
-    pagination_class = JobPagination
+    pagination_class = BasePagination
     
 class JobCategoryViewSet(ModelViewSet):
     http_method_name = ['get']
@@ -680,7 +680,7 @@ class EmployerJobApplicantViewSet(ModelViewSet):
 
     serializer_class = EmployerPostedJobSerializer
     permission_classes = [IsEmployerType]
-    pagination_class = JobPagination
+    pagination_class = BasePagination
     filter_backends = [DjangoFilterBackend]
 
     def get_queryset(self):
@@ -694,7 +694,7 @@ class StudentAppliedJobViewSet(ModelViewSet):
 
     serializer_class = StudentJobApplicationSerializer
     permission_classes = [IsStudentType]
-    pagination_class = JobPagination
+    pagination_class = BasePagination
 
     def get_queryset(self):
         return Student.objects.filter(user=self.request.user).prefetch_related(
@@ -799,3 +799,16 @@ class BillingDetailsViewSet(ModelViewSet):
 
 
 # End Billing region
+
+# BLOG POST REGION
+
+class BlogPostViewSet(ModelViewSet):
+    http_method_names = ['get']
+    queryset = BlogPost.objects.filter(status='published')
+    serializer_class = BlogPostSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['blog_category__title','title','content']
+    ordering_fields = ["date_created", "date_updated"]
+    pagination_class = BasePagination
+# END BLOG POST REGION
+

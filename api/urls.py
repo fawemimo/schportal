@@ -115,6 +115,12 @@ router.register("billingdetails", views.BillingDetailsViewSet, basename="student
 
 # End Billing region
 
+
+# BLOG POST REGION 
+router.register("blogposts", views.BlogPostViewSet, basename="blogposts")
+# END BLOG POST REGION
+
+
 # Nested routes
 courses_router = routers.NestedDefaultRouter(router, "courses", lookup="course")
 courses_router.register("schedules", views.ScheduleViewSet, basename="course-schedules")

@@ -649,7 +649,7 @@ class BlogCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ['id','title','status', 'blog_category', 'date_created', 'date_updated']
+    list_display = ['id','user','title','status', 'blog_category', 'date_created', 'date_updated']
     list_filter = ['date_created','date_updated']    
     search_fields = ['title','content']
     list_editable = ['status']
