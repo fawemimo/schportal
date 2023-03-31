@@ -998,19 +998,15 @@ class JobCategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class JobSerializer(serializers.ModelSerializer):
-    employer = EmployerSerializer()
-    job_category = serializers.StringRelatedField()
-    job_location = serializers.SerializerMethodField()
-    experience = serializers.SerializerMethodField()
-    job_type = serializers.SerializerMethodField()
-
-    class Meta:
+class PostJobSerializer(serializers.ModelSerializer):
+    employer_id = serializers.IntegerField()
+    job_category_id = serializers.IntegerField()
+    class Meta: 
         model = Job
         fields = [
             "id",
-            "employer",
-            "job_category",
+            "employer_id",
+            "job_category_id",
             "job_title",
             "job_location",
             "experience",
@@ -1019,18 +1015,68 @@ class JobSerializer(serializers.ModelSerializer):
             "close_job",
             "job_summary",
             "job_responsibilities",
-            "date_posted",
-            "date_updated",
+           
         ]
 
-    def get_job_location(self, obj):
-        return obj.job_category.job_location
+    def validate_employer_id(self, value):
+        if not Employer.objects.filter(id=value).exists():
+            raise serializers.ValidationError('Employer with the give ID does not exist')
+        return value
+    
+    def validate_job_category_id(self, value):
+        if not JobCategory.objects.filter(id=value).exists():
+            raise serializers.ValidationError('Job Category with the given ID does not exist')
+        return value
 
-    def get_experience(self, obj):
-        return obj.job_category.experience
+    def create(self, validated_data):
+        employer_id = self.context['employer_id']
+        job_category_id = self.context['job_category_id']
 
-    def get_job_type(self, obj):
-        return obj.job_category.job_type
+        return Job.objects.create(employer_id=employer_id, job_category_id=job_category_id, **validated_data)    
+
+    def save(self, **kwargs):
+        employer_id = self.validated_data['employer_id']
+        job_category_id = self.validated_data['job_category_id']
+        experience = self.validated_data['experience']
+        job_type = self.validated_data['job_type']
+        job_location = self.validated_data['job_location']
+        job_title = self.validated_data['job_title']
+        save_as = self.validated_data['save_as']
+        job_summary = self.validated_data['job_summary']
+        job_responsibilities = self.validated_data['job_responsibilities']
+        close_job = self.validated_data['close_job']
+
+        try:
+            job = Job.objects.create(
+                employer_id=employer_id,
+                job_category_id=job_category_id,
+                experience=experience,
+                job_type=job_type,
+                job_location=job_location,
+                job_title=job_title,
+                save_as=save_as,
+                job_summary=job_summary,
+                job_responsibilities=job_responsibilities,
+                close_job=close_job
+            )
+            job.save()
+            return job
+
+        except Exception:
+            pass
+
+
+
+class JobSerializer(serializers.ModelSerializer):
+    employer = EmployerSerializer()
+    job_category = serializers.StringRelatedField()
+    # job_location = serializers.SerializerMethodField()
+    # experience = serializers.SerializerMethodField()
+    # job_type = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Job
+        fields = "__all__"
 
 
 class StudentJobApplicationSerializer(serializers.ModelSerializer):

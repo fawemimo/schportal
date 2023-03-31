@@ -650,10 +650,7 @@ class Employer(models.Model):
 
 class JobCategory(models.Model):
     
-    title = models.CharField(max_length=255)
-    experience = models.CharField(max_length=50, choices=EXPERIENCE_LEVEL)
-    job_type = models.CharField(max_length=50, choices=JOB_TYPE)
-    job_location = models.CharField(max_length=50, choices=JOB_LOCATION)
+    title = models.CharField(max_length=255)   
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -663,6 +660,9 @@ class JobCategory(models.Model):
 class Job(models.Model):
     employer = models.ForeignKey(Employer, on_delete=models.CASCADE)
     job_category = models.ForeignKey(JobCategory, on_delete=models.CASCADE)
+    experience = models.CharField(max_length=50, choices=EXPERIENCE_LEVEL, blank=True, null=True)
+    job_type = models.CharField(max_length=50, choices=JOB_TYPE, blank=True, null=True)
+    job_location = models.CharField(max_length=50, choices=JOB_LOCATION, blank=True, null=True)
     job_title = models.CharField(max_length=255)
     save_as = models.CharField(max_length=50, choices=STATUS, default="Draft")
     job_summary = models.TextField()
@@ -728,27 +728,12 @@ class BillingDetail(models.Model):
     )
     amount_paid = models.PositiveBigIntegerField()
     outstanding_amount = models.PositiveBigIntegerField(
-        null=True, blank=True, editable=False
+        null=True, blank=True
     )
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
-
-    def save(self, *args, **kwargs):
-        billing = Billing.objects.get(id=self.billing.id)
-        billings = billing.billingdetail_set.filter(
-            billing_id=self.billing.id
-        ).aggregate(amount_paid=Sum("amount_paid"))
-        try:
-
-            total_amount_paid = billings["amount_paid"]
-            cal = self.billing.total_amount - total_amount_paid
-            self.outstanding_amount = cal
-        except Exception as e:
-            return None
-
-        super(BillingDetail, self).save(*args, **kwargs)
 
 
 # End Billing Information region

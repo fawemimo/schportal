@@ -563,9 +563,9 @@ class EmployerAdmin(admin.ModelAdmin):
 @admin.register(JobCategory)
 class JobCategoryAdmin(admin.ModelAdmin):
 
-    list_display = ["title", "experience", "job_type", "job_location", "date_created"]
-    list_filter = ["experience", "job_type", "job_location"]
-    list_editable = ["experience", "job_type", "job_location"]
+    list_display = ["title",  "date_created"]
+    # list_filter = ["experience", "job_type", "job_location"]
+    # list_editable = ["experience", "job_type", "job_location"]
     search_fields = ["title"]
     date_hierarchy = "date_created"
     ordering = ["title"]
@@ -601,6 +601,11 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
 # Billing region
 
+class BillingDetailsInline(admin.TabularInline):
+    model =  BillingDetail
+    extra = 1
+    readonly_fields = ['outstanding_amount']
+
 
 @admin.register(Billing)
 class BillingAdmin(admin.ModelAdmin):
@@ -619,6 +624,8 @@ class BillingAdmin(admin.ModelAdmin):
     search_fields = ["student"]
     list_per_page = 25
     paginator = CachingPaginator
+    inlines = [BillingDetailsInline]
+
 
 @admin.register(BillingDetail)
 class BillingDetailAdmin(admin.ModelAdmin):
@@ -633,7 +640,8 @@ class BillingDetailAdmin(admin.ModelAdmin):
     search_fields = ["billing__icontains"]
     list_select_related = ["billing"]
     list_per_page = 25
-
+    readonly_fields = ['outstanding_amount']
+   
 # End Billing
 
 

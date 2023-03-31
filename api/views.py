@@ -622,7 +622,8 @@ class EmployerViewSet(ModelViewSet):
             return UpdateEmployerSerializer
 
     def get_queryset(self):
-        return Employer.objects.only("id").filter(user_id=self.request.user.id)
+        if self.request.user.user_type == 'employer':
+            return Employer.objects.get(user_id=self.request.user.id)
 
     @action(
         detail=False,
@@ -650,14 +651,13 @@ class EmployerViewSet(ModelViewSet):
 
 
 class JobViewSet(ModelViewSet):
-    http_method_names = ["get"]
+    http_method_names = ["get","post"]
 
     queryset = (
         Job.objects.filter(save_as="Published")
         .exclude(close_job=True)
         .select_related("job_category")
-    )
-    serializer_class = JobSerializer
+    )    
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -668,6 +668,18 @@ class JobViewSet(ModelViewSet):
     ordering_fields = ["date_posted", "date_updated"]
     pagination_class = BasePagination
     
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return JobSerializer
+        elif self.request.method == 'POST':
+            return PostJobSerializer
+
+    def get_serializer_context(self):
+        return {
+            'employer_id': self.kwargs.get('employer_pk'),
+            'job_category_id': self.kwargs.get('job_category_id')
+        }
+
 class JobCategoryViewSet(ModelViewSet):
     http_method_name = ['get']
     serializer_class = JobCategorySerializer
@@ -810,6 +822,6 @@ class BlogPostViewSet(ModelViewSet):
     search_fields = ['blog_category__title','title','content']
     ordering_fields = ["date_created", "date_updated"]
     pagination_class = BasePagination
-    
+
 # END BLOG POST REGION
 
