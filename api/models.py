@@ -7,25 +7,20 @@ from django.db import models
 from django.db.models import Sum
 from django.utils.text import slugify
 from tinymce import models as tinymce_models
-from api.choices import OPTIONS
 
+from api.choices import *
 from api.validate import validate_file_size
 
 
 class User(AbstractUser):
-    user_type_choices = (
-        ("teacher", "Teacher"),
-        ("student", "Student"),
-        ("employer", "Employer"),
-    )
+
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     mobile_numbers = models.CharField(max_length=50, blank=True, null=True)
     user_type = models.CharField(
-        max_length=8, choices=user_type_choices, blank=True, null=True
+        max_length=8, choices=USER_TYPE_CHOICES, blank=True, null=True
     )
-
 
 
 # region core models - mainsite
@@ -95,11 +90,11 @@ class Course(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    billings = models.OneToOneField("Billing", on_delete=models.CASCADE, blank=True, null=True, related_name = '+')
+    # billings = models.OneToOneField("Billing", on_delete=models.CASCADE, blank=True, null=True, related_name = '+')
     full_name = models.CharField(max_length=255, blank=True, null=True)
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
     date_of_birth = models.CharField(max_length=50, blank=True, null=True)
-    mobile_numbers = models.CharField(max_length=250,blank=True, null=True)
+    mobile_numbers = models.CharField(max_length=250, blank=True, null=True)
     profile_pic = models.ImageField(
         upload_to="students_profilepix/",
         validators=[
@@ -107,10 +102,12 @@ class Student(models.Model):
             FileExtensionValidator(allowed_extensions=["jpg", "png", "jpeg"]),
         ],
     )
-    residential_address = models.CharField(max_length=250,blank=True, null=True)
-    contact_address = models.CharField(max_length=250,blank=True, null=True)
-    next_of_kin_fullname = models.CharField(max_length=150,blank=True, null=True)
-    next_of_kin_contact_address = models.CharField(max_length=250,blank=True, null=True)
+    residential_address = models.CharField(max_length=250, blank=True, null=True)
+    contact_address = models.CharField(max_length=250, blank=True, null=True)
+    next_of_kin_fullname = models.CharField(max_length=150, blank=True, null=True)
+    next_of_kin_contact_address = models.CharField(
+        max_length=250, blank=True, null=True
+    )
     next_of_kin_mobile_number = models.CharField(max_length=250, blank=True, null=True)
     relationship_with_next_kin = models.CharField(max_length=255, blank=True, null=True)
 
@@ -130,13 +127,8 @@ class Teacher(models.Model):
 
 
 class Schedule(models.Model):
-    program_type_choices = (
-        ("Physical/Onsite Class", "Physical/Onsite Class"),
-        ("Virtual/Online Class", "Virtual/Online Class"),
-    )
-
     program_type = models.CharField(
-        max_length=50, choices=program_type_choices, blank=True, null=True
+        max_length=50, choices=PROGRAM_TYPE_CHOICES, blank=True, null=True
     )
     active = models.BooleanField(default=False)
     registration_status = models.BooleanField(default=True)
@@ -171,15 +163,6 @@ class Batch(models.Model):
     def __str__(self):
         return f"{self.title}"
 
-
-# class Enrollment(models.Model):
-#     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-#     full_name = models.CharField(max_length=255)
-#     email = models.EmailField(max_length=255)
-#     mobile_number = models.CharField(max_length=50)
-
-#     def __str__(self):
-#         return self.full_name
 
 class TopBar(models.Model):
     title = models.CharField(max_length=150)
@@ -282,7 +265,7 @@ class StudentLoanSection(models.Model):
 
     def __str__(self):
         return str(self.id)
-    
+
 
 class CareerSection(models.Model):
     is_published = models.BooleanField(default=False)
@@ -293,7 +276,7 @@ class CareerSection(models.Model):
 
     def __str__(self):
         return str(self.id)
-    
+
 
 class AlbumSection(models.Model):
     is_published = models.BooleanField(default=False)
@@ -310,6 +293,7 @@ class AlumiConnectSection(models.Model):
 
     def __str__(self):
         return str(self.id)
+
 
 # For any section that just requires a content dump
 # like the footer etc
@@ -386,13 +370,13 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     def save(self, *args, **kwargs):
         now = datetime.now()
         if self.expiration_date == now:
             self.is_published = False
 
-        super(Announcement, self).save(args, kwargs)     
+        super(Announcement, self).save(args, kwargs)
 
 
 class ScholarshipSection(models.Model):
@@ -402,8 +386,8 @@ class ScholarshipSection(models.Model):
 
     def __str__(self):
         return str(self.id)
-    
-    
+
+
 # endregion
 
 
@@ -507,18 +491,10 @@ class Resource(models.Model):
 
 
 class StudentAttendance(models.Model):
-
-    ABSENT = "Absent"
-    PRESENT = "Present"
-    attendance_choices = (
-        (ABSENT, "Absent"),
-        (PRESENT, "Present"),
-    )
-
     student = models.ForeignKey(Student, on_delete=models.PROTECT)
     batch = models.ForeignKey(Batch, on_delete=models.PROTECT)
     attendance_status = models.CharField(
-        max_length=50, choices=attendance_choices, default=ABSENT
+        max_length=50, choices=ATTENDANCE_CHOICES, default=ABSENT
     )
     timestamp = models.DateTimeField(blank=True, null=True)
     attendance_comment = models.CharField(max_length=255)
@@ -541,11 +517,10 @@ class VirtualClass(models.Model):
 
 
 class KidsCoding(models.Model):
-    age_bracket_choices = (("6-9", "6-9"), ("10-14", "10-14"))
     full_name = models.CharField(max_length=50)
     email = models.EmailField()
     mobile = models.CharField(max_length=50)
-    age_bracket = models.CharField(max_length=150, choices=age_bracket_choices)
+    age_bracket = models.CharField(max_length=150, choices=AGE_BRACKET_CHOICES)
     remarks = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -572,20 +547,7 @@ class InternationalModel(models.Model):
 
 
 class FinancialAid(models.Model):
-    aid_type_choices = (
-        ("Student Loan", "Student Loan"),
-        (
-            "Full Scholarship(Tuition + Laptop + Stipends)",
-            "Full Scholarship(Tuition + Laptop + Stipends)",
-        ),
-        (
-            "Scholarship Tier 1 (Tuition + Laptop)",
-            "Scholarship Tier 1 (Tuition + Laptop)",
-        ),
-        ("Scholarship Tier 2 (Tuition)", "Scholarship Tier 2 (Tuition)"),
-    )
-
-    aid_type = models.CharField(max_length=50, choices=aid_type_choices)
+    aid_type = models.CharField(max_length=50, choices=AID_TYPE_CHOICES)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -593,8 +555,12 @@ class FinancialAid(models.Model):
     mobile = models.CharField(max_length=50)
     residential_address = models.CharField(max_length=255, blank=True, null=True)
     guarantor_full_name = models.CharField(max_length=255, blank=True, null=True)
-    guarantor_residential_contact_address = models.CharField(max_length=255, blank=True, null=True)
-    relationship_with_guarantor = models.CharField(max_length=255, blank=True, null=True)
+    guarantor_residential_contact_address = models.CharField(
+        max_length=255, blank=True, null=True
+    )
+    relationship_with_guarantor = models.CharField(
+        max_length=255, blank=True, null=True
+    )
     guarantor_mobile = models.CharField(max_length=255, blank=True, null=True)
     date_posted = models.DateTimeField(auto_now_add=True)
 
@@ -603,11 +569,9 @@ class FinancialAid(models.Model):
 
 
 class CommunityConnect(models.Model):
-    community_type = (("Webinars", "Webinars"), ("Meetups", "Meetups"))
-
     completed = models.BooleanField(default=False)
     ordering = models.CharField(max_length=5, blank=True, null=True)
-    community = models.CharField(max_length=50, choices=community_type)
+    community = models.CharField(max_length=50, choices=COMMUNITY_TYPE)
     title = models.CharField(max_length=255)
     descriptions = models.TextField()
     image = models.ImageField(
@@ -649,13 +613,8 @@ class VirtualVsOther(models.Model):
 
 class HowItWork(models.Model):
 
-    how_it_work_class_type = (
-        ("Physical Class", "Physical Class"),
-        ("Virtual Class", "Virtual Class"),
-    )
-
     how_it_work_class = models.CharField(
-        max_length=50, choices=how_it_work_class_type, blank=True, null=True
+        max_length=50, choices=HOW_IT_WORK_CLASS_TYPE, blank=True, null=True
     )
     content = models.TextField()
 
@@ -690,20 +649,7 @@ class Employer(models.Model):
 
 
 class JobCategory(models.Model):
-    EXPERIENCE_LEVEL = (
-        ("Experienced", "Experienced"),
-        ("Intermediate", "Intermediate"),
-        ("Internship", "Internship"),
-    )
-
-    JOB_TYPE = (
-        ("Full-time", "Full-time"),
-        ("Part-time", "Part-time"),
-        ("Contractor", "Contractor"),
-    )
-
-    JOB_LOCATION = (("On-site", "On-site"), ("Hybrid", "Hybrid"), ("Remote", "Remote"))
-
+    
     title = models.CharField(max_length=255)
     experience = models.CharField(max_length=50, choices=EXPERIENCE_LEVEL)
     job_type = models.CharField(max_length=50, choices=JOB_TYPE)
@@ -715,8 +661,6 @@ class JobCategory(models.Model):
 
 
 class Job(models.Model):
-    STATUS = (("Draft", "Draft"), ("Published", "Published"))
-
     employer = models.ForeignKey(Employer, on_delete=models.CASCADE)
     job_category = models.ForeignKey(JobCategory, on_delete=models.CASCADE)
     job_title = models.CharField(max_length=255)
@@ -754,15 +698,6 @@ class JobApplication(models.Model):
 
 
 class Billing(models.Model):
-    PENDING = 'pending'
-    FAILED = 'failed'
-    SUCCESS = 'success'
-
-    PAYMENT_COMPLETION_STATUS = (
-        (PENDING, 'pending'),
-        (FAILED, 'failed'),
-        (SUCCESS, 'success')
-    )
     transaction_ref = models.UUIDField(default=uuid.uuid4)
     squad_transaction_ref = models.CharField(max_length=255, blank=True, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -774,20 +709,27 @@ class Billing(models.Model):
     email = models.EmailField(max_length=255, blank=True, null=True)
     total_amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
     total_amount = models.PositiveBigIntegerField(blank=True, null=True)
-    payment_completion_status = models.CharField(default=PENDING, choices=PAYMENT_COMPLETION_STATUS, max_length=50, blank=True, null=True)    
+    payment_completion_status = models.CharField(
+        default=PENDING,
+        choices=PAYMENT_COMPLETION_STATUS,
+        max_length=50,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return str(self.id)
 
+
 class BillingDetail(models.Model):
-    PROGRAM_TYPE_CHOICES = (
-        ('Onsite', 'Onsite'),
-        ('Virtual', 'Virtual')
-    )
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
-    program_type = models.CharField(max_length=50, choices=PROGRAM_TYPE_CHOICES, blank=True,null=True)
+    program_type = models.CharField(
+        max_length=50, choices=PROGRAM_TYPE_CHOICES, blank=True, null=True
+    )
     amount_paid = models.PositiveBigIntegerField()
-    outstanding_amount = models.PositiveBigIntegerField(null=True, blank=True, editable=False)
+    outstanding_amount = models.PositiveBigIntegerField(
+        null=True, blank=True, editable=False
+    )
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -795,10 +737,12 @@ class BillingDetail(models.Model):
 
     def save(self, *args, **kwargs):
         billing = Billing.objects.get(id=self.billing.id)
-        billings = billing.billingdetail_set.filter(billing_id=self.billing.id).aggregate(amount_paid=Sum('amount_paid'))
+        billings = billing.billingdetail_set.filter(
+            billing_id=self.billing.id
+        ).aggregate(amount_paid=Sum("amount_paid"))
         try:
-            
-            total_amount_paid = billings['amount_paid']
+
+            total_amount_paid = billings["amount_paid"]
             cal = self.billing.total_amount - total_amount_paid
             self.outstanding_amount = cal
         except Exception as e:
@@ -810,7 +754,8 @@ class BillingDetail(models.Model):
 # End Billing Information region
 
 
-# BLOG MODEL REGION 
+# BLOG MODEL REGION
+
 
 class BlogBaseModel(models.Model):
     title = models.CharField(max_length=50)
@@ -820,27 +765,29 @@ class BlogBaseModel(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-date_created']
+        ordering = ["-date_created"]
         abstract = True
 
     def __str__(self):
         return self.title
 
+
 class BlogCategory(BlogBaseModel):
     pass
 
 
-class BlogPost(BlogBaseModel): 
+class BlogPost(BlogBaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    blog_category = models.ForeignKey(BlogCategory, on_delete=models.CASCADE)  
+    blog_category = models.ForeignKey(BlogCategory, on_delete=models.CASCADE)
     content = tinymce_models.HTMLField()
-    image_1 = models.ImageField(upload_to='blog', blank=True, null=True)
-    image_2 = models.ImageField(upload_to='blog', blank=True, null=True)
-    image_3 = models.ImageField(upload_to='blog', blank=True, null=True)
+    image_1 = models.ImageField(upload_to="blog", blank=True, null=True)
+    image_2 = models.ImageField(upload_to="blog", blank=True, null=True)
+    image_3 = models.ImageField(upload_to="blog", blank=True, null=True)
     status = models.CharField(max_length=50, choices=OPTIONS)
 
     @property
     def short_content(self):
-        return f'{self.content[:200]}....'
+        return f"{self.content[:200]}...."
 
-# END BLOG MODEL REGION 
+
+# END BLOG MODEL REGION

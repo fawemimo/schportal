@@ -810,5 +810,6 @@ class BlogPostViewSet(ModelViewSet):
     search_fields = ['blog_category__title','title','content']
     ordering_fields = ["date_created", "date_updated"]
     pagination_class = BasePagination
+    
 # END BLOG POST REGION
 
