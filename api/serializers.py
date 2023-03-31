@@ -1312,5 +1312,5 @@ class BlogPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPost
         fields = ['id','user','blog_category','title', 'slug','content','short_content','image_1','image_2','image_3','status','seo_keywords', 'date_created', 'date_updated']
-
+        lookup_field = "slug"
 # End Blog Region

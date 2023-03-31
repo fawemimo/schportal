@@ -822,6 +822,13 @@ class BlogPostViewSet(ModelViewSet):
     search_fields = ['blog_category__title','title','content']
     ordering_fields = ["date_created", "date_updated"]
     pagination_class = BasePagination
+    lookup_field = "slug"
+    lookup_regex_values = "[^/]+"
+
+    @method_decorator(cache_page(60*2))
+    def dispatch(self, request, *args, **kwargs):
+       return super().dispatch(request, *args, **kwargs)
+
 
 # END BLOG POST REGION
 
