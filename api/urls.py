@@ -163,5 +163,9 @@ urlpatterns = [
         views.MyTokenObtainPairView.as_view(),
         name="token_obtain_pair",
     ),
-    path("billings/<int:obj_id>/receipt/", pdf.create_receipts, name="receipt"),
+    path(
+        "billings/<int:billing_id>/receipt/<int:detail_id>/",
+        pdf.create_receipts,
+        name="receipt",
+    ),
 ]

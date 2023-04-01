@@ -38,10 +38,10 @@ def link_callback(uri, rel):
     return path
 
 
-def create_receipts(self, obj_id):
-    billings = Billing.objects.get(id=obj_id)
-
-    context = {"billings": billings}
+def create_receipts(self, billing_id, detail_id):
+    billings = Billing.objects.get(id=billing_id)
+    billingdetails = BillingDetail.objects.get(billing_id=billings.id, id=detail_id)
+    context = {"billingdetails": billingdetails}
     template_path = "api/billings_receipt.html"
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = f"filename='{billings.id}_billings_receipt.pdf'"

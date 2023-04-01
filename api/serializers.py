@@ -1269,7 +1269,6 @@ class PostBillingSerializer(serializers.ModelSerializer):
 class BillingSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
     course = serializers.StringRelatedField()
-    receipts = serializers.SerializerMethodField()
     grand_outstanding = serializers.SerializerMethodField()
 
     class Meta:
@@ -1284,11 +1283,7 @@ class BillingSerializer(serializers.ModelSerializer):
             "total_amount",
             "payment_completion_status",
             "grand_outstanding",
-            "receipts",
         ]
-
-    def get_receipts(self, obj):
-        return f"billings/{obj.id}/receipt/"
 
     def get_grand_outstanding(self, obj):
 
@@ -1313,10 +1308,13 @@ class BillingSerializer(serializers.ModelSerializer):
 
 
 class BillingDetailSerializer(serializers.ModelSerializer):
+    receipts = serializers.SerializerMethodField()
     class Meta:
         model = BillingDetail
-        fields = ["id", "amount_paid", "date_paid"]
+        fields = ["id", "amount_paid","receipts", "date_paid"]
 
+    def get_receipts(self, obj):
+        return f"billings/{obj.billing.id}/receipt/{obj.id}"
 
 class PostBillingDetailSerializer(serializers.ModelSerializer):
     billing_id = serializers.IntegerField()

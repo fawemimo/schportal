@@ -2,13 +2,17 @@
   <head>
     <style>
         @page {
-        size: letter portrait;
-        @frame content_frame {
-            left: 50pt;
-            width: 512pt;
-            top: 50pt;
-            height: 692pt;
-            -pdf-frame-border: 1;    /* for debugging the layout */
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 50pt; height: 40pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 772pt; height: 20pt;
         }
     }
     </style>
@@ -26,18 +30,16 @@
             Total Amount
           </td>
           <td>Amount Paid</td>
-          <td>Grand Outstanding</td>
+          <td>Outstanding</td>
         </tr>
         
-        {% if billings %}
-        
-        
+        {% if billingdetails %}
         <tr>
-          <td>{{billings.id}}</td>
-          <td>{{billings.course}}</td>
-          <td>{{billings.total_amount}}</td>
-          <td>{{billings.total_amount_paid}}</td>
-          <td>{{billings.get_grand_outstanding}}</td>
+          <td>{{billingdetails.billing.id}}</td>
+          <td>{{billingdetails.billing.course}}</td>
+          <td>{{billingdetails.billing.total_amount}}</td>
+          <td>{{billingdetails.amount_paid}}</td>
+          <td>{{billingdetails.outstanding_amount}}</td>
         </tr>
         
         {% endif %}
