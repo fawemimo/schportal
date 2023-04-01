@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <style>
+        @page {
+        size: letter portrait;
+        @frame content_frame {
+            left: 50pt;
+            width: 512pt;
+            top: 50pt;
+            height: 692pt;
+            -pdf-frame-border: 1;    /* for debugging the layout */
+        }
+    }
+    </style>
+  </head>
+
+  <body>
+      <div id="header_content"><h1>Billing Details</h1></div>
+      <table class="table">
+        <tr>
+          <td>
+            Billing ID
+          </td>
+          <td>Course</td>
+          <td>
+            Total Amount
+          </td>
+          <td>Amount Paid</td>
+          <td>Grand Outstanding</td>
+        </tr>
+        
+        {% if billings %}
+        
+        
+        <tr>
+          <td>{{billings.id}}</td>
+          <td>{{billings.course}}</td>
+          <td>{{billings.total_amount}}</td>
+          <td>{{billings.total_amount_paid}}</td>
+          <td>{{billings.get_grand_outstanding}}</td>
+        </tr>
+        
+        {% endif %}
+      </table>
+  </body>
+</html>

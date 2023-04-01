@@ -649,8 +649,8 @@ class Employer(models.Model):
 
 
 class JobCategory(models.Model):
-    
-    title = models.CharField(max_length=255)   
+
+    title = models.CharField(max_length=255)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -660,9 +660,13 @@ class JobCategory(models.Model):
 class Job(models.Model):
     employer = models.ForeignKey(Employer, on_delete=models.CASCADE)
     job_category = models.ForeignKey(JobCategory, on_delete=models.CASCADE)
-    experience = models.CharField(max_length=50, choices=EXPERIENCE_LEVEL, blank=True, null=True)
+    experience = models.CharField(
+        max_length=50, choices=EXPERIENCE_LEVEL, blank=True, null=True
+    )
     job_type = models.CharField(max_length=50, choices=JOB_TYPE, blank=True, null=True)
-    job_location = models.CharField(max_length=50, choices=JOB_LOCATION, blank=True, null=True)
+    job_location = models.CharField(
+        max_length=50, choices=JOB_LOCATION, blank=True, null=True
+    )
     job_title = models.CharField(max_length=255)
     save_as = models.CharField(max_length=50, choices=STATUS, default="Draft")
     job_summary = models.TextField()
@@ -720,6 +724,38 @@ class Billing(models.Model):
     def __str__(self):
         return str(self.id)
 
+    @property
+    def get_grand_outstanding(self):
+
+        try:
+            billings = self.billingdetail_set.filter(billing_id=self.id).aggregate(
+                amount_paid=Sum("amount_paid")
+            )
+            total_amount_paid = 0
+
+            if billings:
+                if total_amount_paid != None:
+                    total_amount_paid = billings["amount_paid"]
+                    cal = self.total_amount - total_amount_paid
+                    return cal
+                elif total_amount_paid == None:
+                    total_amount_paid = 0
+                    cal = self.total_amount - total_amount_paid
+
+                    return cal
+        except Exception as e:
+            return None
+        
+    def save(self, *args, **kwargs):
+        try:
+
+            if self.total_amount == self.total_amount_paid:
+                self.payment_completion_status = True
+
+        except Exception as e:
+            pass
+        super(Billing, self).save(*args, **kwargs)
+
 
 class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
@@ -727,13 +763,34 @@ class BillingDetail(models.Model):
         max_length=50, choices=PROGRAM_TYPE_CHOICES, blank=True, null=True
     )
     amount_paid = models.PositiveBigIntegerField()
-    outstanding_amount = models.PositiveBigIntegerField(
-        null=True, blank=True
-    )
+    outstanding_amount = models.PositiveBigIntegerField(null=True, blank=True)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
+
+    def cal_sum_ofamount(self):
+        try:
+            # aggreagate amount paid wrt billing
+            billings = self.billing.billingdetail_set.filter(billing_id=self.billing.id)
+            sum_of_amount_paid = sum([x.amount_paid for x in billings])
+            # amount of the course from amount paid
+            if billings:
+                amount_of_the_course = self.billing.total_amount
+                sum_of_amount_paid = sum_of_amount_paid
+                cal = self.billing.total_amount - sum_of_amount_paid
+                return cal
+        except Exception as e:
+            pass
+
+    def save(self, *args, **kwargs):
+        try:
+
+            self.outstanding_amount = self.cal_sum_ofamount()
+        except Exception as e:
+            pass    
+
+        super(BillingDetail, self).save(*args, **kwargs)
 
 
 # End Billing Information region

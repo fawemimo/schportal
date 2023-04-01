@@ -1,6 +1,8 @@
 from django.urls import include, path
 from rest_framework_nested import routers
 
+from api import pdf
+
 from . import views
 
 router = routers.DefaultRouter()
@@ -9,11 +11,15 @@ router.register("mainbanners", views.MainBannerViewSet)
 router.register("sectionbanners", views.SectionBannerViewSet)
 router.register("testimonials", views.TestimonialViewSet)
 router.register("aboutus", views.AboutUsSectionViewSet)
-router.register("studentloanbanners", views.StudentLoanSectionViewSet, basename="studentloanbanners")
+router.register(
+    "studentloanbanners", views.StudentLoanSectionViewSet, basename="studentloanbanners"
+)
 router.register("techicons", views.TechIconViewSet)
 router.register("featuredprojects", views.FeaturedProjectViewSet)
 router.register("componentdumps", views.ComponentDumpViewSet)
-router.register("coursecategories", views.CourseCategoryViewSet, basename='coursecategories')
+router.register(
+    "coursecategories", views.CourseCategoryViewSet, basename="coursecategories"
+)
 router.register("courses", views.CourseViewSet, basename="courses")
 router.register("teachers", views.TeacherViewSet)
 router.register("students", views.StudentViewSet, basename="students")
@@ -85,7 +91,11 @@ router.register(
 router.register("ourteams", views.OurTeamViewSet, basename="ourteams")
 router.register("sponsorships", views.SponsorshipsViewSet, basename="sponsorships")
 router.register("announcements", views.AnnouncementViewSet, basename="announcements")
-router.register("scholarshipsections", views.ScholarshipSectionViewSet, basename='scholarshipsections')
+router.register(
+    "scholarshipsections",
+    views.ScholarshipSectionViewSet,
+    basename="scholarshipsections",
+)
 
 
 # JOB PORTAL REGION
@@ -102,7 +112,7 @@ router.register(
 router.register(
     "jobapplications", views.StudentApplicationForJobViewSet, basename="jobapplications"
 )
-router.register('jobcategories', views.JobCategoryViewSet, basename='jobcategories')
+router.register("jobcategories", views.JobCategoryViewSet, basename="jobcategories")
 
 # END JOB PORTAL REGION
 
@@ -110,13 +120,15 @@ router.register('jobcategories', views.JobCategoryViewSet, basename='jobcategori
 # Billing region
 
 router.register("billings", views.BillingPaymentViewSet, basename="billings")
-router.register("billingdetails", views.BillingDetailsViewSet, basename="studentbillings")
+router.register(
+    "billingdetails", views.BillingDetailsViewSet, basename="studentbillings"
+)
 
 
 # End Billing region
 
 
-# BLOG POST REGION 
+# BLOG POST REGION
 router.register("blogposts", views.BlogPostViewSet, basename="blogposts")
 # END BLOG POST REGION
 
@@ -133,8 +145,10 @@ coursemanual_router = routers.NestedDefaultRouter(
 )
 coursemanual_router.register("coursesview", views.CoursesViewSet, basename="course")
 
-billing_router =routers.NestedDefaultRouter(router, "billings", lookup="billing")
-billing_router.register("details",views.BillingDetailsViewSet, basename="billing-details")
+billing_router = routers.NestedDefaultRouter(router, "billings", lookup="billing")
+billing_router.register(
+    "details", views.BillingDetailsViewSet, basename="billing-details"
+)
 
 urlpatterns = [
     path("", include(router.urls)),
@@ -149,4 +163,5 @@ urlpatterns = [
         views.MyTokenObtainPairView.as_view(),
         name="token_obtain_pair",
     ),
+    path("billings/<int:obj_id>/receipt/", pdf.create_receipts, name="receipt"),
 ]

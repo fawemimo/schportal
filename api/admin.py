@@ -33,9 +33,9 @@ class CachingPaginator(Paginator):
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ["id","first_name","last_name","username", "email"]
-    list_display_links = ["id","username", "email"]
-    list_filter = ["user_type","is_staff","is_superuser","is_active"]
+    list_display = ["id", "first_name", "last_name", "username", "email"]
+    list_display_links = ["id", "username", "email"]
+    list_filter = ["user_type", "is_staff", "is_superuser", "is_active"]
     ordering = ["-id"]
     add_fieldsets = (
         (
@@ -157,6 +157,7 @@ class CourseAdmin(admin.ModelAdmin):
 #     list_display = ["id", "course","full_name","mobile_number"]
 #     list_select_related = ["course"]
 
+
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
 
@@ -273,10 +274,10 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
 
 @admin.register(ScholarshipSection)
-class ScholarshipSectionAdmin(admin.ModelAdmin):   
+class ScholarshipSectionAdmin(admin.ModelAdmin):
 
-    list_display = ['id', 'scholarship_intro']
-    
+    list_display = ["id", "scholarship_intro"]
+
 
 @admin.register(StudentAttendance)
 class StudentAttendanceAdmin(admin.ModelAdmin):
@@ -330,7 +331,7 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ["id","full_name", "profile_pix", "student_idcard_id", "batch_name"]
+    list_display = ["id", "full_name", "profile_pix", "student_idcard_id", "batch_name"]
     search_fields = ["user__first_name", "user__last_name__istartswith"]
     list_per_page = 25
     paginator = CachingPaginator
@@ -497,7 +498,7 @@ class FeaturedProjectAdmin(admin.ModelAdmin):
 
 @admin.register(FinancialAid)
 class FinancialAidAdmin(admin.ModelAdmin):
-    list_display = ["name","course", "email", "mobile", "date_posted"]
+    list_display = ["name", "course", "email", "mobile", "date_posted"]
     list_filter = ["date_posted"]
 
     def name(self, obj):
@@ -563,7 +564,7 @@ class EmployerAdmin(admin.ModelAdmin):
 @admin.register(JobCategory)
 class JobCategoryAdmin(admin.ModelAdmin):
 
-    list_display = ["title",  "date_created"]
+    list_display = ["title", "date_created"]
     # list_filter = ["experience", "job_type", "job_location"]
     # list_editable = ["experience", "job_type", "job_location"]
     search_fields = ["title"]
@@ -601,10 +602,11 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
 # Billing region
 
+
 class BillingDetailsInline(admin.TabularInline):
-    model =  BillingDetail
+    model = BillingDetail
     extra = 1
-    readonly_fields = ['outstanding_amount']
+    readonly_fields = ["outstanding_amount"]
 
 
 @admin.register(Billing)
@@ -624,7 +626,7 @@ class BillingAdmin(admin.ModelAdmin):
     search_fields = ["student"]
     list_per_page = 25
     paginator = CachingPaginator
-    inlines = [BillingDetailsInline]
+    # inlines = [BillingDetailsInline]
 
 
 @admin.register(BillingDetail)
@@ -632,16 +634,24 @@ class BillingDetailAdmin(admin.ModelAdmin):
     def student_name(self, obj):
         return obj.billing.student
 
-    def get_queryset(self, request) :
-        return  BillingDetail.objects.select_related('billing')
-    
-    list_display = ["id", "billing","student_name", "amount_paid","outstanding_amount", "date_paid"] 
+    def get_queryset(self, request):
+        return BillingDetail.objects.select_related("billing")
+
+    list_display = [
+        "id",
+        "billing",
+        "student_name",
+        "amount_paid",
+        "outstanding_amount",
+        "date_paid",
+    ]
     list_filter = ["date_paid"]
     search_fields = ["billing__icontains"]
     list_select_related = ["billing"]
     list_per_page = 25
-    readonly_fields = ['outstanding_amount']
-   
+    readonly_fields = ["outstanding_amount"]
+
+
 # End Billing
 
 
@@ -649,19 +659,28 @@ class BillingDetailAdmin(admin.ModelAdmin):
 @admin.register(BlogCategory)
 class BlogCategoryAdmin(admin.ModelAdmin):
 
-    list_display = ['id','title', 'seo_keywords', 'date_created', 'date_updated']
-    list_filter = ['date_created','date_updated']    
-    search_fields = ['title']
+    list_display = ["id", "title", "seo_keywords", "date_created", "date_updated"]
+    list_filter = ["date_created", "date_updated"]
+    search_fields = ["title"]
     prepopulated_fields = {"slug": ("title",)}
 
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ['id','user','title','status', 'blog_category', 'date_created', 'date_updated']
-    list_filter = ['date_created','date_updated']    
-    search_fields = ['title','content']
-    list_editable = ['status']
-    list_select_related = ['blog_category']
+    list_display = [
+        "id",
+        "user",
+        "title",
+        "status",
+        "blog_category",
+        "date_created",
+        "date_updated",
+    ]
+    list_filter = ["date_created", "date_updated"]
+    search_fields = ["title", "content"]
+    list_editable = ["status"]
+    list_select_related = ["blog_category"]
     prepopulated_fields = {"slug": ("title",)}
-      
+
+
 # END BLOG REGION

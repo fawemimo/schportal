@@ -4,10 +4,15 @@ from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from api.emails import (send_financial_aid_email, send_inquiries_email,
-                        send_interested_email, send_kids_coding_email,
-                        send_short_quizze_email, send_sponsorship_email,
-                        send_virtualclass_email)
+from api.emails import (
+    send_financial_aid_email,
+    send_inquiries_email,
+    send_interested_email,
+    send_kids_coding_email,
+    send_short_quizze_email,
+    send_sponsorship_email,
+    send_virtualclass_email,
+)
 
 from .models import *
 
@@ -250,8 +255,8 @@ class AlumiConnectSectionSerailizer(serializers.ModelSerializer):
     class Meta:
         model = AlumiConnectSection
         fields = "__all__"
-        
-                        
+
+
 class ComponentDumpSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComponentDump
@@ -893,7 +898,9 @@ class FinancialAidSerializer(serializers.ModelSerializer):
         mobile = self.validated_data["mobile"]
         residential_address = self.validated_data["residential_address"]
         guarantor_full_name = self.validated_data["guarantor_full_name"]
-        guarantor_residential_contact_address = self.validated_data["guarantor_residential_contact_address"]
+        guarantor_residential_contact_address = self.validated_data[
+            "guarantor_residential_contact_address"
+        ]
         relationship_with_guarantor = self.validated_data["relationship_with_guarantor"]
         guarantor_mobile = self.validated_data["guarantor_mobile"]
 
@@ -904,14 +911,26 @@ class FinancialAidSerializer(serializers.ModelSerializer):
             last_name=last_name,
             email=email,
             mobile=mobile,
-            residential_address =residential_address,
+            residential_address=residential_address,
             guarantor_full_name=guarantor_full_name,
             guarantor_residential_contact_address=guarantor_residential_contact_address,
             relationship_with_guarantor=relationship_with_guarantor,
             guarantor_mobile=guarantor_mobile,
         )
 
-        send_financial_aid_email(aid_type,course,first_name,last_name,email,mobile,relationship_with_guarantor,residential_address,guarantor_full_name,guarantor_residential_contact_address,guarantor_mobile)
+        send_financial_aid_email(
+            aid_type,
+            course,
+            first_name,
+            last_name,
+            email,
+            mobile,
+            relationship_with_guarantor,
+            residential_address,
+            guarantor_full_name,
+            guarantor_residential_contact_address,
+            guarantor_mobile,
+        )
 
         return financial_aid
 
@@ -1001,7 +1020,8 @@ class JobCategorySerializer(serializers.ModelSerializer):
 class PostJobSerializer(serializers.ModelSerializer):
     employer_id = serializers.IntegerField()
     job_category_id = serializers.IntegerField()
-    class Meta: 
+
+    class Meta:
         model = Job
         fields = [
             "id",
@@ -1015,36 +1035,41 @@ class PostJobSerializer(serializers.ModelSerializer):
             "close_job",
             "job_summary",
             "job_responsibilities",
-           
         ]
 
     def validate_employer_id(self, value):
         if not Employer.objects.filter(id=value).exists():
-            raise serializers.ValidationError('Employer with the give ID does not exist')
+            raise serializers.ValidationError(
+                "Employer with the give ID does not exist"
+            )
         return value
-    
+
     def validate_job_category_id(self, value):
         if not JobCategory.objects.filter(id=value).exists():
-            raise serializers.ValidationError('Job Category with the given ID does not exist')
+            raise serializers.ValidationError(
+                "Job Category with the given ID does not exist"
+            )
         return value
 
     def create(self, validated_data):
-        employer_id = self.context['employer_id']
-        job_category_id = self.context['job_category_id']
+        employer_id = self.context["employer_id"]
+        job_category_id = self.context["job_category_id"]
 
-        return Job.objects.create(employer_id=employer_id, job_category_id=job_category_id, **validated_data)    
+        return Job.objects.create(
+            employer_id=employer_id, job_category_id=job_category_id, **validated_data
+        )
 
     def save(self, **kwargs):
-        employer_id = self.validated_data['employer_id']
-        job_category_id = self.validated_data['job_category_id']
-        experience = self.validated_data['experience']
-        job_type = self.validated_data['job_type']
-        job_location = self.validated_data['job_location']
-        job_title = self.validated_data['job_title']
-        save_as = self.validated_data['save_as']
-        job_summary = self.validated_data['job_summary']
-        job_responsibilities = self.validated_data['job_responsibilities']
-        close_job = self.validated_data['close_job']
+        employer_id = self.validated_data["employer_id"]
+        job_category_id = self.validated_data["job_category_id"]
+        experience = self.validated_data["experience"]
+        job_type = self.validated_data["job_type"]
+        job_location = self.validated_data["job_location"]
+        job_title = self.validated_data["job_title"]
+        save_as = self.validated_data["save_as"]
+        job_summary = self.validated_data["job_summary"]
+        job_responsibilities = self.validated_data["job_responsibilities"]
+        close_job = self.validated_data["close_job"]
 
         try:
             job = Job.objects.create(
@@ -1057,14 +1082,13 @@ class PostJobSerializer(serializers.ModelSerializer):
                 save_as=save_as,
                 job_summary=job_summary,
                 job_responsibilities=job_responsibilities,
-                close_job=close_job
+                close_job=close_job,
             )
             job.save()
             return job
 
         except Exception:
             pass
-
 
 
 class JobSerializer(serializers.ModelSerializer):
@@ -1221,8 +1245,8 @@ class PostBillingSerializer(serializers.ModelSerializer):
         course_id = self.validated_data["course_id"]
         total_amount_paid = self.validated_data["total_amount_paid"]
         total_amount = self.validated_data["total_amount"]
-        student_id = self.validated_data['student_id']
-        student = Student.objects.get(id = student_id)
+        student_id = self.validated_data["student_id"]
+        student = Student.objects.get(id=student_id)
         try:
             billing = Billing.objects.create(
                 student_id=student_id,
@@ -1244,7 +1268,8 @@ class PostBillingSerializer(serializers.ModelSerializer):
 
 class BillingSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
-    course = serializers.StringRelatedField()    
+    course = serializers.StringRelatedField()
+    receipts = serializers.SerializerMethodField()
     grand_outstanding = serializers.SerializerMethodField()
 
     class Meta:
@@ -1259,26 +1284,46 @@ class BillingSerializer(serializers.ModelSerializer):
             "total_amount",
             "payment_completion_status",
             "grand_outstanding",
+            "receipts",
         ]
 
+    def get_receipts(self, obj):
+        return f"billings/{obj.id}/receipt/"
+
     def get_grand_outstanding(self, obj):
-        billings = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(amount_paid=Sum('amount_paid'))
-        total_amount_paid = billings['amount_paid']
-        cal = obj.total_amount - total_amount_paid
-        return cal
 
-class BillingDetailSerializer(serializers.ModelSerializer): 
+        try:
+            billings = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(
+                amount_paid=Sum("amount_paid")
+            )
+            total_amount_paid = 0
 
+            if billings:
+                if total_amount_paid != None:
+                    total_amount_paid = billings["amount_paid"]
+                    cal = obj.total_amount - total_amount_paid
+                    return cal
+                elif total_amount_paid == None:
+                    total_amount_paid = 0
+                    cal = obj.total_amount - total_amount_paid
+
+                    return cal
+        except Exception as e:
+            return None
+
+
+class BillingDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillingDetail
-        fields = ["id","amount_paid","date_paid"]
+        fields = ["id", "amount_paid", "date_paid"]
+
 
 class PostBillingDetailSerializer(serializers.ModelSerializer):
     billing_id = serializers.IntegerField()
 
     class Meta:
         model = BillingDetail
-        fields = ["id", "billing_id", "amount_paid","program_type"]
+        fields = ["id", "billing_id", "amount_paid", "program_type"]
 
     def validate_billing_id(self, value):
         if not Billing.objects.filter(id=value):
@@ -1293,7 +1338,9 @@ class PostBillingDetailSerializer(serializers.ModelSerializer):
         try:
             # create the billing details wrt billing_id
             billingdetails = BillingDetail.objects.create(
-                billing_id=billing_id, amount_paid=amount_paid, program_type=program_type
+                billing_id=billing_id,
+                amount_paid=amount_paid,
+                program_type=program_type,
             )
 
             billingdetails.save()
@@ -1307,10 +1354,33 @@ class PostBillingDetailSerializer(serializers.ModelSerializer):
 
 # Blog Region
 
+
 class BlogPostSerializer(serializers.ModelSerializer):
     blog_category = serializers.StringRelatedField()
+    author = serializers.SerializerMethodField(source="user")
+
     class Meta:
         model = BlogPost
-        fields = ['id','user','blog_category','title', 'slug','content','short_content','image_1','image_2','image_3','status','seo_keywords', 'date_created', 'date_updated']
+        fields = [
+            "id",
+            "author",
+            "blog_category",
+            "title",
+            "slug",
+            "content",
+            "short_content",
+            "image_1",
+            "image_2",
+            "image_3",
+            "status",
+            "seo_keywords",
+            "date_created",
+            "date_updated",
+        ]
         lookup_field = "slug"
+
+    def get_author(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name}"
+
+
 # End Blog Region

@@ -383,7 +383,7 @@ class CourseManualViewSet(ModelViewSet):
 class ResourceViewSet(ModelViewSet):
     http_method_names = ["get"]
 
-    queryset = Resource.objects.filter(published=True).select_related('resource_type')
+    queryset = Resource.objects.filter(published=True).select_related("resource_type")
     serializer_class = ResourceSerializer
     permission_classes = []
 
@@ -622,7 +622,7 @@ class EmployerViewSet(ModelViewSet):
             return UpdateEmployerSerializer
 
     def get_queryset(self):
-        if self.request.user.user_type == 'employer':
+        if self.request.user.user_type == "employer":
             return Employer.objects.get(user_id=self.request.user.id)
 
     @action(
@@ -651,13 +651,14 @@ class EmployerViewSet(ModelViewSet):
 
 
 class JobViewSet(ModelViewSet):
-    http_method_names = ["get","post"]
+    http_method_names = ["get", "post"]
 
     queryset = (
         Job.objects.filter(save_as="Published")
         .exclude(close_job=True)
         .select_related("job_category")
-    )    
+    )
+    serializer_class = JobSerializer
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -667,24 +668,47 @@ class JobViewSet(ModelViewSet):
     search_fields = ["job_title", "job_category__title", "employer__company_name"]
     ordering_fields = ["date_posted", "date_updated"]
     pagination_class = BasePagination
-    
+
     def get_serializer_class(self):
-        if self.request.method == 'GET':
+        if self.request.method == "GET":
             return JobSerializer
-        elif self.request.method == 'POST':
+        elif self.request.method == "POST":
             return PostJobSerializer
 
     def get_serializer_context(self):
         return {
-            'employer_id': self.kwargs.get('employer_pk'),
-            'job_category_id': self.kwargs.get('job_category_id')
+            "employer_id": self.kwargs.get("employer_pk"),
+            "job_category_id": self.kwargs.get("job_category_id"),
         }
 
+    # @action(
+    #     detail=False,
+    #     methods=["GET", "POST", "PATCH"],
+    #     permission_classes=[IsEmployerType],
+    # )
+    # def posts(self, request):
+    #     employer = Employer.objects.get(user=self.request.user.id)
+
+    #     serializer = PostJobSerializer(employer)
+
+    #     if request.method == "GET":
+    #         serializer = JobSerializer(employer)
+    #         return Response(serializer.data)
+
+    #     elif request.method == "POST":
+    #         serializer = PostJobSerializer(employer, data=request.data)
+    #         serializer.is_valid(raise_exception=True)
+    #         serializer.save()
+    #         return Response(serializer.data)
+
+    #     else:
+    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class JobCategoryViewSet(ModelViewSet):
-    http_method_name = ['get']
+    http_method_name = ["get"]
     serializer_class = JobCategorySerializer
     queryset = JobCategory.objects.all()
-
 
 
 class EmployerJobApplicantViewSet(ModelViewSet):
@@ -752,7 +776,7 @@ class StudentApplicationForJobViewSet(ModelViewSet):
 
 class BillingPaymentViewSet(ModelViewSet):
     http_method_names = ["post", "get"]
-    permission_classes = [IsStudentType]    
+    permission_classes = [IsStudentType]
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -761,16 +785,18 @@ class BillingPaymentViewSet(ModelViewSet):
             return PostBillingSerializer
 
     def get_queryset(self):
-        return Billing.objects.filter(student__user=self.request.user).prefetch_related(
-            "billingdetail_set"
-        ).select_related('student', 'course')
+        return (
+            Billing.objects.filter(student__user=self.request.user)
+            .prefetch_related("billingdetail_set")
+            .select_related("student", "course")
+        )
 
     def get_serializer_context(self):
         return {
             "student_id": self.kwargs.get("student_pk"),
             "course_id": self.kwargs.get("course_pk"),
         }
-    
+
     # @method_decorator(cache_page(1*60))
     # def dispatch(self, request, *args, **kwargs):
     #    return super().dispatch(request, *args, **kwargs)
@@ -804,31 +830,45 @@ class BillingDetailsViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data)
-    
+
     # @method_decorator(cache_page(1*60))
     # def dispatch(self, request, *args, **kwargs):
     #    return super().dispatch(request, *args, **kwargs)
+
+    # @action(
+    #     detail=False,
+    #     methods=["GET"],
+    #     permission_classes=[IsStudentType],
+    # )
+    # def receipts(self):
+    #     billings = BillingDetail.objects.get(billing_id=self.kwargs.get('billing_id'))
+    #     serializer = BillingDetailSerializer(billings)
+    #     print("ok")
 
 
 # End Billing region
 
 # BLOG POST REGION
 
+
 class BlogPostViewSet(ModelViewSet):
-    http_method_names = ['get']
-    queryset = BlogPost.objects.filter(status='published')
+    http_method_names = ["get"]
+    queryset = BlogPost.objects.filter(status="published")
     serializer_class = BlogPostSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['blog_category__title','title','content']
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    search_fields = ["blog_category__title", "title", "content"]
     ordering_fields = ["date_created", "date_updated"]
     pagination_class = BasePagination
     lookup_field = "slug"
     lookup_regex_values = "[^/]+"
 
-    @method_decorator(cache_page(60*2))
+    @method_decorator(cache_page(60 * 2))
     def dispatch(self, request, *args, **kwargs):
-       return super().dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 # END BLOG POST REGION
-
