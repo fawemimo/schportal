@@ -4,15 +4,10 @@ from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from api.emails import (
-    send_financial_aid_email,
-    send_inquiries_email,
-    send_interested_email,
-    send_kids_coding_email,
-    send_short_quizze_email,
-    send_sponsorship_email,
-    send_virtualclass_email,
-)
+from api.emails import (send_financial_aid_email, send_inquiries_email,
+                        send_interested_email, send_kids_coding_email,
+                        send_short_quizze_email, send_sponsorship_email,
+                        send_virtualclass_email)
 
 from .models import *
 

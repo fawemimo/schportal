@@ -6,8 +6,14 @@ from django.core.paginator import Paginator
 from django.db.models.aggregates import Count
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
-
+from django.http import HttpResponse
+import csv
 from .models import *
+
+
+admin.site.site_header = "Anchorsoft Academy"
+admin.site.site_title = "Anchorsoft Academy Admin"
+admin.site.index_title = "Anchorsoft Academy Portal"
 
 
 class CachingPaginator(Paginator):
@@ -144,6 +150,7 @@ class CourseAdmin(admin.ModelAdmin):
     list_display_links = ["course_code", "title"]
     list_select_related = ["coursecategory"]
     prepopulated_fields = {"slug": ("title",)}
+    search_fields = ["title"]
 
     def course_categoryo(self, course):
         return course.coursecategory.title
@@ -207,6 +214,21 @@ class TeacherAdmin(admin.ModelAdmin):
     search_fields = ["user__first_name__istartswith", "user__last_name__istartswith"]
     list_display_links = ["id", "fullname"]
     list_per_page = 25
+    actions = ["export_to_csv"]
+    autocomplete_fields = ["courses_taking"]
+
+    @admin.display(description="Export as CSV")
+    def export_to_csv(self, request, queryset):
+        meta = self.model._meta
+        fieldnames = [field.name for field in meta.fields]
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename={}.csv".format(meta)
+
+        writer = csv.writer(response)
+        writer.writerow(fieldnames)
+        for x in queryset:
+            row = writer.writerow([getattr(x, field) for field in fieldnames])
+        return response
 
     @admin.display(description="Total Courses Taking")
     def courses(self, obj):
@@ -336,6 +358,20 @@ class StudentAdmin(admin.ModelAdmin):
     list_per_page = 25
     paginator = CachingPaginator
     list_select_related = ["user"]
+    actions = ["export_to_csv"]
+
+    @admin.display(description="Export as CSV")
+    def export_to_csv(self, request, queryset):
+        meta = self.model._meta
+        fieldnames = [field.name for field in meta.fields]
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename={}.csv".format(meta)
+
+        writer = csv.writer(response)
+        writer.writerow(fieldnames)
+        for x in queryset:
+            row = writer.writerow([getattr(x, field) for field in fieldnames])
+        return response
 
     def batch_name(self, obj):
         obj = obj.batch_set.values("title", "id")
@@ -377,6 +413,20 @@ class BatchAdmin(admin.ModelAdmin):
     search_fields = ["title", "students__user__first_name__istartswith"]
     list_select_related = ["teacher", "course"]
     autocomplete_fields = ["students"]
+    actions = ["export_to_csv"]
+
+    @admin.display(description="Export as CSV")
+    def export_to_csv(self, request, queryset):
+        meta = self.model._meta
+        fieldnames = [field.name for field in meta.fields]
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename={}.csv".format(meta)
+
+        writer = csv.writer(response)
+        writer.writerow(fieldnames)
+        for x in queryset:
+            row = writer.writerow([getattr(x, field) for field in fieldnames])
+        return response
 
     @admin.display(ordering="start_date")
     def total_students(self, obj):
@@ -611,6 +661,19 @@ class BillingDetailsInline(admin.TabularInline):
 
 @admin.register(Billing)
 class BillingAdmin(admin.ModelAdmin):
+    @admin.display(description="Export as CSV")
+    def export_to_csv(self, request, queryset):
+        meta = self.model._meta
+        fieldnames = [field.name for field in meta.fields]
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename={}.csv".format(meta)
+
+        writer = csv.writer(response)
+        writer.writerow(fieldnames)
+        for x in queryset:
+            row = writer.writerow([getattr(x, field) for field in fieldnames])
+        return response
+
     list_display = [
         "id",
         "transaction_ref",
@@ -626,11 +689,24 @@ class BillingAdmin(admin.ModelAdmin):
     search_fields = ["student"]
     list_per_page = 25
     paginator = CachingPaginator
-    # inlines = [BillingDetailsInline]
+    actions = ["export_to_csv"]
 
 
 @admin.register(BillingDetail)
 class BillingDetailAdmin(admin.ModelAdmin):
+    @admin.display(description="Export as CSV")
+    def export_to_csv(self, request, queryset):
+        meta = self.model._meta
+        fieldnames = [field.name for field in meta.fields]
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename={}.csv".format(meta)
+
+        writer = csv.writer(response)
+        writer.writerow(fieldnames)
+        for x in queryset:
+            row = writer.writerow([getattr(x, field) for field in fieldnames])
+        return response
+
     def student_name(self, obj):
         return obj.billing.student
 
@@ -650,6 +726,7 @@ class BillingDetailAdmin(admin.ModelAdmin):
     list_select_related = ["billing"]
     list_per_page = 25
     readonly_fields = ["outstanding_amount"]
+    actions = ["export_to_csv"]
 
 
 # End Billing

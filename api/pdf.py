@@ -1,16 +1,13 @@
-from api.models import *
+import os
 
+from django.conf import settings
+from django.contrib.staticfiles import finders
+from django.http import HttpResponse
 # PDF CONFIG
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-from django.contrib.staticfiles import finders
-from django.http import HttpResponse
-import os
-from django.conf import settings
-from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-from django.contrib.staticfiles import finders
+
+from api.models import *
 
 
 def link_callback(uri, rel):
