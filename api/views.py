@@ -10,6 +10,13 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from django.contrib.staticfiles import finders
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
+from api.models import *
+
 from .filters import *
 from .models import *
 from .paginations import *
@@ -834,16 +841,29 @@ class BillingDetailsViewSet(ModelViewSet):
     # @method_decorator(cache_page(1*60))
     # def dispatch(self, request, *args, **kwargs):
     #    return super().dispatch(request, *args, **kwargs)
+    # True:individual
+    # False:list view
+    @action(
+        detail=True,
+        methods=["GET"],
+        permission_classes=[IsStudentType],
+    )
+    def receipts(self, request, billing_pk=None, pk=None):
+        billings = Billing.objects.get(id=billing_pk)
+        billingdetails = BillingDetail.objects.get(billing_id=billings.id, id=pk)
+        context = {"billingdetails": billingdetails}
+        template_path = "api/billings_receipt.html"
+        response = HttpResponse(content_type="application/pdf")
+        response[
+            "Content-Disposition"
+        ] = f"filename='{billings.id}_billings_receipt.pdf'"
+        template = get_template(template_path)
+        html = template.render(context)
 
-    # @action(
-    #     detail=False,
-    #     methods=["GET"],
-    #     permission_classes=[IsStudentType],
-    # )
-    # def receipts(self):
-    #     billings = BillingDetail.objects.get(billing_id=self.kwargs.get('billing_id'))
-    #     serializer = BillingDetailSerializer(billings)
-    #     print("ok")
+        pisa_status = pisa.CreatePDF(html, dest=response)
+        if pisa_status.err:
+            return HttpResponse("We had some errors <pre>" + html + "</pre>")
+        return Response(response)
 
 
 # End Billing region

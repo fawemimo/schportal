@@ -85,7 +85,6 @@ DATABASES = {
 }
 
 
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -186,9 +185,9 @@ TINYMCE_SPELLCHECKER = True
 
 # SQUAD CONFIG
 if DEBUG:
-    SQUAD_SECRET_KEY = config('SQUAD_SECRET_KEY')
+    SQUAD_SECRET_KEY = config("SQUAD_SECRET_KEY")
 else:
-    SQUAD_SECRET_KEY = config('SQUAD_SECRET_KEY_PROD')
+    SQUAD_SECRET_KEY = config("SQUAD_SECRET_KEY_PROD")
 
 
 try:

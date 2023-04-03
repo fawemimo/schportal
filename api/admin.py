@@ -8,7 +8,11 @@ from django.urls import reverse
 from django.utils.html import format_html, urlencode
 from django.http import HttpResponse
 import csv
+
+from api.forms import CsvImportAdminForm
 from .models import *
+from django.urls import path
+from django.shortcuts import render
 
 
 admin.site.site_header = "Anchorsoft Academy"
@@ -39,6 +43,16 @@ class CachingPaginator(Paginator):
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
+    def get_urls(self):
+        urls = super().get_urls()
+        new_urls = [path("uploads", self.uploads, name="uploads")]
+        return new_urls + urls
+
+    def uploads(self, request):
+        form = CsvImportAdminForm()
+        data = {"form": form}
+        return render(self.request, "admin/upload.html", data)
+
     list_display = ["id", "first_name", "last_name", "username", "email"]
     list_display_links = ["id", "username", "email"]
     list_filter = ["user_type", "is_staff", "is_superuser", "is_active"]
