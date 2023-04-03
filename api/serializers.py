@@ -147,6 +147,16 @@ class UpdateProfilePicSerializer(serializers.ModelSerializer):
         return super(UpdateProfilePicSerializer, self).update(instance, validated_data)
 
 
+class UploadCvSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ["id", "cv_upload"]
+
+    def update(self, instance, validated_data):
+        instance.cv_upload = validated_data["cv_upload"]
+        return super(UploadCvSerializer, self).update(instance, validated_data)
+
+
 class ScheduleSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
     teacher = serializers.StringRelatedField()
@@ -1120,7 +1130,14 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
 
     def get_job_applied_for(self, obj):
         return obj.jobapplication_set.values(
-            "job__job_category", "job__job_title", "job__date_posted"
+            "job__employer__company_name",
+            "job__employer__company_logo",
+            "job__job_category",
+            "job__job_title",
+            "job__job_location",
+            "job__job_type",
+            "job__date_posted",
+            "date_applied",
         )
 
 

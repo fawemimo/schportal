@@ -113,31 +113,25 @@ class StudentViewSet(ModelViewSet):
         return Response(request, status=status.HTTP_200_OK)
 
 
-class StudentProfilePicViewSet(ModelViewSet):
+class StudentUpdateViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "head", "options"]
 
     permission_classes = [IsStudentType]
+    serializer_class = StudentSerializer
 
     def get_queryset(self):
         return Student.objects.filter(user_id=self.request.user.id).select_related(
             "user"
         )
 
-    def get_serializer_class(self):
-        if self.request.method == "POST":
-            return UpdateProfilePicSerializer
-        elif self.request.method == "GET":
-            return StudentSerializer
-        return UpdateProfilePicSerializer
-
     @action(
         detail=False,
         methods=["GET", "POST", "PATCH"],
         permission_classes=[IsStudentType],
+        serializer_class=UpdateProfilePicSerializer,
     )
     def profile(self, request):
         student = Student.objects.get(user=self.request.user.id)
-        # student = Student.objects.get(user=self.kwargs.get('user_pk'))
 
         serializer = UpdateProfilePicSerializer(student)
 
@@ -147,6 +141,30 @@ class StudentProfilePicViewSet(ModelViewSet):
 
         elif request.method == "POST":
             serializer = UpdateProfilePicSerializer(student, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(
+        detail=False,
+        methods=["GET", "POST", "PATCH"],
+        permission_classes=[IsStudentType],
+        serializer_class=UploadCvSerializer,
+    )
+    def cv(self, request):
+        student = Student.objects.get(user=self.request.user.id)
+
+        serializer = UploadCvSerializer(student)
+
+        if request.method == "GET":
+            serializer = UploadCvSerializer(student)
+            return Response(serializer.data)
+
+        elif request.method == "POST":
+            serializer = UploadCvSerializer(student, data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
@@ -766,12 +784,10 @@ class StudentApplicationForJobViewSet(ModelViewSet):
         if self.request.method == "POST":
             return JobApplicationSerializer
         return JobApplicationSerializer
-    
+
     def get_serializer_context(self):
-        return {
-            'student_id': self.kwargs.get('student_pk')
-        }
-    
+        return {"student_id": self.kwargs.get("student_pk")}
+
     def create(self, request, *args, **kwargs):
         serializer = JobApplicationSerializer(
             data=request.data, context={"user_id": self.request.user.id}
