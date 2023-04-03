@@ -43,15 +43,15 @@ class CachingPaginator(Paginator):
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    def get_urls(self):
-        urls = super().get_urls()
-        new_urls = [path("uploads", self.uploads, name="uploads")]
-        return new_urls + urls
+    # def get_urls(self):
+    #     urls = super().get_urls()
+    #     new_urls = [path("uploads", self.uploads, name="uploads")]
+    #     return new_urls + urls
 
-    def uploads(self, request):
-        form = CsvImportAdminForm()
-        data = {"form": form}
-        return render(self.request, "admin/upload.html", data)
+    # def uploads(self, request):
+    #     form = CsvImportAdminForm()
+    #     data = {"form": form}
+    #     return render(self.request, "admin/upload.html", data)
 
     list_display = ["id", "first_name", "last_name", "username", "email"]
     list_display_links = ["id", "username", "email"]
@@ -647,6 +647,7 @@ class JobAdmin(admin.ModelAdmin):
     date_hierarchy = "date_posted"
     list_select_related = ["job_category", "employer"]
     autocomplete_fields = ["job_category", "employer"]
+    prepopulated_fields = {"slug": ("job_title",)}
 
 
 @admin.register(JobApplication)

@@ -668,6 +668,7 @@ class Job(models.Model):
         max_length=50, choices=JOB_LOCATION, blank=True, null=True
     )
     job_title = models.CharField(max_length=255)
+    slug = models.SlugField(blank=True, null=True)
     save_as = models.CharField(max_length=50, choices=STATUS, default="Draft")
     job_summary = models.TextField()
     job_responsibilities = tinymce_models.HTMLField()
@@ -745,7 +746,7 @@ class Billing(models.Model):
                     return cal
         except Exception as e:
             return None
-        
+
     def save(self, *args, **kwargs):
         try:
 
@@ -788,7 +789,7 @@ class BillingDetail(models.Model):
 
             self.outstanding_amount = self.cal_sum_ofamount()
         except Exception as e:
-            pass    
+            pass
 
         super(BillingDetail, self).save(*args, **kwargs)
 

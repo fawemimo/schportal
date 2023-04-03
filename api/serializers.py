@@ -1096,7 +1096,7 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = "__all__"
-
+        lookup_field = "slug"
 
 class StudentJobApplicationSerializer(serializers.ModelSerializer):
     job_applied_for = serializers.SerializerMethodField()

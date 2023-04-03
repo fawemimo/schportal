@@ -675,6 +675,8 @@ class JobViewSet(ModelViewSet):
     search_fields = ["job_title", "job_category__title", "employer__company_name"]
     ordering_fields = ["date_posted", "date_updated"]
     pagination_class = BasePagination
+    lookup_field = "slug"
+    lookup_regex_values = "[^/]+"
 
     def get_serializer_class(self):
         if self.request.method == "GET":
