@@ -3,6 +3,7 @@ import os
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.http import HttpResponse
+
 # PDF CONFIG
 from django.template.loader import get_template
 from xhtml2pdf import pisa
@@ -35,9 +36,9 @@ def link_callback(uri, rel):
     return path
 
 
-def create_receipts(self, billing_id, detail_id):
-    billings = Billing.objects.get(id=billing_id)
-    billingdetails = BillingDetail.objects.get(billing_id=billings.id, id=detail_id)
+def create_receipts(self, billing_pk, pk):
+    billings = Billing.objects.get(id=billing_pk)
+    billingdetails = BillingDetail.objects.get(billing_id=billings.id, id=pk)
     context = {"billingdetails": billingdetails}
     template_path = "api/billings_receipt.html"
     response = HttpResponse(content_type="application/pdf")

@@ -14,7 +14,7 @@ from django.contrib.staticfiles import finders
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-
+from api.pdf import *
 from api.models import *
 
 from .filters import *
@@ -851,21 +851,7 @@ class BillingDetailsViewSet(ModelViewSet):
         permission_classes=[IsStudentType],
     )
     def receipts(self, request, billing_pk=None, pk=None):
-        billings = Billing.objects.get(id=billing_pk)
-        billingdetails = BillingDetail.objects.get(billing_id=billings.id, id=pk)
-        context = {"billingdetails": billingdetails}
-        template_path = "api/billings_receipt.html"
-        response = HttpResponse(content_type="application/pdf")
-        response[
-            "Content-Disposition"
-        ] = f"filename='{billings.id}_billings_receipt.pdf'"
-        template = get_template(template_path)
-        html = template.render(context)
-
-        pisa_status = pisa.CreatePDF(html, dest=response)
-        if pisa_status.err:
-            return HttpResponse("We had some errors <pre>" + html + "</pre>")
-        return Response(response)
+        return create_receipts(self, billing_pk, pk)
 
 
 # End Billing region

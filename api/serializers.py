@@ -4,10 +4,15 @@ from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from api.emails import (send_financial_aid_email, send_inquiries_email,
-                        send_interested_email, send_kids_coding_email,
-                        send_short_quizze_email, send_sponsorship_email,
-                        send_virtualclass_email)
+from api.emails import (
+    send_financial_aid_email,
+    send_inquiries_email,
+    send_interested_email,
+    send_kids_coding_email,
+    send_short_quizze_email,
+    send_sponsorship_email,
+    send_virtualclass_email,
+)
 
 from .models import *
 
@@ -1098,6 +1103,7 @@ class JobSerializer(serializers.ModelSerializer):
         fields = "__all__"
         lookup_field = "slug"
 
+
 class StudentJobApplicationSerializer(serializers.ModelSerializer):
     job_applied_for = serializers.SerializerMethodField()
 
@@ -1303,13 +1309,10 @@ class BillingSerializer(serializers.ModelSerializer):
 
 
 class BillingDetailSerializer(serializers.ModelSerializer):
-    receipts = serializers.SerializerMethodField()
     class Meta:
         model = BillingDetail
-        fields = ["id", "amount_paid","receipts", "date_paid"]
+        fields = ["id", "amount_paid", "date_paid"]
 
-    def get_receipts(self, obj):
-        return f"billings/{obj.billing.id}/receipt/{obj.id}"
 
 class PostBillingDetailSerializer(serializers.ModelSerializer):
     billing_id = serializers.IntegerField()
