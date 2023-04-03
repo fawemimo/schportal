@@ -1164,7 +1164,7 @@ class JobApplicationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobApplication
-        fields = ["id", "student_id", "job_id", "cv_upload", "years_of_experience"]
+        fields = ["id", "student_id", "job_id"]
 
     def validate_job_id(self, value):
         if not Job.objects.filter(pk=value).exists():
@@ -1182,18 +1182,11 @@ class JobApplicationSerializer(serializers.ModelSerializer):
         return jobapplication
 
     def save(self, **kwargs):
-        id = self.validated_data["id"]
         student_id = self.validated_data["student_id"]
         job_id = self.validated_data["job_id"]
-        cv_upload = self.validated_data["cv_upload"]
-        years_of_experience = self.validated_data["years_of_experience"]
 
         jobapplication = JobApplication.objects.create(
-            id=id,
-            student_id=student_id,
-            job_id=job_id,
-            cv_upload=cv_upload,
-            years_of_experience=years_of_experience,
+            student_id=student_id, job_id=job_id
         )
 
         return jobapplication

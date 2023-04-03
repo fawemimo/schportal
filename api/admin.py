@@ -629,8 +629,6 @@ class EmployerAdmin(admin.ModelAdmin):
 class JobCategoryAdmin(admin.ModelAdmin):
 
     list_display = ["title", "date_created"]
-    # list_filter = ["experience", "job_type", "job_location"]
-    # list_editable = ["experience", "job_type", "job_location"]
     search_fields = ["title"]
     date_hierarchy = "date_created"
     ordering = ["title"]
@@ -653,8 +651,7 @@ class JobAdmin(admin.ModelAdmin):
 @admin.register(JobApplication)
 class JobApplicationAdmin(admin.ModelAdmin):
 
-    list_display = ["student", "job", "cv_upload", "date_applied"]
-    list_filter = ["years_of_experience"]
+    list_display = ["student", "job", "date_applied"]
     search_fields = ["student"]
     autocomplete_fields = ["student"]
     date_hierarchy = "date_applied"
@@ -666,12 +663,6 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
 
 # Billing region
-
-
-class BillingDetailsInline(admin.TabularInline):
-    model = BillingDetail
-    extra = 1
-    readonly_fields = ["outstanding_amount"]
 
 
 @admin.register(Billing)

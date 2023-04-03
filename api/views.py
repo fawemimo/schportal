@@ -766,7 +766,12 @@ class StudentApplicationForJobViewSet(ModelViewSet):
         if self.request.method == "POST":
             return JobApplicationSerializer
         return JobApplicationSerializer
-
+    
+    def get_serializer_context(self):
+        return {
+            'student_id': self.kwargs.get('student_pk')
+        }
+    
     def create(self, request, *args, **kwargs):
         serializer = JobApplicationSerializer(
             data=request.data, context={"user_id": self.request.user.id}

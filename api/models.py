@@ -102,6 +102,14 @@ class Student(models.Model):
             FileExtensionValidator(allowed_extensions=["jpg", "png", "jpeg"]),
         ],
     )
+    cv_upload = models.FileField(
+        upload_to="JobPortal/cv_upload",
+        validators=[
+            FileExtensionValidator(allowed_extensions=("pdf", "jpg", "jpeg", "png"))
+        ],
+        blank=True,
+        null=True,
+    )
     residential_address = models.CharField(max_length=250, blank=True, null=True)
     contact_address = models.CharField(max_length=250, blank=True, null=True)
     next_of_kin_fullname = models.CharField(max_length=150, blank=True, null=True)
@@ -683,13 +691,6 @@ class Job(models.Model):
 class JobApplication(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    cv_upload = models.FileField(
-        upload_to="JobPortal/cv_upload",
-        validators=[
-            FileExtensionValidator(allowed_extensions=("pdf", "jpg", "jpeg", "png"))
-        ],
-    )
-    years_of_experience = models.CharField(max_length=50)
     date_applied = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
