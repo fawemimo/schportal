@@ -676,7 +676,7 @@ class EmployerViewSet(ModelViewSet):
 
 
 class JobViewSet(ModelViewSet):
-    http_method_names = ["get", "post"]
+    http_method_names = ["get", "post", "delete", "patch"]
 
     queryset = (
         Job.objects.filter(save_as="Published")
@@ -696,10 +696,15 @@ class JobViewSet(ModelViewSet):
     lookup_field = "slug"
     lookup_regex_values = "[^/]+"
 
+    def get_permissions(self):
+        if self.request.method in ["POST", "DELETE", "PATCH"]:
+            return [IsEmployerType()]
+        return [permissions.AllowAny()]
+
     def get_serializer_class(self):
         if self.request.method == "GET":
             return JobSerializer
-        elif self.request.method == "POST":
+        elif self.request.method in ["POST", "DELETE", "PATCH"]:
             return PostJobSerializer
 
     def get_serializer_context(self):
