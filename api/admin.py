@@ -638,7 +638,7 @@ class JobCategoryAdmin(admin.ModelAdmin):
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
 
-    list_display = ["employer", "job_title", "job_category", "save_as", "close_job"]
+    list_display = ["id","employer", "job_title", "job_category", "save_as", "close_job"]
     list_editable = ["save_as", "close_job"]
     list_filter = ["date_posted", "date_updated"]
     ordering = ["date_posted"]

@@ -696,6 +696,9 @@ class JobApplication(models.Model):
     def __str__(self):
         return str(self.student)
 
+    class Meta:
+        unique_together = ["student", "job"]
+
 
 # endportal region
 

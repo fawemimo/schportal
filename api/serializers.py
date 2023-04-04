@@ -3,7 +3,7 @@ from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+from rest_framework.validators import UniqueTogetherValidator
 from api.emails import (
     send_financial_aid_email,
     send_inquiries_email,
@@ -1104,9 +1104,6 @@ class PostJobSerializer(serializers.ModelSerializer):
 class JobSerializer(serializers.ModelSerializer):
     employer = EmployerSerializer()
     job_category = serializers.StringRelatedField()
-    # job_location = serializers.SerializerMethodField()
-    # experience = serializers.SerializerMethodField()
-    # job_type = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
@@ -1182,6 +1179,13 @@ class JobApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobApplication
         fields = ["id", "student_id", "job_id"]
+        validators = [
+            UniqueTogetherValidator(
+                queryset=JobApplication.objects.all(),
+                fields=["student_id", "job_id"],
+                message=("You already apply for this job"),
+            )
+        ]
 
     def validate_job_id(self, value):
         if not Job.objects.filter(pk=value).exists():
