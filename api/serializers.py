@@ -128,6 +128,7 @@ class StudentSerializer(serializers.ModelSerializer):
             "date_of_birth",
             "mobile_numbers",
             "profile_pic",
+            "cv_upload",
             "residential_address",
             "contact_address",
             "next_of_kin_fullname",
