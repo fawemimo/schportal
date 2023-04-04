@@ -1207,7 +1207,7 @@ class JobApplicationSerializer(serializers.ModelSerializer):
         job_id = self.validated_data["job_id"]
 
         jobapplication = JobApplication.objects.create(
-            student_id=student_id, job_id=job_id
+            student_id=student_id, job_id=job_id, applied=True
         )
 
         return jobapplication

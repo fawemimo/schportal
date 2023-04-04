@@ -641,7 +641,7 @@ class JobAdmin(admin.ModelAdmin):
     list_display = ["id","employer", "job_title", "job_category", "save_as", "close_job"]
     list_editable = ["save_as", "close_job"]
     list_filter = ["date_posted", "date_updated"]
-    ordering = ["date_posted"]
+    ordering = ["-date_posted"]
     date_hierarchy = "date_posted"
     list_select_related = ["job_category", "employer"]
     autocomplete_fields = ["job_category", "employer"]
@@ -655,7 +655,7 @@ class JobApplicationAdmin(admin.ModelAdmin):
     search_fields = ["student"]
     autocomplete_fields = ["student"]
     date_hierarchy = "date_applied"
-    ordering = ["date_applied"]
+    ordering = ["-date_applied"]
     list_select_related = ["student", "job"]
 
 

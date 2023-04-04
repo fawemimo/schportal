@@ -678,7 +678,7 @@ class Job(models.Model):
     job_title = models.CharField(max_length=255)
     slug = models.SlugField(blank=True, null=True)
     save_as = models.CharField(max_length=50, choices=STATUS, default="Draft")
-    job_summary = models.TextField()
+    job_summary = tinymce_models.HTMLField()
     job_responsibilities = tinymce_models.HTMLField()
     close_job = models.BooleanField(default=False)
     date_posted = models.DateTimeField(auto_now_add=True)
@@ -687,16 +687,21 @@ class Job(models.Model):
     def __str__(self):
         return f"{self.employer}:- {self.job_title}"
 
+    class Meta:
+        ordering = ["-date_posted"]
+
 
 class JobApplication(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    applied = models.BooleanField(default=False)
     date_applied = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.student)
 
     class Meta:
+        ordering = ['-date_applied']
         unique_together = ["student", "job"]
 
 
