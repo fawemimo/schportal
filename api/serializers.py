@@ -1098,8 +1098,8 @@ class PostJobSerializer(serializers.ModelSerializer):
             job.save()
             return job
 
-        except Exception:
-            pass
+        except Exception as e:
+            print(e)
 
 
 class JobSerializer(serializers.ModelSerializer):

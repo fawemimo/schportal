@@ -616,7 +616,7 @@ class OurTeamAdmin(admin.ModelAdmin):
 @admin.register(Employer)
 class EmployerAdmin(admin.ModelAdmin):
 
-    list_display = ["full_name", "location", "company_name", "date_created"]
+    list_display = ["id","full_name", "location", "company_name", "date_created"]
     date_hierarchy = "date_created"
     search_fields = ["full_name", "company_name"]
     ordering = [

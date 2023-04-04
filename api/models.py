@@ -687,9 +687,9 @@ class Job(models.Model):
     def __str__(self):
         return f"{self.employer}:- {self.job_title}"
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.job_title)
-        super(Job, self).save(args, kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.slug = slugify(self.job_title)
+    #     super(Job, self).save(args, kwargs)
 
     class Meta:
         ordering = ["-date_posted"]
