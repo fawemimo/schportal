@@ -1168,8 +1168,7 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
             "student",
             "student__date_of_birth",
             "job",
-            "cv_upload",
-            "years_of_experience",
+            "student__cv_upload",
             "date_applied",
         )
 

@@ -713,28 +713,28 @@ class JobViewSet(ModelViewSet):
             "job_category_id": self.kwargs.get("job_category_id"),
         }
 
-    @action(
-        detail=False,
-        methods=["GET", "POST", "PATCH"],
-        permission_classes=[IsEmployerType],
-    )
-    def posts(self, request):
-        employer = Employer.objects.get(user=self.request.user.id)
+    # @action(
+    #     detail=False,
+    #     methods=["GET", "POST", "PATCH"],
+    #     permission_classes=[IsEmployerType],
+    # )
+    # def posts(self, request):
+    #     employer = Employer.objects.get(user=self.request.user.id)
 
-        serializer = PostJobSerializer(employer)
+    #     serializer = PostJobSerializer(employer)
 
-        if request.method == "GET":
-            serializer = JobSerializer()
-            return Response(serializer.data)
+    #     if request.method == "GET":
+    #         serializer = JobSerializer()
+    #         return Response(serializer.data)
 
-        elif request.method == "POST":
-            serializer = PostJobSerializer(employer, data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
+    #     elif request.method == "POST":
+    #         serializer = PostJobSerializer(employer, data=request.data)
+    #         serializer.is_valid(raise_exception=True)
+    #         serializer.save()
+    #         return Response(serializer.data)
 
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #     else:
+    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class JobCategoryViewSet(ModelViewSet):
