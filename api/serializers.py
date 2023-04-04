@@ -1128,6 +1128,7 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
 
     def get_job_applied_for(self, obj):
         return obj.jobapplication_set.values(
+            "job_id",
             "job__employer__company_name",
             "job__employer__company_logo",
             "job__job_category",
