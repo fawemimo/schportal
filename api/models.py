@@ -161,6 +161,7 @@ class Schedule(models.Model):
 
 
 class Batch(models.Model):
+    program_type = models.CharField(max_length=50, blank=True, null=True, choices=PROGRAM_TYPE_CHOICES)
     title = models.CharField(max_length=150)
     teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
@@ -402,7 +403,7 @@ class ScholarshipSection(models.Model):
 # region student portal
 
 
-class InterestedForm(models.Model):
+class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=155)
     email = models.EmailField(max_length=155)
@@ -705,7 +706,7 @@ class JobApplication(models.Model):
         return str(self.student)
 
     class Meta:
-        ordering = ['-date_applied']
+        ordering = ["-date_applied"]
         unique_together = ["student", "job"]
 
 

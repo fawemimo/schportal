@@ -273,7 +273,7 @@ class InquiryAdmin(admin.ModelAdmin):
     list_display = ["id", "fullname", "mobile", "email"]
 
 
-@admin.register(InterestedForm)
+@admin.register(Enrollment)
 class InterestsAdmin(admin.ModelAdmin):
 
     list_display = ["course_title", "full_name", "mobile", "email"]
@@ -616,7 +616,7 @@ class OurTeamAdmin(admin.ModelAdmin):
 @admin.register(Employer)
 class EmployerAdmin(admin.ModelAdmin):
 
-    list_display = ["id","full_name", "location", "company_name", "date_created"]
+    list_display = ["id", "full_name", "location", "company_name", "date_created"]
     date_hierarchy = "date_created"
     search_fields = ["full_name", "company_name"]
     ordering = [
@@ -638,7 +638,14 @@ class JobCategoryAdmin(admin.ModelAdmin):
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
 
-    list_display = ["id","employer", "job_title", "job_category", "save_as", "close_job"]
+    list_display = [
+        "id",
+        "employer",
+        "job_title",
+        "job_category",
+        "save_as",
+        "close_job",
+    ]
     list_editable = ["save_as", "close_job"]
     list_filter = ["date_posted", "date_updated"]
     ordering = ["-date_posted"]

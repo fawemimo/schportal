@@ -308,7 +308,7 @@ class InterestedFormViewSet(ModelViewSet):
         return {"course_id": self.kwargs.get("course_pk")}
 
     def get_queryset(self):
-        return InterestedForm.objects.filter(
+        return Enrollment.objects.filter(
             course_id=self.kwargs.get("course_id")
         ).select_related("course")
 

@@ -5,10 +5,15 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from api.emails import (send_financial_aid_email, send_inquiries_email,
-                        send_interested_email, send_kids_coding_email,
-                        send_short_quizze_email, send_sponsorship_email,
-                        send_virtualclass_email)
+from api.emails import (
+    send_financial_aid_email,
+    send_inquiries_email,
+    send_interested_email,
+    send_kids_coding_email,
+    send_short_quizze_email,
+    send_sponsorship_email,
+    send_virtualclass_email,
+)
 
 from .models import *
 
@@ -367,7 +372,7 @@ class InterestedFormSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
 
     class Meta:
-        model = InterestedForm
+        model = Enrollment
         fields = ["id", "course_id", "full_name", "email", "mobile"]
 
     def validate_course_id(self, value):
@@ -381,7 +386,7 @@ class InterestedFormSerializer(serializers.ModelSerializer):
         email = self.validated_data["email"]
         mobile = self.validated_data["mobile"]
 
-        interestform = InterestedForm.objects.create(
+        interestform = Enrollment.objects.create(
             course_id=course_id, full_name=full_name, email=email, mobile=mobile
         )
 
@@ -434,7 +439,7 @@ class BatchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Batch
-        fields = ["id", "title", "course", "course_manuals"]
+        fields = ["id","program_type", "title", "course", "course_manuals"]
 
     def get_course_manuals(self, obj):
         return obj.coursemanualallocation_set.values(
