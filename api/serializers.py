@@ -1248,6 +1248,9 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
 
 class ApplicantsSerializer(serializers.ModelSerializer):
     cv = serializers.SerializerMethodField()
+    student_name = serializers.SerializerMethodField()
+    student_profile_pics = serializers.SerializerMethodField()
+    job_title = serializers.SerializerMethodField()
     class Meta:
         model = JobApplication
         fields = "__all__"
@@ -1256,7 +1259,16 @@ class ApplicantsSerializer(serializers.ModelSerializer):
         if obj.student.cv_upload is None:
             return obj.student.cv_upload.url
         return obj.student.cv_upload.url
-        
+    
+    def get_student_name(self, obj):
+        return obj.student.full_name
+    
+    def get_student_profile_pics(self, obj):
+        return obj.student.profile_pic.url
+    
+    def get_job_title(self, obj):
+        return obj.job.job_title
+    
     
 class JobApplicationSerializer(serializers.ModelSerializer):
     job_id = serializers.IntegerField()
