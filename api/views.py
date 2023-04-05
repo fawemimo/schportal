@@ -10,12 +10,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from django.contrib.staticfiles import finders
-from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-from api.pdf import *
 from api.models import *
+from api.pdf import *
 
 from .filters import *
 from .models import *

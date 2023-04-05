@@ -2,17 +2,13 @@ from django.db.models import *
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueTogetherValidator
-from api.emails import (
-    send_financial_aid_email,
-    send_inquiries_email,
-    send_interested_email,
-    send_kids_coding_email,
-    send_short_quizze_email,
-    send_sponsorship_email,
-    send_virtualclass_email,
-)
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from api.emails import (send_financial_aid_email, send_inquiries_email,
+                        send_interested_email, send_kids_coding_email,
+                        send_short_quizze_email, send_sponsorship_email,
+                        send_virtualclass_email)
 
 from .models import *
 

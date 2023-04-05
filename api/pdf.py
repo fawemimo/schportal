@@ -3,7 +3,6 @@ import os
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.http import HttpResponse
-
 # PDF CONFIG
 from django.template.loader import get_template
 from xhtml2pdf import pisa

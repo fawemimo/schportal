@@ -1,19 +1,19 @@
+import csv
+
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models.aggregates import Count
-from django.urls import reverse
-from django.utils.html import format_html, urlencode
 from django.http import HttpResponse
-import csv
+from django.shortcuts import render
+from django.urls import path, reverse
+from django.utils.html import format_html, urlencode
 
 from api.forms import CsvImportAdminForm
-from .models import *
-from django.urls import path
-from django.shortcuts import render
 
+from .models import *
 
 admin.site.site_header = "Anchorsoft Academy"
 admin.site.site_title = "Anchorsoft Academy Admin"
