@@ -1078,9 +1078,11 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
     # email = serializers.SerializerMethodField(source='user__email')
     class Meta:
         model = Employer
-        fields = ["id", "tagline", "location", "company_name", "company_logo"]
+        fields = ["id", "tagline", "location", "company_name", "company_logo","contact_person_mobile","company_url"]
 
     def update(self, instance, validated_data):
+        instance.contact_person_mobile = validated_data["contact_person_mobile"]
+        instance.company_url = validated_data["company_url"]
         instance.company_logo = validated_data["company_logo"]
         instance.company_name = validated_data["company_name"]
         instance.location = validated_data["location"]
