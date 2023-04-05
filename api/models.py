@@ -16,8 +16,8 @@ from api.validate import validate_file_size
 class User(AbstractUser):
 
     email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255, blank=True, null=True)
+    last_name = models.CharField(max_length=255, blank=True, null=True)
     mobile_numbers = models.CharField(max_length=50, blank=True, null=True)
     user_type = models.CharField(
         max_length=8, choices=USER_TYPE_CHOICES, blank=True, null=True
@@ -644,7 +644,7 @@ class Employer(models.Model):
     contact_person_mobile = models.CharField(max_length=50, blank=True, null=True)
     location = models.CharField(max_length=255, null=True, blank=True)
     company_name = models.CharField(max_length=255)
-    company_url = models.URLField(blank=True,null=True, max_length=200)
+    company_url = models.CharField(blank=True,null=True, max_length=200)
     tagline = models.TextField()
     company_logo = models.ImageField(
         upload_to="JobPortal/Company",

@@ -630,7 +630,7 @@ class StudentAttendanceSerializer(serializers.ModelSerializer):
         ]
 
 
-class UserCreateSerializer(BaseUserCreateSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -643,18 +643,24 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         source="password",
     )
     mobile_numbers = serializers.CharField(write_only=True)
-
-    class Meta(BaseUserCreateSerializer.Meta):
+    company_website_url = serializers.CharField(write_only=True)
+    contact_person = serializers.CharField(write_only=True)
+    company_name = serializers.CharField(write_only=True)
+    class Meta:
+        model = User
         fields = [
             "id",
             "user_type",
             "username",
             "password",
             "password2",
-            "first_name",
-            "last_name",
+            # "first_name",
+            # "last_name",
             "email",
             "mobile_numbers",
+            "company_website_url",
+            "contact_person",
+            "company_name"
         ]
 
     def validate_email(self, value):
@@ -671,8 +677,8 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 
     def validate_user_type(self, value):
         user_type = value.lower()
-        if not user_type == "student":
-            raise serializers.ValidationError("Student can only register")
+        if not user_type == "employer":
+            raise serializers.ValidationError("Employer can only register")
         return value
 
     def validate_password(self, value):
@@ -691,6 +697,62 @@ class UserCreateSerializer(BaseUserCreateSerializer):
             raise serializers.ValidationError("Passwords must match")
         return value
 
+    def create(self, validated_data):
+        user_type = self.validated_data['user_type']
+        username = self.validated_data['username']
+        # password = self.validated_data['user_type']
+        # password2 = self.validated_data['user_type']
+        # first_name = self.validated_data['user_type']
+        # last_name = self.validated_data['user_type']
+        email = self.validated_data['email']
+        mobile_numbers = self.validated_data['mobile_numbers']
+        company_website_url = self.validated_data['company_website_url']
+        contact_person = self.validated_data['contact_person']
+        company_name = self.validated_data['company_name']
+
+        user = User.objects.create(user_type=user_type,username=username, email=email,mobile_numbers=mobile_numbers)          
+        user.save()  
+        employer = Employer(user=user,contact_person = contact_person,company_name = company_name,company_website_url=company_website_url)
+        employer.save()
+        return user
+        # try:
+
+           
+           
+           
+            
+        # except Exception as e:
+        #     print(e)
+
+    # def save(self, **kwargs):
+    #     user_type = self.validated_data['user_type']
+    #     username = self.validated_data['username']
+    #     # password = self.validated_data['user_type']
+    #     # password2 = self.validated_data['user_type']
+    #     # first_name = self.validated_data['user_type']
+    #     # last_name = self.validated_data['user_type']
+    #     email = self.validated_data['email']
+    #     mobile_numbers = self.validated_data['mobile_numbers']
+    #     company_website_url = self.validated_data['company_website_url']
+    #     contact_person = self.validated_data['contact_person']
+    #     company_name = self.validated_data['company_name']
+
+    #     try:
+    #         user = User.objects.create(user_type=user_type,username=username, email=email,mobile_numbers=mobile_numbers)          
+    #         # employer = Employer(company_website_url=company_website_url,contact_person = contact_person,company_name = company_name)
+
+    #         user.employer.company_website_url=company_website_url
+    #         user.employer.contact_person=contact_person
+    #         user.employer.company_name=company_name
+           
+    #         user.save()  
+           
+           
+    #         # employer.save()
+    #         return user
+            
+    #     except Exception as e:
+    #         print(e)
 
 class VirtualClassSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
@@ -1182,10 +1244,17 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
 
 
 class ApplicantsSerializer(serializers.ModelSerializer):
+    cv = serializers.SerializerMethodField()
     class Meta:
         model = JobApplication
         fields = "__all__"
 
+    def get_cv(self, obj):
+        if obj.student.cv_upload is None:
+            return obj.student.cv_upload.url
+        return obj.student.cv_upload.url
+        
+    
 class JobApplicationSerializer(serializers.ModelSerializer):
     job_id = serializers.IntegerField()
     student_id = serializers.IntegerField()
