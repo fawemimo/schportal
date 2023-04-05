@@ -753,6 +753,17 @@ class EmployerJobApplicantViewSet(ModelViewSet):
         )
 
 
+class ApplicantsViewSet(ModelViewSet):
+    http_method_names = ['get']
+
+    serializer_class = ApplicantsSerializer
+    permission_classes = [IsEmployerType]
+    pagination_class = BasePagination
+    filter_backends = [DjangoFilterBackend]
+
+    def get_queryset(self):
+        return JobApplication.objects.filter(job_id=self.kwargs.get('job_pk')).select_related('job')
+
 class StudentAppliedJobViewSet(ModelViewSet):
     http_method_names = ["get"]
 

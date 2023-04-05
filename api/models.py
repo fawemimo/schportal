@@ -1,4 +1,5 @@
 import uuid
+import random
 from datetime import datetime
 
 from django.contrib.auth.models import AbstractUser
@@ -639,9 +640,11 @@ class HowItWork(models.Model):
 
 class Employer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=255)
+    contact_person = models.CharField(max_length=255)
+    contact_person_mobile = models.CharField(max_length=50, blank=True, null=True)
     location = models.CharField(max_length=255, null=True, blank=True)
     company_name = models.CharField(max_length=255)
+    company_url = models.URLField(blank=True,null=True, max_length=200)
     tagline = models.TextField()
     company_logo = models.ImageField(
         upload_to="JobPortal/Company",
@@ -688,9 +691,11 @@ class Job(models.Model):
     def __str__(self):
         return f"{self.employer}:- {self.job_title}"
 
-    # def save(self, *args, **kwargs):
-    #     self.slug = slugify(self.job_title)
-    #     super(Job, self).save(args, kwargs)
+    def save(self, *args, **kwargs):
+        num = range(100, 1000)
+        ran = random.choice(num)
+        self.slug = f'{(slugify(self.job_title))}-{ran}'
+        super(Job, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ["-date_posted"]

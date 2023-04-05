@@ -113,7 +113,7 @@ router.register(
     "jobapplications", views.StudentApplicationForJobViewSet, basename="jobapplications"
 )
 router.register("jobcategories", views.JobCategoryViewSet, basename="jobcategories")
-
+router.register("applicants", views.ApplicantsViewSet, basename="applicants")
 # END JOB PORTAL REGION
 
 
@@ -150,12 +150,19 @@ billing_router.register(
     "details", views.BillingDetailsViewSet, basename="billing-details"
 )
 
+
+applicants_router = routers.NestedDefaultRouter(router, "employerjobapplicants", lookup="job")
+applicants_router.register(
+    "applicants", views.ApplicantsViewSet, basename="job-details"
+)
+
 urlpatterns = [
     path("", include(router.urls)),
     path("", include(courses_router.urls)),
     path("", include(navlink_router.urls)),
     path("", include(coursemanual_router.urls)),
     path("", include(billing_router.urls)),
+    path("", include(applicants_router.urls)),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.jwt")),
     path(

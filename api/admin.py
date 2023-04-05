@@ -616,9 +616,9 @@ class OurTeamAdmin(admin.ModelAdmin):
 @admin.register(Employer)
 class EmployerAdmin(admin.ModelAdmin):
 
-    list_display = ["id", "full_name", "location", "company_name", "date_created"]
+    list_display = ["id", "contact_person", "location", "company_name", "date_created"]
     date_hierarchy = "date_created"
-    search_fields = ["full_name", "company_name"]
+    search_fields = ["contact_person", "company_name"]
     ordering = [
         "company_name",
     ]
@@ -642,6 +642,7 @@ class JobAdmin(admin.ModelAdmin):
         "id",
         "employer",
         "job_title",
+        "slug",
         "job_category",
         "save_as",
         "close_job",
@@ -652,7 +653,6 @@ class JobAdmin(admin.ModelAdmin):
     date_hierarchy = "date_posted"
     list_select_related = ["job_category", "employer"]
     autocomplete_fields = ["job_category", "employer"]
-    prepopulated_fields = {"slug": ("job_title",)}
 
 
 @admin.register(JobApplication)

@@ -4,6 +4,7 @@ from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.utils.text import slugify
 
 from api.emails import (
     send_financial_aid_email,
@@ -16,7 +17,7 @@ from api.emails import (
 )
 
 from .models import *
-
+import random
 
 class BaseTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -999,9 +1000,11 @@ class EmployerSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "user",
-            "full_name",
+            "contact_person",
+            "contact_person_mobile",
             "location",
             "company_name",
+            "company_url",
             "tagline",
             "company_logo",
             "date_created",
@@ -1084,6 +1087,9 @@ class PostJobSerializer(serializers.ModelSerializer):
         close_job = self.validated_data["close_job"]
 
         try:
+            num = range(100, 1000)
+            ran = random.choice(num)
+            slug = f'{(slugify(job_title))}-{ran}'
             job = Job.objects.create(
                 employer_id=employer_id,
                 job_category_id=job_category_id,
@@ -1093,6 +1099,7 @@ class PostJobSerializer(serializers.ModelSerializer):
                 job_title=job_title,
                 save_as=save_as,
                 job_summary=job_summary,
+                slug=slug,
                 job_responsibilities=job_responsibilities,
                 close_job=close_job,
             )
@@ -1142,7 +1149,7 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
 
 
 class EmployerPostedJobSerializer(serializers.ModelSerializer):
-    applicants = serializers.SerializerMethodField()
+    # applicants = serializers.SerializerMethodField()
     total_applicants = serializers.SerializerMethodField()
 
     class Meta:
@@ -1156,23 +1163,28 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
             "job_responsibilities",
             "date_posted",
             "date_updated",
-            "applicants",
+            # "applicants",
             "total_applicants",
         ]
 
     def get_total_applicants(self, obj):
         return obj.jobapplication_set.count()
 
-    def get_applicants(self, obj):
-        return obj.jobapplication_set.values(
-            "id",
-            "student",
-            "student__date_of_birth",
-            "job",
-            "student__cv_upload",
-            "date_applied",
-        )
+    # def get_applicants(self, obj):
+    #     return obj.jobapplication_set.values(
+    #         "id",
+    #         "student",
+    #         "student__date_of_birth",
+    #         "job",
+    #         "student__cv_upload",
+    #         "date_applied",
+    #     )
 
+
+class ApplicantsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobApplication
+        fields = "__all__"
 
 class JobApplicationSerializer(serializers.ModelSerializer):
     job_id = serializers.IntegerField()
