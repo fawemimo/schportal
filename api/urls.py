@@ -38,9 +38,7 @@ router.register("resources", views.ResourceViewSet, basename="resource")
 router.register("projects", views.ProjectViewSet, basename="project")
 router.register("coursemanuals", views.CourseManualViewSet, basename="coursemanual")
 router.register("coursescards", views.CourseCardViewSet, basename="coursescard")
-router.register(
-    "interestedforms", views.InterestedFormViewSet, basename="interestedform"
-)
+router.register("interestedforms", views.EnrollmentViewSet, basename="interestedform")
 router.register(
     "studentattendances", views.StudentAttendanceViewSet, basename="studentattendance"
 )
@@ -151,7 +149,9 @@ billing_router.register(
 )
 
 
-applicants_router = routers.NestedDefaultRouter(router, "employerjobapplicants", lookup="job")
+applicants_router = routers.NestedDefaultRouter(
+    router, "employerjobapplicants", lookup="job"
+)
 applicants_router.register(
     "applicants", views.ApplicantsViewSet, basename="job-details"
 )

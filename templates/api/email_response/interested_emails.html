@@ -220,6 +220,35 @@ Enrollment - {{course}}
                 </td>
               </tr>
 
+               <!-- name -->
+               <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
+                  >
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Name:</span>
+                          <span>{{ full_name }}</span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
               <!-- COURSE TITLE -->
               <tr>
                 <td
@@ -277,36 +306,97 @@ Enrollment - {{course}}
                     </table>
                   </td>
                 </tr>
-
-                <!-- START DATE -->
-                <tr>
-                  <td
-                    style="
-                      padding: 0;
-                      padding-bottom: 20px;
-                      background-color: white;
-                    "
+                <!-- FEE -->
+                 
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
                   >
-                    <table
-                      width="100%"
-                      style="border-spacing: 0"
-                      role="presentation"
-                    >
-                      <tr>
-                        <td style="padding-bottom: 10px">
-                          <p style="color: #404141">
-                            <span style="font-weight: 700">Start Date:</span>
-                            <span>{{ startdate }}</span>
-                          </p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="height: 1px; background-color: #404141"></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Fee:</span>
+                          <span> {% if fee %}
+                                  {{ fee }}
+                                  {% else %}
+                                  {{ fee_dollar }}
+                                  {% endif %}
+                            </span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+               <!-- Duration -->
+               <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
+                  >
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Duration:</span>
+                          <span>{{ duration }}</span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              
+                <!-- EMAIL -->
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
+                  >
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Email:</span>
+                          <span>{{ email }}</span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
 
               <!-- MOBILE -->
               <tr>
@@ -336,63 +426,34 @@ Enrollment - {{course}}
                   </table>
                 </td>
               </tr>
-
-              <!-- name -->
-              <tr>
-                <td
-                  style="
-                    padding: 0;
-                    padding-bottom: 20px;
-                    background-color: white;
-                  "
-                >
-                  <table
-                    width="100%"
-                    style="border-spacing: 0"
-                    role="presentation"
+                <!-- START DATE -->
+                <tr>
+                  <td
+                    style="
+                      padding: 0;
+                      padding-bottom: 20px;
+                      background-color: white;
+                    "
                   >
-                    <tr>
-                      <td style="padding-bottom: 10px">
-                        <p style="color: #404141">
-                          <span style="font-weight: 700">Name:</span>
-                          <span>{{ full_name }}</span>
-                        </p>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="height: 1px; background-color: #404141"></td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <!-- EMAIL -->
-              <tr>
-                <td
-                  style="
-                    padding: 0;
-                    padding-bottom: 20px;
-                    background-color: white;
-                  "
-                >
-                  <table
-                    width="100%"
-                    style="border-spacing: 0"
-                    role="presentation"
-                  >
-                    <tr>
-                      <td style="padding-bottom: 10px">
-                        <p style="color: #404141">
-                          <span style="font-weight: 700">Email:</span>
-                          <span>{{ email }}</span>
-                        </p>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="height: 1px; background-color: #404141"></td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
+                    <table
+                      width="100%"
+                      style="border-spacing: 0"
+                      role="presentation"
+                    >
+                      <tr>
+                        <td style="padding-bottom: 10px">
+                          <p style="color: #404141">
+                            <span style="font-weight: 700">Start Date:</span>
+                            <span>{{ startdate }}</span>
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="height: 1px; background-color: #404141"></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
 
               <!-- THANK YOU FOR CHOOSING  ANCHORSOFT-->
               <tr>

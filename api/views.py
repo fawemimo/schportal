@@ -290,13 +290,13 @@ class InquiryViewSet(ModelViewSet):
         return Response(serializer.data)
 
 
-class InterestedFormViewSet(ModelViewSet):
+class EnrollmentViewSet(ModelViewSet):
     http_method_names = ["post", "get", "patch"]
 
     def get_serializer_class(self):
         if self.request.method == "POST":
-            return InterestedFormSerializer
-        return InterestedFormSerializer
+            return EnrollmentSerializer
+        return EnrollmentSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -677,7 +677,7 @@ class JobViewSet(ModelViewSet):
     queryset = (
         Job.objects.filter(save_as="Published")
         .exclude(close_job=True)
-        .select_related("job_category")
+        .select_related("employer")
     )
     serializer_class = JobSerializer
     filter_backends = [
@@ -706,7 +706,8 @@ class JobViewSet(ModelViewSet):
     def get_serializer_context(self):
         return {
             "employer_id": self.kwargs.get("employer_pk"),
-            "job_category_id": self.kwargs.get("job_category_id"),
+            "job_category_id": self.kwargs.get("job_category_pk"),
+            "experience_id":self.kwargs.get('experience_pk')
         }
 
     # @action(

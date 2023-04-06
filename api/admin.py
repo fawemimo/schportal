@@ -635,6 +635,12 @@ class JobCategoryAdmin(admin.ModelAdmin):
     list_per_page = 25
 
 
+@admin.register(JobExperience)
+class JobExperienceAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title']
+    search_fields = ['title']
+
+
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
 
@@ -643,7 +649,6 @@ class JobAdmin(admin.ModelAdmin):
         "employer",
         "job_title",
         "slug",
-        "job_category",
         "save_as",
         "close_job",
     ]
@@ -651,9 +656,10 @@ class JobAdmin(admin.ModelAdmin):
     list_filter = ["date_posted", "date_updated"]
     ordering = ["-date_posted"]
     date_hierarchy = "date_posted"
-    list_select_related = ["job_category", "employer"]
-    autocomplete_fields = ["job_category", "employer"]
-
+    list_select_related = ["employer"]
+    autocomplete_fields = ["job_category", "employer","experience"]
+    list_per_page = 25 
+    # preserve_filters = ['job_category']
 
 @admin.register(JobApplication)
 class JobApplicationAdmin(admin.ModelAdmin):

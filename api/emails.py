@@ -27,7 +27,7 @@ def send_interested_email(course_id, full_name, email, mobile):
     program_type = (
         course.schedule_set.only("id")
         .filter(course_id=course.id)
-        .values("program_type", "startdate")
+        .values("program_type", "startdate", "fee_dollar", "fee","duration")
         .first()
     )
     try:
@@ -37,6 +37,9 @@ def send_interested_email(course_id, full_name, email, mobile):
                 "course": course.title,
                 "program_type": program_type["program_type"],
                 "startdate": program_type["startdate"],
+                "fee":program_type["fee"],
+                "fee_dollar":program_type["fee_dollar"],
+                "duration": program_type["duration"],
                 "course_id": course_id,
                 "full_name": full_name,
                 "email": email,

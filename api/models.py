@@ -406,6 +406,10 @@ class ScholarshipSection(models.Model):
 
 class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    program_type = models.CharField(max_length=50,blank=True, null=True)
+    fee = models.CharField(max_length=250, blank=True, null=True)
+    fee_dollar = models.CharField(max_length=250, blank=True, null=True)
+    start_date = models.CharField(max_length=50, blank=True, null=True)
     full_name = models.CharField(max_length=155)
     email = models.EmailField(max_length=155)
     mobile = models.CharField(max_length=50)
@@ -668,13 +672,17 @@ class JobCategory(models.Model):
     def __str__(self):
         return self.title
 
+class JobExperience(models.Model):
+    title = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.title
+    
 
 class Job(models.Model):
     employer = models.ForeignKey(Employer, on_delete=models.CASCADE)
-    job_category = models.ForeignKey(JobCategory, on_delete=models.CASCADE)
-    experience = models.CharField(
-        max_length=50, choices=EXPERIENCE_LEVEL, blank=True, null=True
-    )
+    job_category = models.ManyToManyField(JobCategory)
+    experience = models.ManyToManyField(JobExperience)
     job_type = models.CharField(max_length=50, choices=JOB_TYPE, blank=True, null=True)
     job_location = models.CharField(
         max_length=50, choices=JOB_LOCATION, blank=True, null=True
