@@ -6,6 +6,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.utils.text import slugify
 from django.db import transaction
+from django.db import IntegrityError
 from api.emails import (
     send_financial_aid_email,
     send_inquiries_email,
@@ -967,7 +968,6 @@ class EmployerSerializer(serializers.ModelSerializer):
 
 
 class UpdateEmployerSerializer(serializers.ModelSerializer):
-    # email = serializers.SerializerMethodField(source='user__email')
     class Meta:
         model = Employer
         fields = [
@@ -1426,7 +1426,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
 # End Blog Region
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(BaseUserCreateSerializer):
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -1439,8 +1439,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
         source="password",
     )
     mobile_numbers = serializers.CharField(write_only=True)
-    contact_person = serializers.CharField()
-    company_name = serializers.CharField()
+    contact_person = serializers.CharField(write_only=True, source='employer__contact_person')
+    company_name = serializers.CharField(write_only=True, source='employer__company_name')
 
     class Meta:
         model = User
@@ -1464,16 +1464,34 @@ class UserCreateSerializer(serializers.ModelSerializer):
         email = validated_data["email"]
         mobile_numbers = validated_data["mobile_numbers"]
 
-        user = User.objects.create(
-            user_type=user_type,
-            email=email,
-            username=username,
-            mobile_numbers=mobile_numbers,
-        )
-        employer_obj = Employer.objects.create(
-            user_id=user.id, company_name=company_name, contact_person=contact_person
-        )
-        return employer_obj
+        try:
+            
+            user = User.objects.create(
+                user_type=user_type,
+                email=email,
+                username=username,
+                mobile_numbers=mobile_numbers,
+            )
+            # employer = Employer.objects.create(user=user,company_name = company_name,contact_person = contact_person)
+            
+            return user
+        except Exception as err:
+            print(err)
+    
+    def save(self, **kwargs):
+        
+        contact_person = self.validated_data['contact_person']
+        company_name = self.validated_data['company_name']
+        email = self.validated_data['email']
+        username = self.validated_data['username']
+        mobile_numbers = self.validated_data['mobile_numbers']
+        user_type = self.validated_data['user_type']
+        try:
+            user = User.objects.create(user_type=user_type, username=username, mobile_numbers=mobile_numbers, email=email)
+            employer = Employer.objects.create(user=user, contact_person=contact_person, company_name=company_name)
+            return employer
+        except Exception as e:
+            print(e)
 
     def validate_email(self, value):
         email = value.lower()
