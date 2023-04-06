@@ -390,14 +390,21 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         course = Course.objects.get(id=course_id)
 
         schedule = (
-        course.schedule_set.only("id")
-        .filter(course_id=course.id)
-        .values("program_type", "startdate", "fee_dollar", "fee")
-        .first()
+            course.schedule_set.only("id")
+            .filter(course_id=course.id)
+            .values("program_type", "startdate", "fee_dollar", "fee")
+            .first()
         )
 
         interestform = Enrollment.objects.create(
-            course_id=course_id, full_name=full_name, email=email, mobile=mobile,program_type=schedule["program_type"],start_date=schedule["startdate"],fee=schedule['fee'], fee_dollar=schedule['fee_dollar']
+            course_id=course_id,
+            full_name=full_name,
+            email=email,
+            mobile=mobile,
+            program_type=schedule["program_type"],
+            start_date=schedule["startdate"],
+            fee=schedule["fee"],
+            fee_dollar=schedule["fee_dollar"],
         )
 
         send_interested_email(course_id, full_name, email, mobile)
@@ -637,142 +644,6 @@ class StudentAttendanceSerializer(serializers.ModelSerializer):
             "attendance_comment",
             "raise_warning",
         ]
-
-
-class UserCreateSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True,
-        required=True,
-        style={"input_type": "password", "placeholder": "enter your password"},
-    )
-    password2 = serializers.CharField(
-        write_only=True,
-        required=True,
-        style={"input_type": "password", "placeholder": "password confirmation"},
-        source="password",
-    )
-    mobile_numbers = serializers.CharField(write_only=True)
-    # company_website_url = serializers.CharField(write_only=True)
-    contact_person = serializers.CharField(write_only=True)
-    company_name = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "user_type",
-            "username",
-            "password",
-            "password2",
-            # "first_name",
-            # "last_name",
-            "email",
-            "mobile_numbers",
-            # "company_website_url",
-            "contact_person",
-            "company_name",
-        ]
-
-    def validate_email(self, value):
-        email = value.lower()
-        if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError("User with this email already exists")
-        return value
-
-    def validate_username(self, value):
-        username = value.lower()
-        if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError("User with this username already exists")
-        return value
-
-    def validate_user_type(self, value):
-        user_type = value.lower()
-        if not user_type == "employer":
-            raise serializers.ValidationError("Employer can only register")
-        return value
-
-    def validate_password(self, value):
-        data = self.get_initial()
-        password = data.get("password")
-        password2 = value
-        if password != password2:
-            raise serializers.ValidationError("Passwords must match")
-        return value
-
-    def validate_password2(self, value):
-        data = self.get_initial()
-        password = data.get("password")
-        password2 = value
-        if password != password2:
-            raise serializers.ValidationError("Passwords must match")
-        return value
-
-    def create(self, validated_data):
-        user_type = self.validated_data["user_type"]
-        username = self.validated_data["username"]
-        # password = self.validated_data['user_type']
-        # password2 = self.validated_data['user_type']
-        # first_name = self.validated_data['user_type']
-        # last_name = self.validated_data['user_type']
-        email = self.validated_data["email"]
-        mobile_numbers = self.validated_data["mobile_numbers"]
-        # company_website_url = self.validated_data['company_website_url']
-        contact_person = self.validated_data["contact_person"]
-        company_name = self.validated_data["company_name"]
-
-        user = User.objects.create(
-            user_type=user_type,
-            username=username,
-            email=email,
-            mobile_numbers=mobile_numbers,
-        )
-        # user = User.objects.create(**validated_data)
-        # user.save()
-        employer = Employer.objects.create(
-            user=user, contact_person=contact_person, company_name=company_name
-        )
-        # employer = Employer()
-        # employer.save(commit=False)
-        # employer.user = user
-        # user.employer.company_website_url=company_website_url
-        # employer.user = user
-        # employer.contact_person=contact_person
-        # employer.company_name=company_name
-        employer.save()
-        return user
-        # try:
-
-        # except Exception as e:
-        #     print(e)
-
-    # def save(self, **kwargs):
-    #     user_type = self.validated_data['user_type']
-    #     username = self.validated_data['username']
-    #     # password = self.validated_data['user_type']
-    #     # password2 = self.validated_data['user_type']
-    #     # first_name = self.validated_data['user_type']
-    #     # last_name = self.validated_data['user_type']
-    #     email = self.validated_data['email']
-    #     mobile_numbers = self.validated_data['mobile_numbers']
-    #     company_website_url = self.validated_data['company_website_url']
-    #     contact_person = self.validated_data['contact_person']
-    #     company_name = self.validated_data['company_name']
-
-    #     try:
-    #         user = User.objects.create(user_type=user_type,username=username, email=email,mobile_numbers=mobile_numbers)
-    #         # employer = Employer(company_website_url=company_website_url,contact_person = contact_person,company_name = company_name)
-
-    #         user.employer.company_website_url=company_website_url
-    #         user.employer.contact_person=contact_person
-    #         user.employer.company_name=company_name
-
-    #         user.save()
-
-    #         # employer.save()
-    #         return user
-
-    #     except Exception as e:
-    #         print(e)
 
 
 class VirtualClassSerializer(serializers.ModelSerializer):
@@ -1109,6 +980,9 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
             "contact_person_mobile",
             "company_url",
         ]
+        extra_kwargs = {
+            'company_logo': {'required': False, 'allow_null': True}
+        }
 
     def update(self, instance, validated_data):
         instance.contact_person = validated_data["contact_person"]
@@ -1550,3 +1424,87 @@ class BlogPostSerializer(serializers.ModelSerializer):
 
 
 # End Blog Region
+
+
+class UserCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={"input_type": "password", "placeholder": "enter your password"},
+    )
+    password2 = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={"input_type": "password", "placeholder": "password confirmation"},
+        source="password",
+    )
+    mobile_numbers = serializers.CharField(write_only=True)
+    contact_person = serializers.CharField()
+    company_name = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "user_type",
+            "username",
+            "password",
+            "password2",
+            "email",
+            "mobile_numbers",
+            "contact_person",
+            "company_name",
+        ]
+
+    def create(self, validated_data):
+        company_name = validated_data["company_name"]
+        contact_person = validated_data["contact_person"]
+        user_type = validated_data["user_type"]
+        username = validated_data["username"]
+        email = validated_data["email"]
+        mobile_numbers = validated_data["mobile_numbers"]
+
+        user = User.objects.create(
+            user_type=user_type,
+            email=email,
+            username=username,
+            mobile_numbers=mobile_numbers,
+        )
+        employer_obj = Employer.objects.create(
+            user_id=user.id, company_name=company_name, contact_person=contact_person
+        )
+        return employer_obj
+
+    def validate_email(self, value):
+        email = value.lower()
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError("User with this email already exists")
+        return value
+
+    def validate_username(self, value):
+        username = value.lower()
+        if User.objects.filter(username=username).exists():
+            raise serializers.ValidationError("User with this username already exists")
+        return value
+
+    def validate_user_type(self, value):
+        user_type = value.lower()
+        if not user_type == "employer":
+            raise serializers.ValidationError("Employer can only register")
+        return value
+
+    def validate_password(self, value):
+        data = self.get_initial()
+        password = data.get("password")
+        password2 = value
+        if password != password2:
+            raise serializers.ValidationError("Passwords must match")
+        return value
+
+    def validate_password2(self, value):
+        data = self.get_initial()
+        password = data.get("password")
+        password2 = value
+        if password != password2:
+            raise serializers.ValidationError("Passwords must match")
+        return value
