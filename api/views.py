@@ -710,6 +710,13 @@ class JobViewSet(ModelViewSet):
             "experience_id":self.kwargs.get('experience_pk')
         }
 
+    # def create(self, request, *args, **kwargs):
+    #     serializer = PostJobSerializer(data=request.data, many=True)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_create(serializer)
+    #     return Response(serializer.data)
+
+
     # @action(
     #     detail=False,
     #     methods=["GET", "POST", "PATCH"],

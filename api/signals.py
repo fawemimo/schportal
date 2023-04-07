@@ -23,11 +23,11 @@ def create_teacher_profile(sender, created, instance, *args, **kwargs):
             Student.objects.create(user=instance, full_name=f"{f_name} {l_name}", mobile_numbers=mobile_numbers)
             instance.save()
 
-        elif instance.user_type == "employer":
-            f_name = instance.first_name
-            l_name = instance.last_name
-            Employer.objects.create(user=instance)
-            instance.save()
+        # elif instance.user_type == "employer":
+        #     # f_name = instance.first_name
+        #     # l_name = instance.last_name
+        #     Employer.objects.create(user=instance)
+        #     instance.save()
 
 
 @receiver(post_save, sender=Billing)

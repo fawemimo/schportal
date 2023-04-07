@@ -1009,8 +1009,8 @@ class JobExperienceSerializer(serializers.ModelSerializer):
 
 class PostJobSerializer(serializers.ModelSerializer):
     employer_id = serializers.IntegerField()
-    job_category = JobCategorySerializer()
-    experience = JobExperienceSerializer()
+    job_category = serializers.PrimaryKeyRelatedField(write_only=True, many=True, queryset=JobCategory.objects.all())
+    experience = serializers.PrimaryKeyRelatedField(write_only=True, many=True, queryset=JobExperience.objects.all())
 
     class Meta:
         model = Job
@@ -1028,6 +1028,11 @@ class PostJobSerializer(serializers.ModelSerializer):
             "job_responsibilities",
         ]
 
+    # def to_representation(self, instance):
+    #     self.fields['job_category']= JobCategorySerializer(many=True)
+    #     self.fields['experience'] = JobExperienceSerializer(many=True)
+    #     return super().to_representation(instance)
+    
     def validate_employer_id(self, value):
         if not Employer.objects.filter(id=value).exists():
             raise serializers.ValidationError(
@@ -1035,75 +1040,75 @@ class PostJobSerializer(serializers.ModelSerializer):
             )
         return value
 
-    # def validate_job_category(self, value):
-    #     if not JobCategory.objects.filter(title__in=value).exists():
-    #         raise serializers.ValidationError(
-    #             "Job Category you select is invalid"
-    #         )
-    #     return value
-
-    # def validate_experience(self, value):
-    #     if not JobExperience.objects.filter(title__in=value).exists():
-    #         raise serializers.ValidationError(
-    #             "Job Experience you select is invalid"
-    #         )
-    #     return value
-
-    @transaction.atomic
-    def create(self, validated_data):
-        employer_id = self.context["employer_id"]
-        # job_category = self.validated_data.pop("job_category", [])
-        # experience = self.validated_data.pop("experience", [])
-
-        # obj = super().create(validated_data)
-        # obj.job_category.set(job_category)
-        # obj.experience.set(experience)
-        # return Job.objects.create(employer_id=employer_id, job_category=job_category, experience=experience, **validated_data)
-        job = Job.objects.create(employer_id=employer_id, **validated_data)
-        # job_category = validated_data.pop('job_category')
-        # experience = validated_data.pop('experience')
-        # job.job_category.add(job_category)
-        # job.experience.add(experience)
-        return job
-
-    def save(self, **kwargs):
-        employer_id = self.validated_data["employer_id"]
-        # job_category = self.validated_data["job_category"]
-        # experience = self.validated_data["experience"]
-        job_type = self.validated_data["job_type"]
-        job_location = self.validated_data["job_location"]
-        job_title = self.validated_data["job_title"]
-        save_as = self.validated_data["save_as"]
-        job_summary = self.validated_data["job_summary"]
-        job_responsibilities = self.validated_data["job_responsibilities"]
-        close_job = self.validated_data["close_job"]
-        job_category = self.validated_data.pop("job_category")
-        experience = self.validated_data.pop("experience")
-        try:
-            num = range(100, 1000)
-            ran = random.choice(num)
-            slug = f"{(slugify(job_title))}-{ran}"
-            # job = Job.objects.create(employer_id=employer_id)
-
-            experience.set(experience)
-            job = Job.objects.create(
-                employer_id=employer_id,
-                job_type=job_type,
-                job_location=job_location,
-                job_title=job_title,
-                save_as=save_as,
-                job_summary=job_summary,
-                slug=slug,
-                job_responsibilities=job_responsibilities,
-                close_job=close_job,
+    def validate_job_category(self, value):
+        if not JobCategory.objects.filter(title__in=value).exists():
+            raise serializers.ValidationError(
+                "Job Category you select is invalid"
             )
-            job.job_category.set(job_category)
-            job.experience.set(experience)
-            job.save()
-            return job
+        return value
 
-        except Exception as e:
-            print(e)
+    def validate_experience(self, value):
+        if not JobExperience.objects.filter(title__in=value).exists():
+            raise serializers.ValidationError(
+                "Job Experience you select is invalid"
+            )
+        return value
+
+
+    # def save(self, **kwargs):
+    #     employer_id = self.validated_data["employer_id"]
+    #     job_category = self.validated_data["job_category"]
+    #     experience = self.validated_data["experience"]
+    #     job_type = self.validated_data["job_type"]
+    #     job_location = self.validated_data["job_location"]
+    #     job_title = self.validated_data["job_title"]
+    #     save_as = self.validated_data["save_as"]
+    #     job_summary = self.validated_data["job_summary"]
+    #     job_responsibilities = self.validated_data["job_responsibilities"]
+    #     close_job = self.validated_data["close_job"]
+    #     job_category = self.validated_data.pop("job_category")
+    #     experience = self.validated_data.pop("experience")
+    #     try:
+    #         num = range(100, 1000)
+    #         ran = random.choice(num)
+    #         slug = f"{(slugify(job_title))}-{ran}"
+    #         # job = Job.objects.create(employer_id=employer_id)
+
+    #         experience.set(experience)
+    #         job = Job.objects.create(
+    #             employer_id=employer_id,
+    #             job_type=job_type,
+    #             job_location=job_location,
+    #             job_title=job_title,
+    #             save_as=save_as,
+    #             job_summary=job_summary,
+    #             slug=slug,
+    #             experience=experience,
+    #             job_category=job_category,
+    #             job_responsibilities=job_responsibilities,
+    #             close_job=close_job,
+    #         )
+    #         # job.job_category.set(job_category)
+    #         # job.experience.set(experience)
+    #         job.save()
+    #         return job
+
+    #     except Exception as e:
+    #         print(e)
+
+
+    def create(self, validated_data):
+        job_category = self.validated_data['job_category']
+        experience = self.validated_data['experience']
+        job = Job.objects.create(**validated_data)
+        if job_category:
+            job.job_category.set(job_category)
+
+        if experience:
+            job.experience.set(experience)    
+
+        return job    
+
 
 
 class JobSerializer(serializers.ModelSerializer):
@@ -1426,7 +1431,23 @@ class BlogPostSerializer(serializers.ModelSerializer):
 # End Blog Region
 
 
-class UserCreateSerializer(BaseUserCreateSerializer):
+class PostEmployerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employer
+        fields = [
+            "id",
+            "contact_person",
+            "contact_person_mobile",
+            "company_name",
+            "company_url",
+            "date_created",
+            "date_updated",
+        ]
+        extra_kwargs = {
+            'company_url': {'required': False, 'allow_null': True}
+        }
+
+class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -1439,11 +1460,9 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         source="password",
     )
     mobile_numbers = serializers.CharField(write_only=True)
-    contact_person = serializers.CharField(write_only=True, source='employer__contact_person')
-    company_name = serializers.CharField(write_only=True, source='employer__company_name')
+    employer = PostEmployerSerializer()
 
-    class Meta:
-        model = User
+    class Meta(BaseUserCreateSerializer.Meta):
         fields = [
             "id",
             "user_type",
@@ -1452,46 +1471,8 @@ class UserCreateSerializer(BaseUserCreateSerializer):
             "password2",
             "email",
             "mobile_numbers",
-            "contact_person",
-            "company_name",
+            "employer"
         ]
-
-    def create(self, validated_data):
-        company_name = validated_data["company_name"]
-        contact_person = validated_data["contact_person"]
-        user_type = validated_data["user_type"]
-        username = validated_data["username"]
-        email = validated_data["email"]
-        mobile_numbers = validated_data["mobile_numbers"]
-
-        try:
-            
-            user = User.objects.create(
-                user_type=user_type,
-                email=email,
-                username=username,
-                mobile_numbers=mobile_numbers,
-            )
-            # employer = Employer.objects.create(user=user,company_name = company_name,contact_person = contact_person)
-            
-            return user
-        except Exception as err:
-            print(err)
-    
-    def save(self, **kwargs):
-        
-        contact_person = self.validated_data['contact_person']
-        company_name = self.validated_data['company_name']
-        email = self.validated_data['email']
-        username = self.validated_data['username']
-        mobile_numbers = self.validated_data['mobile_numbers']
-        user_type = self.validated_data['user_type']
-        try:
-            user = User.objects.create(user_type=user_type, username=username, mobile_numbers=mobile_numbers, email=email)
-            employer = Employer.objects.create(user=user, contact_person=contact_person, company_name=company_name)
-            return employer
-        except Exception as e:
-            print(e)
 
     def validate_email(self, value):
         email = value.lower()
@@ -1526,3 +1507,18 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         if password != password2:
             raise serializers.ValidationError("Passwords must match")
         return value
+
+    def create(self, validated_data):
+        employer_data = validated_data.pop('employer')
+        contact_person = employer_data.pop('contact_person')
+        contact_person_mobile = employer_data.pop('contact_person_mobile')
+        company_name = employer_data.pop('company_name')
+        company_url = employer_data.pop('company_url')
+        user_type = validated_data['user_type']
+        email = validated_data['email']
+        username = validated_data['username']
+        mobile_numbers = validated_data['mobile_numbers']
+
+        user = User.objects.create(user_type=user_type, email=email, username=username, mobile_numbers=mobile_numbers)
+        Employer.objects.create(user=user, contact_person=contact_person,contact_person_mobile=contact_person_mobile,company_name=company_name, company_url=company_url)
+        return user
