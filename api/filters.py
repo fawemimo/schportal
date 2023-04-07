@@ -26,7 +26,7 @@ class JobFilter(FilterSet):
 
     def filter_by_experience(self, queryset, name, value):
         names = value.strip().split(",")
-        queryset = Job.objects.filter(Q(experience__in=names))
+        queryset = Job.objects.filter(Q(experience__title__in=names))
 
         return queryset
 

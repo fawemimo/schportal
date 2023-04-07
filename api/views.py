@@ -686,7 +686,7 @@ class JobViewSet(ModelViewSet):
         filters.OrderingFilter,
     ]
     filterset_class = JobFilter
-    search_fields = ["job_title", "job_category__title", "employer__company_name"]
+    search_fields = ["job_title", "job_category__title", "employer__company_name", "experience__title"]
     ordering_fields = ["date_posted", "date_updated"]
     pagination_class = BasePagination
     lookup_field = "slug"
@@ -709,36 +709,6 @@ class JobViewSet(ModelViewSet):
             "job_category_id": self.kwargs.get("job_category_pk"),
             "experience_id":self.kwargs.get('experience_pk')
         }
-
-    # def create(self, request, *args, **kwargs):
-    #     serializer = PostJobSerializer(data=request.data, many=True)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_create(serializer)
-    #     return Response(serializer.data)
-
-
-    # @action(
-    #     detail=False,
-    #     methods=["GET", "POST", "PATCH"],
-    #     permission_classes=[IsEmployerType],
-    # )
-    # def posts(self, request):
-    #     employer = Employer.objects.get(user=self.request.user.id)
-
-    #     serializer = PostJobSerializer(employer)
-
-    #     if request.method == "GET":
-    #         serializer = JobSerializer()
-    #         return Response(serializer.data)
-
-    #     elif request.method == "POST":
-    #         serializer = PostJobSerializer(employer, data=request.data)
-    #         serializer.is_valid(raise_exception=True)
-    #         serializer.save()
-    #         return Response(serializer.data)
-
-    #     else:
-    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class JobCategoryViewSet(ModelViewSet):

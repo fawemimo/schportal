@@ -2,6 +2,6 @@ from rest_framework.pagination import PageNumberPagination
 
 
 class BasePagination(PageNumberPagination):
-    page_size = 1
+    page_size = 10
     last_page_strings = ("last",)
-    max_page_size = 1
+    max_page_size = 10
