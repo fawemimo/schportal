@@ -1009,9 +1009,11 @@ class JobExperienceSerializer(serializers.ModelSerializer):
 
 class PostJobSerializer(serializers.ModelSerializer):
     employer_id = serializers.IntegerField()
-    job_category = serializers.PrimaryKeyRelatedField(write_only=True, many=True, queryset=JobCategory.objects.all())
-    experience = serializers.PrimaryKeyRelatedField(write_only=True, many=True, queryset=JobExperience.objects.all())
+    # job_category = serializers.PrimaryKeyRelatedField(write_only=True, many=True, queryset=JobCategory.objects.all())
+    # experience = serializers.PrimaryKeyRelatedField(write_only=True, many=True, queryset=JobExperience.objects.all())
 
+    job_category = JobCategorySerializer(many=True)
+    experience = JobExperienceSerializer(many=True)
     class Meta:
         model = Job
         fields = [
@@ -1028,6 +1030,21 @@ class PostJobSerializer(serializers.ModelSerializer):
             "job_responsibilities",
         ]
 
+    def create(self, validated_data):
+        job_category_data = validated_data.pop('job_category')
+        experience_data = validated_data.pop('experience')
+        job = Job.objects.create(**validated_data)
+
+        if job_category_data:
+            for x in job_category_data:
+                job.job_category.set(**x)
+
+        if experience_data:
+            for x in experience_data:
+                job.experience.set(**x)    
+
+        return job            
+
     # def to_representation(self, instance):
     #     self.fields['job_category']= JobCategorySerializer(many=True)
     #     self.fields['experience'] = JobExperienceSerializer(many=True)
@@ -1040,19 +1057,19 @@ class PostJobSerializer(serializers.ModelSerializer):
             )
         return value
 
-    def validate_job_category(self, value):
-        if not JobCategory.objects.filter(title__in=value).exists():
-            raise serializers.ValidationError(
-                "Job Category you select is invalid"
-            )
-        return value
+    # def validate_job_category(self, value):
+    #     if not JobCategory.objects.filter(title__in=value).exists():
+    #         raise serializers.ValidationError(
+    #             "Job Category you select is invalid"
+    #         )
+    #     return value
 
-    def validate_experience(self, value):
-        if not JobExperience.objects.filter(title__in=value).exists():
-            raise serializers.ValidationError(
-                "Job Experience you select is invalid"
-            )
-        return value
+    # def validate_experience(self, value):
+    #     if not JobExperience.objects.filter(title__in=value).exists():
+    #         raise serializers.ValidationError(
+    #             "Job Experience you select is invalid"
+    #         )
+    #     return value
 
 
     # def save(self, **kwargs):
@@ -1518,7 +1535,10 @@ class UserCreateSerializer(serializers.ModelSerializer):
         email = validated_data['email']
         username = validated_data['username']
         mobile_numbers = validated_data['mobile_numbers']
-
+        password = validated_data['password']
         user = User.objects.create(user_type=user_type, email=email, username=username, mobile_numbers=mobile_numbers)
+        if password:
+            user.set_password(password)
+            user.save()
         Employer.objects.create(user=user, contact_person=contact_person,contact_person_mobile=contact_person_mobile,company_name=company_name, company_url=company_url)
         return user
