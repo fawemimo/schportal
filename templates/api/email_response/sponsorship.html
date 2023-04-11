@@ -210,6 +210,7 @@ style="margin: 0; padding: 0; min-width: 100%; background-color: #f0ffff"
                             </td>
                         </tr>
 
+                        <!-- SELECTION -->
                       
                         <tr>
                             <td
@@ -228,7 +229,7 @@ style="margin: 0; padding: 0; min-width: 100%; background-color: #f0ffff"
                                   <td style=" padding-bottom:10px">
                                     <p style="color: #404141">
                                       <span style="font-weight: 700">Selection:</span>
-                                      <span>{{ choices_type }}</span>
+                                      <span>{{ selection }}</span>
                                     </p>
                                   </td>
                                 </tr>
@@ -238,7 +239,38 @@ style="margin: 0; padding: 0; min-width: 100%; background-color: #f0ffff"
                               </table>
                             </td>
                           </tr>
+                          <!-- organiztion -->
+                           {% if organization_name %}
+                        <tr>
+                          <td
+                            style="
+                              padding: 0;
+                              padding-bottom: 20px;
+                              background-color: white;
+                            "
+                          >
+                            <table
+                              width="100%"
+                              style="border-spacing: 0"
+                              role="presentation"
+                            >
+                              <tr>
+                                <td style=" padding-bottom:10px">
+                                  <p style="color: #404141">
+                                    <span style="font-weight: 700">Organization Name:</span>
+                                    <span>{{ organization_name }}</span>
+                                  </p>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="height: 1px; background-color: #404141"></td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
 
+                             
+                        {% endif %}
                             <!-- NAME -->
         <tr>
             <td
@@ -267,7 +299,7 @@ style="margin: 0; padding: 0; min-width: 100%; background-color: #f0ffff"
               </table>
             </td>
           </tr>
-                 <!-- course -->
+                 <!-- Number OF sTUDENT -->
                  <tr>
                     <td
                       style="

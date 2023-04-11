@@ -22,24 +22,20 @@ def send_inquiries_email(fullname, email, mobile, message):
         print(e)
 
 
-def send_interested_email(course_id, full_name, email, mobile):
+def send_interested_email(course_id, full_name, email, mobile, schedule_id):
     course = Course.objects.get(id=course_id)
-    program_type = (
-        course.schedule_set.only("id")
-        .filter(course_id=course.id)
-        .values("program_type", "startdate", "fee_dollar", "fee","duration")
-        .first()
-    )
+    schedule = Schedule.objects.get(id=schedule_id)   
+
     try:
         message = BaseEmailMessage(
             template_name="api/email_response/interested_emails.html",
             context={
                 "course": course.title,
-                "program_type": program_type["program_type"],
-                "startdate": program_type["startdate"],
-                "fee":program_type["fee"],
-                "fee_dollar":program_type["fee_dollar"],
-                "duration": program_type["duration"],
+                "program_type":schedule.program_type,
+                "startdate": schedule.startdate,
+                "fee":schedule.fee,
+                "fee_dollar":schedule.fee_dollar,
+                "duration": schedule.duration,
                 "course_id": course_id,
                 "full_name": full_name,
                 "email": email,
@@ -163,7 +159,7 @@ def send_financial_aid_email(
 
 
 def send_sponsorship_email(
-    name_of_sponsor, selection, number_of_student, email, phone_number, remarks
+    name_of_sponsor, selection, number_of_student, email, phone_number, remarks,organization_name
 ):
     try:
         message = BaseEmailMessage(
@@ -171,6 +167,7 @@ def send_sponsorship_email(
             context={
                 "name_of_sponsor": name_of_sponsor,
                 "selection": selection,
+                "organization_name":organization_name,
                 "email": email,
                 "phone_number": phone_number,
                 "number_of_student": number_of_student,

@@ -22,7 +22,6 @@ admin.site.index_title = "Anchorsoft Academy Portal"
 
 class CachingPaginator(Paginator):
     def _get_count(self):
-
         if not hasattr(self, "_count"):
             self._count = None
 
@@ -113,7 +112,6 @@ class StudentLoanSectionAdmin(admin.ModelAdmin):
 
 @admin.register(CareerSection)
 class CareerSectionAdmin(admin.ModelAdmin):
-
     list_display = ["id", "is_published"]
     list_filter = ["is_published"]
 
@@ -149,7 +147,6 @@ class CourseCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-
     list_display = [
         "id",
         "course_code",
@@ -181,7 +178,6 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
-
     list_display = [
         "id",
         "course",
@@ -190,6 +186,7 @@ class ScheduleAdmin(admin.ModelAdmin):
         "fee",
         "discounted_fee",
         "fee_dollar",
+        "discounted_fee_dollar",
         "program_type",
     ]
     list_editable = ["startdate", "program_type"]
@@ -204,13 +201,11 @@ class ScheduleAdmin(admin.ModelAdmin):
 
 @admin.register(NavLink)
 class NavlinkAdmin(admin.ModelAdmin):
-
     list_display = ["id", "title"]
 
 
 @admin.register(NavLinkItem)
 class NavLinkItemAdmin(admin.ModelAdmin):
-
     list_display = ["id", "item", "item_url", "navlink_header"]
 
     def navlink_header(self, item: NavLinkItem):
@@ -263,27 +258,24 @@ class TeacherAdmin(admin.ModelAdmin):
 
 @admin.register(ShortQuiz)
 class ShortQuizAdmin(admin.ModelAdmin):
-
     list_display = ["id", "fullname", "mobile", "email"]
 
 
 @admin.register(Inquiry)
 class InquiryAdmin(admin.ModelAdmin):
-
     list_display = ["id", "fullname", "mobile", "email"]
 
 
 @admin.register(Enrollment)
 class InterestsAdmin(admin.ModelAdmin):
-
     list_display = ["course_title", "full_name", "mobile", "email"]
 
     def course_title(self, obj):
         return obj.course.title
 
 
-@admin.register(Sponsorship)
-class SponsorshipAdmin(admin.ModelAdmin):
+@admin.register(Sponsor)
+class SponsorAdmin(admin.ModelAdmin):
     list_display = [
         "name_of_sponsor",
         "selection",
@@ -295,6 +287,12 @@ class SponsorshipAdmin(admin.ModelAdmin):
     ordering = ["name_of_sponsor"]
 
 
+@admin.register(ScholarshipAward)
+class ScholarshipAwardAdmin(admin.ModelAdmin):   
+    list_display = ['id', 'sponsor','award_date','total_amount','amount_received','date_posted']
+    list_per_page = 25
+
+    
 @admin.register(Announcement)
 class AnnouncementAdmin(admin.ModelAdmin):
     list_display = [
@@ -311,7 +309,6 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
 @admin.register(ScholarshipSection)
 class ScholarshipSectionAdmin(admin.ModelAdmin):
-
     list_display = ["id", "scholarship_intro"]
 
 
@@ -390,7 +387,6 @@ class StudentAdmin(admin.ModelAdmin):
     def batch_name(self, obj):
         obj = obj.batch_set.values("title", "id")
         for x in obj:
-
             url = (
                 reverse("admin:api_batch_changelist")
                 + "?"
@@ -491,22 +487,10 @@ class ProjectAllocationAdmin(admin.ModelAdmin):
 
 @admin.register(CourseManual)
 class CourseManualAdmin(admin.ModelAdmin):
-
     list_display = ["title", "manual", "date_posted", "date_updated"]
     search_fields = ["title"]
     list_filter = ["date_posted", "date_updated"]
     list_per_page = 25
-
-
-@admin.register(CourseManualAllocation)
-class CourseManualAllocationAdmin(admin.ModelAdmin):
-    list_display = ["course_manual", "released_by", "when_released"]
-
-    def course_manual(self, obj):
-        return obj.course_manual.title
-
-    def release_by(self, obj):
-        return obj.release_by.user
 
 
 @admin.register(Testimonial)
@@ -544,7 +528,6 @@ class ResourceTypeAdmin(admin.ModelAdmin):
 
 @admin.register(InternationalModel)
 class InternationalModelAdmin(admin.ModelAdmin):
-
     list_display = [
         "id",
         "country_name",
@@ -587,25 +570,21 @@ class AlumiConnectAdmin(admin.ModelAdmin):
 
 @admin.register(TermsOfService)
 class TermsOfServiceAdmin(admin.ModelAdmin):
-
     list_display = ("id", "title")
 
 
 @admin.register(VirtualVsOther)
 class VirtualVsOthersAdmin(admin.ModelAdmin):
-
     list_display = ["id", "title", "descriptions"]
 
 
 @admin.register(HowItWork)
 class VirtualHowItWorksAdmin(admin.ModelAdmin):
-
     list_display = ["id", "content"]
 
 
 @admin.register(OurTeam)
 class OurTeamAdmin(admin.ModelAdmin):
-
     list_display = ["id", "image", "full_name", "designation", "social_dump"]
     list_display_link = ["id", "full_name"]
 
@@ -615,7 +594,6 @@ class OurTeamAdmin(admin.ModelAdmin):
 
 @admin.register(Employer)
 class EmployerAdmin(admin.ModelAdmin):
-
     list_display = ["id", "contact_person", "location", "company_name", "date_created"]
     date_hierarchy = "date_created"
     search_fields = ["contact_person", "company_name"]
@@ -627,7 +605,6 @@ class EmployerAdmin(admin.ModelAdmin):
 
 @admin.register(JobCategory)
 class JobCategoryAdmin(admin.ModelAdmin):
-
     list_display = ["title", "date_created"]
     search_fields = ["title"]
     date_hierarchy = "date_created"
@@ -637,13 +614,12 @@ class JobCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(JobExperience)
 class JobExperienceAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title']
-    search_fields = ['title']
+    list_display = ["id", "title"]
+    search_fields = ["title"]
 
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-
     list_display = [
         "id",
         "employer",
@@ -657,13 +633,13 @@ class JobAdmin(admin.ModelAdmin):
     ordering = ["-date_posted"]
     date_hierarchy = "date_posted"
     list_select_related = ["employer"]
-    autocomplete_fields = ["job_category", "employer","experience"]
-    list_per_page = 25 
+    autocomplete_fields = ["job_category", "employer", "experience"]
+    list_per_page = 25
     # preserve_filters = ['job_category']
+
 
 @admin.register(JobApplication)
 class JobApplicationAdmin(admin.ModelAdmin):
-
     list_display = ["student", "job", "date_applied"]
     search_fields = ["student"]
     autocomplete_fields = ["student"]
@@ -695,7 +671,6 @@ class BillingAdmin(admin.ModelAdmin):
 
     list_display = [
         "id",
-        "transaction_ref",
         "student",
         "course",
         "total_amount",
@@ -743,8 +718,9 @@ class BillingDetailAdmin(admin.ModelAdmin):
     list_filter = ["date_paid"]
     search_fields = ["billing__icontains"]
     list_select_related = ["billing"]
+    autocomplete_fields = ["billing"]
     list_per_page = 25
-    readonly_fields = ["outstanding_amount"]
+    # readonly_fields = ["outstanding_amount"]
     actions = ["export_to_csv"]
 
 
@@ -754,7 +730,6 @@ class BillingDetailAdmin(admin.ModelAdmin):
 # BLOG REGION
 @admin.register(BlogCategory)
 class BlogCategoryAdmin(admin.ModelAdmin):
-
     list_display = ["id", "title", "seo_keywords", "date_created", "date_updated"]
     list_filter = ["date_created", "date_updated"]
     search_fields = ["title"]

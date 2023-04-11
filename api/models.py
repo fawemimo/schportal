@@ -166,6 +166,7 @@ class Batch(models.Model):
     title = models.CharField(max_length=150)
     teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
+    course_manuals = models.ManyToManyField("CourseManual")
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
     students = models.ManyToManyField(Student, blank=True)
@@ -352,11 +353,12 @@ class OurTeam(models.Model):
         return str(self.id)
 
 
-class Sponsorship(models.Model):
+class Sponsor(models.Model):
     choices_type = (
         ("Individual", "Individual"),
         ("Organization", "Organization"),
     )
+    active = models.BooleanField(default=False)
     name_of_sponsor = models.CharField(max_length=255)
     selection = models.CharField(max_length=50, choices=choices_type)
     organization_name = models.CharField(max_length=255, blank=True, null=True)
@@ -404,8 +406,25 @@ class ScholarshipSection(models.Model):
 # region student portal
 
 
+class ScholarshipAward(models.Model):
+    sponsor = models.ForeignKey(Sponsor, on_delete=models.CASCADE)
+    award_date = models.DateTimeField()
+    total_amount = models.CharField(max_length=255)
+    amount_received = models.CharField(max_length=255)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    date_last_updated = models.DateTimeField(auto_now=True)
+    number_of_students = models.PositiveIntegerField()
+    beneficiaries = models.ManyToManyField(Student)
+    remarks = models.TextField()
+
+    def __str__(self):
+        return f'{self.sponsor.name_of_sponsor}- {self.award_date}'
+
+
+
 class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    schedule = models.ForeignKey(Schedule,  on_delete=models.CASCADE, blank=True, null=True)
     program_type = models.CharField(max_length=50,blank=True, null=True)
     fee = models.CharField(max_length=250, blank=True, null=True)
     fee_dollar = models.CharField(max_length=250, blank=True, null=True)
@@ -472,16 +491,6 @@ class CourseManual(models.Model):
 
     def __str__(self):
         return self.title
-
-
-class CourseManualAllocation(models.Model):
-    batch = models.ForeignKey(Batch, on_delete=models.CASCADE, blank=True, null=True)
-    course_manual = models.ForeignKey(CourseManual, on_delete=models.CASCADE)
-    released_by = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    when_released = models.DateField()
-
-    def __str__(self):
-        return f"{self.batch}"
 
 
 class ResourceType(models.Model):
@@ -730,8 +739,8 @@ class JobApplication(models.Model):
 
 
 class Billing(models.Model):
-    transaction_ref = models.UUIDField(default=uuid.uuid4)
-    squad_transaction_ref = models.CharField(max_length=255, blank=True, null=True)
+    got_scholarship = models.BooleanField(default=False)
+    sponsor = models.ForeignKey(Sponsor, on_delete=models.CASCADE, blank=True, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     student = models.ForeignKey(
         Student, on_delete=models.SET_NULL, null=True, blank=True
@@ -750,7 +759,7 @@ class Billing(models.Model):
     )
 
     def __str__(self):
-        return str(self.id)
+        return f'{str(self.student.full_name)} - {str(self.student.student_idcard_id)}'
 
     @property
     def get_grand_outstanding(self):
@@ -791,7 +800,7 @@ class BillingDetail(models.Model):
         max_length=50, choices=PROGRAM_TYPE_CHOICES, blank=True, null=True
     )
     amount_paid = models.PositiveBigIntegerField()
-    outstanding_amount = models.PositiveBigIntegerField(null=True, blank=True)
+    outstanding_amount = models.PositiveBigIntegerField(default=0)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -800,23 +809,28 @@ class BillingDetail(models.Model):
     def cal_sum_ofamount(self):
         try:
             # aggreagate amount paid wrt billing
-            billings = self.billing.billingdetail_set.filter(billing_id=self.billing.id)
+            billing = Billing.objects.get(id=self.billing.id)
+            billings = BillingDetail.objects.filter(billing_id=self.billing.id)
+            # billings = BillingDetail.objects.filter(billing_id=billing).aggregate(
+            #     Sum("amount_paid"))['amount_paid__sum']
             sum_of_amount_paid = sum([x.amount_paid for x in billings])
+            # sum_of_amount_paid = billings
             # amount of the course from amount paid
-            if billings:
-                amount_of_the_course = self.billing.total_amount
-                sum_of_amount_paid = sum_of_amount_paid
-                cal = self.billing.total_amount - sum_of_amount_paid
-                return cal
+            print('sum_of_amount_paid: ', sum_of_amount_paid)
+            amount_of_the_course = billing.total_amount
+            print('amount_of_the_course: ', amount_of_the_course)
+            cal = amount_of_the_course - sum_of_amount_paid
+            print('cal: ', cal)
+            return cal
         except Exception as e:
-            pass
+            print(e)
 
     def save(self, *args, **kwargs):
         try:
 
             self.outstanding_amount = self.cal_sum_ofamount()
         except Exception as e:
-            pass
+            print(e)
 
         super(BillingDetail, self).save(*args, **kwargs)
 

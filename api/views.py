@@ -344,7 +344,6 @@ class ProjectViewSet(ModelViewSet):
 
 
 class CourseCardViewSet(ModelViewSet):
-
     http_method_names = ["get", "post", "patch", "delete"]
 
     queryset = (
@@ -392,11 +391,11 @@ class CourseManualViewSet(ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return CourseManualAllocation.objects.select_related("course_manual").all()
+            return Batch.objects.all()
         elif self.request.user.is_active:
             return Batch.objects.filter(
                 students__user=self.request.user
-            ).prefetch_related("coursemanualallocation_set")
+            ).prefetch_related("course_manuals").select_related('course')
         else:
             pass
 
@@ -622,7 +621,7 @@ class OurTeamViewSet(ModelViewSet):
 class SponsorshipsViewSet(ModelViewSet):
     http_method_names = ["post"]
 
-    queryset = Sponsorship.objects.all()
+    queryset = Sponsor.objects.all()
     serializer_class = SponsorshipSerializer
 
 
@@ -672,7 +671,7 @@ class EmployerViewSet(ModelViewSet):
 
 
 class JobViewSet(ModelViewSet):
-    http_method_names = ["get", "post", "delete", "patch"]
+    http_method_names = ["get", "post", "delete", "patch", "put"]
 
     queryset = (
         Job.objects.filter(save_as="Published")
@@ -686,7 +685,12 @@ class JobViewSet(ModelViewSet):
         filters.OrderingFilter,
     ]
     filterset_class = JobFilter
-    search_fields = ["job_title", "job_category__title", "employer__company_name", "experience__title"]
+    search_fields = [
+        "job_title",
+        "job_category__title",
+        "employer__company_name",
+        "experience__title",
+    ]
     ordering_fields = ["date_posted", "date_updated"]
     pagination_class = BasePagination
     lookup_field = "slug"
@@ -700,14 +704,16 @@ class JobViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == "GET":
             return JobSerializer
-        elif self.request.method in ["POST", "DELETE", "PATCH"]:
+        elif self.request.method in ["POST", "DELETE"]:
             return PostJobSerializer
+        elif self.request.method in ["PATCH", "PUT"]:
+            return PatchJobSerializer
 
     def get_serializer_context(self):
         return {
             "employer_id": self.kwargs.get("employer_pk"),
             "job_category_id": self.kwargs.get("job_category_pk"),
-            "experience_id":self.kwargs.get('experience_pk')
+            "experience_id": self.kwargs.get("experience_pk"),
         }
 
 
@@ -732,7 +738,7 @@ class EmployerJobApplicantViewSet(ModelViewSet):
 
 
 class ApplicantsViewSet(ModelViewSet):
-    http_method_names = ['get']
+    http_method_names = ["get"]
 
     serializer_class = ApplicantsSerializer
     permission_classes = [IsEmployerType]
@@ -740,7 +746,10 @@ class ApplicantsViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend]
 
     def get_queryset(self):
-        return JobApplication.objects.filter(job_id=self.kwargs.get('job_pk')).select_related('job')
+        return JobApplication.objects.filter(
+            job_id=self.kwargs.get("job_pk")
+        ).select_related("job")
+
 
 class StudentAppliedJobViewSet(ModelViewSet):
     http_method_names = ["get"]

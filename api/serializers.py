@@ -31,7 +31,6 @@ class BaseTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
     def validate(self, attrs):
-
         data = super().validate(attrs)
 
         data["id"] = self.user.id
@@ -373,18 +372,25 @@ class InquirySerializer(serializers.ModelSerializer):
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
+    schedule_id = serializers.IntegerField()
 
     class Meta:
         model = Enrollment
-        fields = ["id", "course_id", "full_name", "email", "mobile"]
+        fields = ["id", "course_id", "schedule_id", "full_name", "email", "mobile"]
 
     def validate_course_id(self, value):
         if not Course.objects.filter(pk=value).exists():
             raise serializers.ValidationError("Course ID does not exist")
         return value
 
+    def validate_schedule_id(self, value):
+        if not Schedule.objects.filter(pk=value).exists():
+            raise serializers.ValidationError("Course ID does not exist")
+        return value
+
     def save(self, **kwargs):
         course_id = self.validated_data["course_id"]
+        schedule_id = self.validated_data["schedule_id"]
         full_name = self.validated_data["full_name"]
         email = self.validated_data["email"]
         mobile = self.validated_data["mobile"]
@@ -399,6 +405,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
         interestform = Enrollment.objects.create(
             course_id=course_id,
+            schedule_id=schedule_id,
             full_name=full_name,
             email=email,
             mobile=mobile,
@@ -408,13 +415,13 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             fee_dollar=schedule["fee_dollar"],
         )
 
-        send_interested_email(course_id, full_name, email, mobile)
+        send_interested_email(course_id, full_name, email, mobile, schedule_id)
         return interestform
 
 
 class SponsorshipSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Sponsorship
+        model = Sponsor
         fields = [
             "id",
             "name_of_sponsor",
@@ -434,18 +441,20 @@ class SponsorshipSerializer(serializers.ModelSerializer):
         email = self.validated_data["email"]
         phone_number = self.validated_data["phone_number"]
         remarks = self.validated_data["remarks"]
+        organization_name = self.validated_data['organization_name']
 
-        sponsorship = Sponsorship.objects.create(
+        sponsorship = Sponsor.objects.create(
             name_of_sponsor=name_of_sponsor,
             selection=selection,
             number_of_student=number_of_student,
             email=email,
             phone_number=phone_number,
             remarks=remarks,
+            organization_name=organization_name
         )
 
         send_sponsorship_email(
-            name_of_sponsor, selection, number_of_student, email, phone_number, remarks
+            name_of_sponsor, selection, number_of_student, email, phone_number, remarks,organization_name
         )
 
         return sponsorship
@@ -453,17 +462,13 @@ class SponsorshipSerializer(serializers.ModelSerializer):
 
 class BatchSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
-    course_manuals = serializers.SerializerMethodField()
-
     class Meta:
         model = Batch
         fields = ["id", "program_type", "title", "course", "course_manuals"]
 
-    def get_course_manuals(self, obj):
-        return obj.coursemanualallocation_set.values(
-            "course_manual__manual", "course_manual__title"
-        )
-
+    def to_representation(self, instance):
+        self.fields["course_manuals"] = CourseManualSerializer(many=True)
+        return super().to_representation(instance)
 
 class AssignmentBatchSerializer(serializers.ModelSerializer):
     assignment = serializers.SerializerMethodField()
@@ -980,9 +985,7 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
             "contact_person_mobile",
             "company_url",
         ]
-        extra_kwargs = {
-            'company_logo': {'required': False, 'allow_null': True}
-        }
+        extra_kwargs = {"company_logo": {"required": False, "allow_null": True}}
 
     def update(self, instance, validated_data):
         instance.contact_person = validated_data["contact_person"]
@@ -1011,6 +1014,7 @@ class PostJobSerializer(serializers.ModelSerializer):
     employer_id = serializers.IntegerField()
     job_category = JobCategorySerializer(many=True)
     experience = JobExperienceSerializer(many=True)
+
     class Meta:
         model = Job
         fields = [
@@ -1028,28 +1032,32 @@ class PostJobSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        employer_id = validated_data['employer_id']
-        job_category = validated_data.pop('job_category')
-        experience = validated_data.pop('experience')
-        job = Job.objects.create(employer_id=employer_id,**validated_data)
-        
+        employer_id = validated_data["employer_id"]
+        job_category = validated_data["job_category"]
+        experience = validated_data["experience"]
+        job = Job.objects.create(employer_id=employer_id, **validated_data)
+        # title_job = job_category.pop('title')
+        # title_experience = experience.pop('title')
+        # print('title_job: ', title_job)
+        print("title_ex: ", experience)
         for x in job_category:
-            job_category, _ = JobCategory.objects.get_or_create(**x)
+            job_category = JobCategory.objects.filter(title=x.title)
             job.job_category.set(job_category)
+            # print(job.job_category.set(job_category))
 
         for x in experience:
-            experience,_= JobExperience.objects.get_or_create(**x)
+            experience = JobExperience.objects.filter(title=x.title)
 
-            job.experience.set(experience)    
+            job.experience.set(experience)
 
-        return job            
+        return job
 
     def validate_employer_id(self, value):
         if not Employer.objects.filter(id=value).exists():
             raise serializers.ValidationError(
                 "Employer with the give ID does not exist"
             )
-        return value  
+        return value
 
     def save(self, **kwargs):
         job_type = self.validated_data["job_type"]
@@ -1060,10 +1068,13 @@ class PostJobSerializer(serializers.ModelSerializer):
         job_responsibilities = self.validated_data["job_responsibilities"]
         close_job = self.validated_data["close_job"]
 
-        employer_id = self.validated_data['employer_id']
-        job_category = self.validated_data.get('job_category')
-        experience = self.validated_data.get('experience')
-        
+        employer_id = self.validated_data["employer_id"]
+        job_category = self.validated_data["job_category"]
+        experience = self.validated_data["experience"]
+        # title_job = job_category['title']
+        # title_experience = experience['title']
+        print(job_category)
+        # print(title_job)
         try:
             num = range(100, 1000)
             ran = random.choice(num)
@@ -1080,17 +1091,23 @@ class PostJobSerializer(serializers.ModelSerializer):
                 job_responsibilities=job_responsibilities,
                 close_job=close_job,
             )
-           
-            for x in job_category:
-                job_category = JobCategory.objects.filter(**x)
-                job.job_category.set(job_category)
 
-            
-            for x in experience:
-                experience= JobExperience.objects.filter(**x)
+            job_category = JobCategory.objects.filter(
+                [x["title"] for x in job_category]
+            )
+            job.job_category.set(job_category)
+            experience = JobExperience.objects.filter([x["title"] for x in experience])
+            job.experience.set(experience)
 
-                job.experience.set(experience)   
-            
+            # for x in job_category:
+            #     job_category = JobCategory.objects.filter(**x)
+            #     job.job_category.set(job_category)
+
+            # for x in experience:
+            #     experience= JobExperience.objects.filter(**x)
+
+            #     job.experience.set(experience)
+
             job.save()
             return job
 
@@ -1098,8 +1115,14 @@ class PostJobSerializer(serializers.ModelSerializer):
             pass
 
 
+class PatchJobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Job
+        fields = ["close_job"]
+
+
 class JobSerializer(serializers.ModelSerializer):
-    employer = EmployerSerializer()   
+    employer = EmployerSerializer()
 
     class Meta:
         model = Job
@@ -1107,10 +1130,10 @@ class JobSerializer(serializers.ModelSerializer):
         lookup_field = "slug"
 
     def to_representation(self, instance):
-        self.fields['job_category']= JobCategorySerializer(many=True)
-        self.fields['experience'] = JobExperienceSerializer(many=True)
+        self.fields["job_category"] = JobCategorySerializer(many=True)
+        self.fields["experience"] = JobExperienceSerializer(many=True)
         return super().to_representation(instance)
-    
+
 
 class StudentJobApplicationSerializer(serializers.ModelSerializer):
     job_applied_for = serializers.SerializerMethodField()
@@ -1254,7 +1277,6 @@ class PostBillingSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "payment_completion_status",
-            "squad_transaction_ref",
             "student_id",
             "course_id",
             "total_amount",
@@ -1280,9 +1302,7 @@ class PostBillingSerializer(serializers.ModelSerializer):
         return value
 
     def save(self, **kwargs):
-
         payment_completion_status = self.validated_data["payment_completion_status"]
-        squad_transaction_ref = self.validated_data["squad_transaction_ref"]
         course_id = self.validated_data["course_id"]
         total_amount_paid = self.validated_data["total_amount_paid"]
         total_amount = self.validated_data["total_amount"]
@@ -1292,7 +1312,6 @@ class PostBillingSerializer(serializers.ModelSerializer):
             billing = Billing.objects.create(
                 student_id=student_id,
                 course_id=course_id,
-                squad_transaction_ref=squad_transaction_ref,
                 total_amount_paid=total_amount_paid,
                 total_amount=total_amount,
                 first_name=student.user.first_name,
@@ -1327,7 +1346,6 @@ class BillingSerializer(serializers.ModelSerializer):
         ]
 
     def get_grand_outstanding(self, obj):
-
         try:
             billings = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(
                 amount_paid=Sum("amount_paid")
@@ -1434,9 +1452,8 @@ class PostEmployerSerializer(serializers.ModelSerializer):
             "date_created",
             "date_updated",
         ]
-        extra_kwargs = {
-            'company_url': {'required': False, 'allow_null': True}
-        }
+        extra_kwargs = {"company_url": {"required": False, "allow_null": True}}
+
 
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -1462,7 +1479,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             "password2",
             "email",
             "mobile_numbers",
-            "employer"
+            "employer",
         ]
 
     def validate_email(self, value):
@@ -1500,19 +1517,30 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        employer_data = validated_data.pop('employer')
-        contact_person = employer_data.pop('contact_person')
-        contact_person_mobile = employer_data.pop('contact_person_mobile')
-        company_name = employer_data.pop('company_name')
-        company_url = employer_data.pop('company_url')
-        user_type = validated_data['user_type']
-        email = validated_data['email']
-        username = validated_data['username']
-        mobile_numbers = validated_data['mobile_numbers']
-        password = validated_data['password']
-        user = User.objects.create(user_type=user_type, email=email, username=username, mobile_numbers=mobile_numbers)
+        employer_data = validated_data.pop("employer")
+        contact_person = employer_data.pop("contact_person")
+        contact_person_mobile = employer_data.pop("contact_person_mobile")
+        company_name = employer_data.pop("company_name")
+        company_url = employer_data.pop("company_url")
+        user_type = validated_data["user_type"]
+        email = validated_data["email"]
+        username = validated_data["username"]
+        mobile_numbers = validated_data["mobile_numbers"]
+        password = validated_data["password"]
+        user = User.objects.create(
+            user_type=user_type,
+            email=email,
+            username=username,
+            mobile_numbers=mobile_numbers,
+        )
         if password:
             user.set_password(password)
             user.save()
-        Employer.objects.create(user=user, contact_person=contact_person,contact_person_mobile=contact_person_mobile,company_name=company_name, company_url=company_url)
+        Employer.objects.create(
+            user=user,
+            contact_person=contact_person,
+            contact_person_mobile=contact_person_mobile,
+            company_name=company_name,
+            company_url=company_url,
+        )
         return user
