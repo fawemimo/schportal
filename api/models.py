@@ -91,6 +91,7 @@ class Course(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+    just_for_jobs = models.BooleanField(default=False)
     # billings = models.OneToOneField("Billing", on_delete=models.CASCADE, blank=True, null=True, related_name = '+')
     full_name = models.CharField(max_length=255, blank=True, null=True)
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
@@ -368,7 +369,7 @@ class Sponsor(models.Model):
     remarks = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
 
-    def __str(self):
+    def __str__(self):
         return self.name_of_sponsor
 
 
@@ -749,7 +750,7 @@ class Billing(models.Model):
     last_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, blank=True, null=True)
     total_amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
-    total_amount = models.PositiveBigIntegerField(blank=True, null=True)
+    total_amount = models.PositiveBigIntegerField(blank=True, null=True, verbose_name='Total amount of the course')
     payment_completion_status = models.CharField(
         default=PENDING,
         choices=PAYMENT_COMPLETION_STATUS,
@@ -787,7 +788,7 @@ class Billing(models.Model):
         try:
 
             if self.total_amount == self.total_amount_paid:
-                self.payment_completion_status = True
+                self.payment_completion_status = SUCCESS
 
         except Exception as e:
             pass
@@ -800,7 +801,7 @@ class BillingDetail(models.Model):
         max_length=50, choices=PROGRAM_TYPE_CHOICES, blank=True, null=True
     )
     amount_paid = models.PositiveBigIntegerField()
-    outstanding_amount = models.PositiveBigIntegerField(default=0)
+    outstanding_amount = models.CharField(default=0, max_length=50)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -810,24 +811,24 @@ class BillingDetail(models.Model):
         try:
             # aggreagate amount paid wrt billing
             billing = Billing.objects.get(id=self.billing.id)
-            billings = BillingDetail.objects.filter(billing_id=self.billing.id)
-            # billings = BillingDetail.objects.filter(billing_id=billing).aggregate(
-            #     Sum("amount_paid"))['amount_paid__sum']
-            sum_of_amount_paid = sum([x.amount_paid for x in billings])
+            # billings = BillingDetail.objects.filter(billing_id=self.billing.id)
+            billings = billing.billingdetail_set.filter(billing_id=billing)
+                # .aggregate(Sum("amount_paid"))['amount_paid__sum']
+            sum_of_amount_paid = sum([int(x.amount_paid) for x in billings])
             # sum_of_amount_paid = billings
             # amount of the course from amount paid
-            print('sum_of_amount_paid: ', sum_of_amount_paid)
-            amount_of_the_course = billing.total_amount
-            print('amount_of_the_course: ', amount_of_the_course)
-            cal = amount_of_the_course - sum_of_amount_paid
-            print('cal: ', cal)
-            return cal
+            # print('sum_of_amount_paid: ', sum_of_amount_paid)
+            # amount_of_the_course = billing.total_amount
+            # print('amount_of_the_course: ', amount_of_the_course)
+            # cal = amount_of_the_course - sum_of_amount_paid
+            # print('cal: ', cal)
+            return 1
         except Exception as e:
             print(e)
 
     def save(self, *args, **kwargs):
         try:
-
+            self.outstanding_amount = 0
             self.outstanding_amount = self.cal_sum_ofamount()
         except Exception as e:
             print(e)

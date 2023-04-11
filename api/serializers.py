@@ -1036,17 +1036,13 @@ class PostJobSerializer(serializers.ModelSerializer):
         job_category = validated_data["job_category"]
         experience = validated_data["experience"]
         job = Job.objects.create(employer_id=employer_id, **validated_data)
-        # title_job = job_category.pop('title')
-        # title_experience = experience.pop('title')
-        # print('title_job: ', title_job)
-        print("title_ex: ", experience)
+
         for x in job_category:
-            job_category = JobCategory.objects.filter(title=x.title)
+            job_category = JobCategory.objects.filter(**x)
             job.job_category.set(job_category)
-            # print(job.job_category.set(job_category))
 
         for x in experience:
-            experience = JobExperience.objects.filter(title=x.title)
+            experience = JobExperience.objects.filter(**x)
 
             job.experience.set(experience)
 
@@ -1058,7 +1054,7 @@ class PostJobSerializer(serializers.ModelSerializer):
                 "Employer with the give ID does not exist"
             )
         return value
-
+    
     def save(self, **kwargs):
         job_type = self.validated_data["job_type"]
         job_location = self.validated_data["job_location"]
@@ -1071,10 +1067,8 @@ class PostJobSerializer(serializers.ModelSerializer):
         employer_id = self.validated_data["employer_id"]
         job_category = self.validated_data["job_category"]
         experience = self.validated_data["experience"]
-        # title_job = job_category['title']
-        # title_experience = experience['title']
-        print(job_category)
-        # print(title_job)
+       
+
         try:
             num = range(100, 1000)
             ran = random.choice(num)
@@ -1092,21 +1086,14 @@ class PostJobSerializer(serializers.ModelSerializer):
                 close_job=close_job,
             )
 
-            job_category = JobCategory.objects.filter(
-                [x["title"] for x in job_category]
-            )
-            job.job_category.set(job_category)
-            experience = JobExperience.objects.filter([x["title"] for x in experience])
-            job.experience.set(experience)
+            for x in job_category:
+                job_category,_ = JobCategory.objects.get_or_create(**x)
+                job.job_category.add(job_category)
 
-            # for x in job_category:
-            #     job_category = JobCategory.objects.filter(**x)
-            #     job.job_category.set(job_category)
+            for x in experience:
+                experience, _ = JobExperience.objects.get_or_create(**x)
 
-            # for x in experience:
-            #     experience= JobExperience.objects.filter(**x)
-
-            #     job.experience.set(experience)
+                job.experience.add(experience)
 
             job.save()
             return job
@@ -1411,7 +1398,7 @@ class PostBillingDetailSerializer(serializers.ModelSerializer):
 
 class BlogPostSerializer(serializers.ModelSerializer):
     blog_category = serializers.StringRelatedField()
-    author = serializers.SerializerMethodField(source="user")
+    author = serializers.SerializerMethodField()
 
     class Meta:
         model = BlogPost
@@ -1434,7 +1421,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
         lookup_field = "slug"
 
     def get_author(self, obj):
-        return f"{obj.user.first_name} {obj.user.last_name}"
+        return f"{obj.user}"
 
 
 # End Blog Region

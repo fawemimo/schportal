@@ -291,6 +291,7 @@ class SponsorAdmin(admin.ModelAdmin):
 class ScholarshipAwardAdmin(admin.ModelAdmin):   
     list_display = ['id', 'sponsor','award_date','total_amount','amount_received','date_posted']
     list_per_page = 25
+    autocomplete_fields = ['beneficiaries']
 
     
 @admin.register(Announcement)

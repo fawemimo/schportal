@@ -36,6 +36,6 @@ def create_billing_details(sender, instance,created,*args,**kwargs):
         total_amount = instance.total_amount
         total_amount_paid = instance.total_amount_paid
         outstanding = int(total_amount) - int(total_amount_paid)
-        BillingDetail.objects.create(billing=instance,amount_paid=total_amount_paid,outstanding_amount=outstanding)
+        BillingDetail.objects.create(billing=instance,amount_paid=total_amount_paid)
         instance.save()
 

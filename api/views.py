@@ -723,6 +723,12 @@ class JobCategoryViewSet(ModelViewSet):
     queryset = JobCategory.objects.all()
 
 
+class JobExperienceViewSet(ModelViewSet):
+    http_method_name = ["get"]
+    serializer_class = JobExperienceSerializer
+    queryset = JobExperience.objects.all()
+
+    
 class EmployerJobApplicantViewSet(ModelViewSet):
     http_method_names = ["get"]
 
