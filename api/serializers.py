@@ -1338,19 +1338,26 @@ class BillingSerializer(serializers.ModelSerializer):
 
     def get_grand_outstanding(self, obj):
         try:
-            billings = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(
+            billingdetails = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(
                 amount_paid=Sum("amount_paid")
             )
-            total_amount_paid = 0
+            extra_payment = obj.extraitem_set.filter(billing_id=obj.id).aggregate(
+                amount_paid=Sum("amount_paid")
+            )
+            total_amount_paid_details = 0
+            total_amount_paid_extra = 0
 
-            if billings:
-                if total_amount_paid != None:
-                    total_amount_paid = billings["amount_paid"]
-                    cal = obj.total_amount - total_amount_paid
+            if billingdetails and extra_payment:
+                if total_amount_paid_details != None and total_amount_paid_extra != None:
+                    total_amount_paid_details = billingdetails["amount_paid"]
+                    total_amount_paid_extra = extra_payment['amount_paid']
+
+                    cal = obj.total_amount - (total_amount_paid_details + total_amount_paid_extra)
                     return cal
-                elif total_amount_paid == None:
-                    total_amount_paid = 0
-                    cal = obj.total_amount - total_amount_paid
+                elif total_amount_paid_details == None and total_amount_paid_extra == None:
+                    total_amount_paid_details = 0
+                    total_amount_paid_extra = 0
+                    cal = obj.total_amount - (total_amount_paid_details + total_amount_paid_extra)
 
                     return cal
         except Exception as e:
