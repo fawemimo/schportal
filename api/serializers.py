@@ -396,12 +396,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         mobile = self.validated_data["mobile"]
         course = Course.objects.get(id=course_id)
 
-        schedule = (
-            course.schedule_set.only("id")
-            .filter(course_id=course.id)
-            .values("program_type", "startdate", "fee_dollar", "fee")
-            .first()
-        )
+        schedule = Schedule.objects.get(id=schedule_id)
 
         interestform = Enrollment.objects.create(
             course_id=course_id,
@@ -409,10 +404,10 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             full_name=full_name,
             email=email,
             mobile=mobile,
-            program_type=schedule["program_type"],
-            start_date=schedule["startdate"],
-            fee=schedule["fee"],
-            fee_dollar=schedule["fee_dollar"],
+            program_type=schedule.program_type,
+            start_date=schedule.startdate,
+            fee=schedule.fee,
+            fee_dollar=schedule.fee_dollar,
         )
 
         send_interested_email(course_id, full_name, email, mobile, schedule_id)
@@ -1317,6 +1312,8 @@ class BillingSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
     course = serializers.StringRelatedField()
     grand_outstanding = serializers.SerializerMethodField()
+    extra_payment = serializers.SerializerMethodField()
+    billingdetails = serializers.SerializerMethodField()
 
     class Meta:
         model = Billing
@@ -1330,7 +1327,14 @@ class BillingSerializer(serializers.ModelSerializer):
             "total_amount",
             "payment_completion_status",
             "grand_outstanding",
+            "billingdetails",
+            "extra_payment"
         ]
+    def get_extra_payment(self, obj):
+        return obj.extraitem_set.filter(billing_id=obj.id).values('id','item_name','amount_paid','date_created','date_updated')
+
+    def get_billingdetails(self, obj):
+        return obj.billingdetail_set.filter(billing_id=obj.id).values("id", "amount_paid", "date_paid")
 
     def get_grand_outstanding(self, obj):
         try:

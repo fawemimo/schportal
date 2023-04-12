@@ -653,7 +653,10 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
 
 # Billing region
-
+@admin.register(ExtraItem)
+class ExtraItemAdmin(admin.ModelAdmin):
+    list_display = ['id', 'billing','item_name', 'amount_paid','date_created']
+    
 
 @admin.register(Billing)
 class BillingAdmin(admin.ModelAdmin):
@@ -721,7 +724,7 @@ class BillingDetailAdmin(admin.ModelAdmin):
     list_select_related = ["billing"]
     autocomplete_fields = ["billing"]
     list_per_page = 25
-    # readonly_fields = ["outstanding_amount"]
+    readonly_fields = ["outstanding_amount"]
     actions = ["export_to_csv"]
 
 

@@ -122,7 +122,7 @@ class Student(models.Model):
     relationship_with_next_kin = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.full_name}"
+        return f"{self.full_name} - {self.student_idcard_id}"
 
 
 class Teacher(models.Model):
@@ -654,18 +654,19 @@ class HowItWork(models.Model):
 
 class Employer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    contact_person = models.CharField(max_length=255)
+    contact_person = models.CharField(max_length=255,blank=True,null=True)
     contact_person_mobile = models.CharField(max_length=50, blank=True, null=True)
     location = models.CharField(max_length=255, null=True, blank=True)
-    company_name = models.CharField(max_length=255)
-    company_url = models.CharField(blank=True,null=True, max_length=200)
-    tagline = models.TextField()
+    company_name = models.CharField(max_length=255,blank=True,null=True)
+    company_url = models.CharField(blank=True,null=True, max_length=255)
+    tagline = models.TextField(blank=True,null=True)
     company_logo = models.ImageField(
         upload_to="JobPortal/Company",
         validators=[
             validate_file_size,
             FileExtensionValidator(allowed_extensions=["svg", "jpg", "png", "jpeg"]),
         ],
+        default = "JobPortal/Company/c.png"
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)
@@ -760,7 +761,7 @@ class Billing(models.Model):
     )
 
     def __str__(self):
-        return f'{str(self.student.full_name)} - {str(self.student.student_idcard_id)}'
+        return f'{str(self.student.full_name)} - {str(self.student.student_idcard_id)}-{str(self.id)}'
 
     @property
     def get_grand_outstanding(self):
@@ -809,32 +810,46 @@ class BillingDetail(models.Model):
 
     def cal_sum_ofamount(self):
         try:
-            # aggreagate amount paid wrt billing
-            billing = Billing.objects.get(id=self.billing.id)
-            # billings = BillingDetail.objects.filter(billing_id=self.billing.id)
-            billings = billing.billingdetail_set.filter(billing_id=billing)
-                # .aggregate(Sum("amount_paid"))['amount_paid__sum']
-            sum_of_amount_paid = sum([int(x.amount_paid) for x in billings])
-            # sum_of_amount_paid = billings
-            # amount of the course from amount paid
-            # print('sum_of_amount_paid: ', sum_of_amount_paid)
-            # amount_of_the_course = billing.total_amount
-            # print('amount_of_the_course: ', amount_of_the_course)
-            # cal = amount_of_the_course - sum_of_amount_paid
-            # print('cal: ', cal)
-            return 1
+            billings =self.billing.billingdetail_set.filter(billing_id=self.billing.id).aggregate(
+                amount_paid=Sum("amount_paid")
+            )['amount_paid']
+            
+
+            if billings:
+                if self.billing.total_amount_paid != None:
+                    self.billing.total_amount_paid = billings
+                    cal = self.billing.total_amount - self.billing.total_amount_paid
+                    return cal
+                elif self.billing.total_amount_paid == None:
+                    self.billing.total_amount_paid = 0
+                    cal = self.billing.total_amount - self.billing.total_amount_paid
+
+                    return cal
         except Exception as e:
             print(e)
 
     def save(self, *args, **kwargs):
         try:
-            self.outstanding_amount = 0
-            self.outstanding_amount = self.cal_sum_ofamount()
+            if self.outstanding_amount != None:
+                self.outstanding_amount = self.cal_sum_ofamount()
+            billing_on_creation = self.billing.total_amount - self.billing.total_amount_paid
+            self.outstanding_amount = billing_on_creation    
         except Exception as e:
             print(e)
 
         super(BillingDetail, self).save(*args, **kwargs)
 
+
+class ExtraItem(models.Model):
+    billing = models.ForeignKey(Billing, on_delete=models.CASCADE, null=True, blank=True)
+    item_name = models.CharField(max_length=255)
+    amount_paid = models.PositiveIntegerField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{str(self.billing.id)} - {self.item_name}'
+    
 
 # End Billing Information region
 
