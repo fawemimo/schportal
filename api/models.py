@@ -666,7 +666,7 @@ class Employer(models.Model):
             validate_file_size,
             FileExtensionValidator(allowed_extensions=["svg", "jpg", "png", "jpeg"]),
         ],
-        default = "JobPortal/Company/c.png"
+        default = "JobPortal/Company/loginIcon.png"
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)

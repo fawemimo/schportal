@@ -1379,16 +1379,14 @@ class BillingSerializer(serializers.ModelSerializer):
             total_amount_paid_details = 0
             total_amount_paid_extra = 0
             course_fee = obj.billingdetail_set.filter(billing_id=obj.id).values('course_fee').first()
-            grand_total = billingdetails["amount_paid"] + course_fee['course_fee']
+            grand_total = extra_payment["amount_paid"] + course_fee['course_fee']
             if billingdetails and extra_payment:
                 if (
                     total_amount_paid_details != None
                     and total_amount_paid_extra != None
                 ):
                     total_amount_paid_details = billingdetails["amount_paid"]
-                    total_amount_paid_extra = extra_payment["amount_paid"]
-                    print(total_amount_paid_extra)
-                    print(total_amount_paid_details)
+                    total_amount_paid_extra = extra_payment["amount_paid"]                    
                     
                     cal = grand_total - (
                         total_amount_paid_details + total_amount_paid_extra
