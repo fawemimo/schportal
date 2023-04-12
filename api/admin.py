@@ -676,12 +676,11 @@ class BillingAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "student",
-        "course",
-        "total_amount",
+        "schedule",
         "payment_completion_status",
     ]
     list_filter = ["payment_completion_status"]
-    list_select_related = ["student", "course"]
+    list_select_related = ["student", "schedule"]
     list_editable = ["student"]
     autocomplete_fields = ["student"]
     search_fields = ["student"]

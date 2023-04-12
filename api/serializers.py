@@ -436,7 +436,7 @@ class SponsorshipSerializer(serializers.ModelSerializer):
         email = self.validated_data["email"]
         phone_number = self.validated_data["phone_number"]
         remarks = self.validated_data["remarks"]
-        organization_name = self.validated_data['organization_name']
+        organization_name = self.validated_data["organization_name"]
 
         sponsorship = Sponsor.objects.create(
             name_of_sponsor=name_of_sponsor,
@@ -445,11 +445,17 @@ class SponsorshipSerializer(serializers.ModelSerializer):
             email=email,
             phone_number=phone_number,
             remarks=remarks,
-            organization_name=organization_name
+            organization_name=organization_name,
         )
 
         send_sponsorship_email(
-            name_of_sponsor, selection, number_of_student, email, phone_number, remarks,organization_name
+            name_of_sponsor,
+            selection,
+            number_of_student,
+            email,
+            phone_number,
+            remarks,
+            organization_name,
         )
 
         return sponsorship
@@ -457,6 +463,7 @@ class SponsorshipSerializer(serializers.ModelSerializer):
 
 class BatchSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
+
     class Meta:
         model = Batch
         fields = ["id", "program_type", "title", "course", "course_manuals"]
@@ -464,6 +471,7 @@ class BatchSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         self.fields["course_manuals"] = CourseManualSerializer(many=True)
         return super().to_representation(instance)
+
 
 class AssignmentBatchSerializer(serializers.ModelSerializer):
     assignment = serializers.SerializerMethodField()
@@ -1049,7 +1057,7 @@ class PostJobSerializer(serializers.ModelSerializer):
                 "Employer with the give ID does not exist"
             )
         return value
-    
+
     def save(self, **kwargs):
         job_type = self.validated_data["job_type"]
         job_location = self.validated_data["job_location"]
@@ -1062,7 +1070,6 @@ class PostJobSerializer(serializers.ModelSerializer):
         employer_id = self.validated_data["employer_id"]
         job_category = self.validated_data["job_category"]
         experience = self.validated_data["experience"]
-       
 
         try:
             num = range(100, 1000)
@@ -1082,7 +1089,7 @@ class PostJobSerializer(serializers.ModelSerializer):
             )
 
             for x in job_category:
-                job_category,_ = JobCategory.objects.get_or_create(**x)
+                job_category, _ = JobCategory.objects.get_or_create(**x)
                 job.job_category.add(job_category)
 
             for x in experience:
@@ -1310,7 +1317,9 @@ class PostBillingSerializer(serializers.ModelSerializer):
 
 class BillingSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
-    course = serializers.StringRelatedField()
+    # course = serializers.StringRelatedField()
+    # grand_fee = serializers.SerializerMethodField()
+    grand_total_paid = serializers.SerializerMethodField()
     grand_outstanding = serializers.SerializerMethodField()
     extra_payment = serializers.SerializerMethodField()
     billingdetails = serializers.SerializerMethodField()
@@ -1320,21 +1329,44 @@ class BillingSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "student",
-            "course",
-            "first_name",
-            "last_name",
-            "email",
+            # "course",
             "total_amount",
             "payment_completion_status",
+            "grand_total_paid",
             "grand_outstanding",
             "billingdetails",
-            "extra_payment"
+            "extra_payment",
         ]
+
+    # def get_grand_fee(self, obj):
+
     def get_extra_payment(self, obj):
-        return obj.extraitem_set.filter(billing_id=obj.id).values('id','item_name','amount_paid','date_created','date_updated')
+        return obj.extraitem_set.filter(billing_id=obj.id).values(
+            "id",
+            "item_name",
+            "item_name_fee",
+            "amount_paid",
+            "date_created",
+            "date_updated",
+        )
 
     def get_billingdetails(self, obj):
-        return obj.billingdetail_set.filter(billing_id=obj.id).values("id", "amount_paid", "date_paid")
+        return obj.billingdetail_set.filter(billing_id=obj.id).values(
+            "id", "course_fee", "amount_paid", "date_paid"
+        )
+
+    def get_grand_total_paid(self, obj):
+        try:
+            extrapayment = obj.extraitem_set.filter(billing_id=obj.id).aggregate(
+                amount_paid=Sum("amount_paid")
+            )
+            billingdetails = obj.billingdetail_set.filter(billing_id=obj.id).values('course_fee').first()
+
+            sum_total = extrapayment["amount_paid"] + billingdetails["course_fee"]
+
+            return sum_total
+        except Exception as e:
+            print(e)
 
     def get_grand_outstanding(self, obj):
         try:
@@ -1346,22 +1378,35 @@ class BillingSerializer(serializers.ModelSerializer):
             )
             total_amount_paid_details = 0
             total_amount_paid_extra = 0
-
+            course_fee = obj.billingdetail_set.filter(billing_id=obj.id).values('course_fee').first()
+            grand_total = billingdetails["amount_paid"] + course_fee['course_fee']
             if billingdetails and extra_payment:
-                if total_amount_paid_details != None and total_amount_paid_extra != None:
+                if (
+                    total_amount_paid_details != None
+                    and total_amount_paid_extra != None
+                ):
                     total_amount_paid_details = billingdetails["amount_paid"]
-                    total_amount_paid_extra = extra_payment['amount_paid']
-
-                    cal = obj.total_amount - (total_amount_paid_details + total_amount_paid_extra)
+                    total_amount_paid_extra = extra_payment["amount_paid"]
+                    print(total_amount_paid_extra)
+                    print(total_amount_paid_details)
+                    
+                    cal = grand_total - (
+                        total_amount_paid_details + total_amount_paid_extra
+                    )
                     return cal
-                elif total_amount_paid_details == None and total_amount_paid_extra == None:
+                elif (
+                    total_amount_paid_details == None
+                    and total_amount_paid_extra == None
+                ):
                     total_amount_paid_details = 0
                     total_amount_paid_extra = 0
-                    cal = obj.total_amount - (total_amount_paid_details + total_amount_paid_extra)
+                    cal = grand_total - (
+                        total_amount_paid_details + total_amount_paid_extra
+                    )
 
                     return cal
         except Exception as e:
-            return None
+            print(e)
 
 
 class BillingDetailSerializer(serializers.ModelSerializer):

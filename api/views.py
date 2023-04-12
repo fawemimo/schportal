@@ -822,8 +822,8 @@ class BillingPaymentViewSet(ModelViewSet):
     def get_queryset(self):
         return (
             Billing.objects.filter(student__user=self.request.user)
-            .prefetch_related("billingdetail_set")
-            .select_related("student", "course")
+            .prefetch_related("billingdetail_set","extraitem_set")
+            .select_related("student", "schedule")
         )
 
     def get_serializer_context(self):

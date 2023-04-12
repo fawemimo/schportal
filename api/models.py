@@ -159,7 +159,7 @@ class Schedule(models.Model):
     )
 
     def __str__(self):
-        return f"{self.teacher} - {self.course}"
+        return f"{self.teacher} - {self.course}: {self.program_type}"
 
 
 class Batch(models.Model):
@@ -743,13 +743,10 @@ class JobApplication(models.Model):
 class Billing(models.Model):
     got_scholarship = models.BooleanField(default=False)
     sponsor = models.ForeignKey(Sponsor, on_delete=models.CASCADE, blank=True, null=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, blank=True, null=True)    
     student = models.ForeignKey(
         Student, on_delete=models.SET_NULL, null=True, blank=True
-    )
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255, blank=True, null=True)
+    )    
     total_amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
     total_amount = models.PositiveBigIntegerField(blank=True, null=True, verbose_name='Total amount of the course')
     payment_completion_status = models.CharField(
@@ -763,87 +760,90 @@ class Billing(models.Model):
     def __str__(self):
         return f'{str(self.student.full_name)} - {str(self.student.student_idcard_id)}-{str(self.id)}'
 
-    @property
-    def get_grand_outstanding(self):
+    # @property
+    # def get_grand_outstanding(self):
 
-        try:
-            billings = self.billingdetail_set.filter(billing_id=self.id).aggregate(
-                amount_paid=Sum("amount_paid")
-            )
-            total_amount_paid = 0
+    #     try:
+    #         billings = self.billingdetail_set.filter(billing_id=self.id).aggregate(
+    #             amount_paid=Sum("amount_paid")
+    #         )
+    #         total_amount_paid = 0
 
-            if billings:
-                if total_amount_paid != None:
-                    total_amount_paid = billings["amount_paid"]
-                    cal = self.total_amount - total_amount_paid
-                    return cal
-                elif total_amount_paid == None:
-                    total_amount_paid = 0
-                    cal = self.total_amount - total_amount_paid
+    #         if billings:
+    #             if total_amount_paid != None:
+    #                 total_amount_paid = billings["amount_paid"]
+    #                 cal = self.total_amount - total_amount_paid
+    #                 return cal
+    #             elif total_amount_paid == None:
+    #                 total_amount_paid = 0
+    #                 cal = self.total_amount - total_amount_paid
 
-                    return cal
-        except Exception as e:
-            return None
+    #                 return cal
+    #     except Exception as e:
+    #         return None
+    # def get_course_fee(self):
+        
+    # def save(self, *args, **kwargs):
+    #     try:
 
-    def save(self, *args, **kwargs):
-        try:
-
-            if self.total_amount == self.total_amount_paid:
-                self.payment_completion_status = SUCCESS
-
-        except Exception as e:
-            pass
-        super(Billing, self).save(*args, **kwargs)
+       
+           
+    #     except Exception as e:
+    #         print(e)
+    #     super(Billing, self).save(*args, **kwargs)
 
 
 class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
-    program_type = models.CharField(
-        max_length=50, choices=PROGRAM_TYPE_CHOICES, blank=True, null=True
-    )
-    amount_paid = models.PositiveBigIntegerField()
-    outstanding_amount = models.CharField(default=0, max_length=50)
+    course_fee = models.PositiveBigIntegerField(blank=True, null=True)
+    amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
+    outstanding_amount = models.CharField(default=0, max_length=50,blank=True, null=True)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
 
-    def cal_sum_ofamount(self):
-        try:
-            billings =self.billing.billingdetail_set.filter(billing_id=self.billing.id).aggregate(
-                amount_paid=Sum("amount_paid")
-            )['amount_paid']
-            
+    # def cal_sum_ofamount(self):
+    #     try:
+    #         billings =self.billing.billingdetail_set.filter(billing_id=self.billing.id).aggregate(
+    #             amount_paid=Sum("amount_paid")
+    #         )['amount_paid']
 
-            if billings:
-                if self.billing.total_amount_paid != None:
-                    self.billing.total_amount_paid = billings
-                    cal = self.billing.total_amount - self.billing.total_amount_paid
-                    return cal
-                elif self.billing.total_amount_paid == None:
-                    self.billing.total_amount_paid = 0
-                    cal = self.billing.total_amount - self.billing.total_amount_paid
+    #         if billings:
+    #             if self.course_fee != None:
+    #                 self.billing.total_amount_paid = billings
+    #                 cal = self.course_fee - self.billing.total_amount_paid
+    #                 return cal
+    #             # elif self.billing.total_amount_paid == None:
+    #             #     self.billing.total_amount_paid = 0
+    #             #     cal = self.billing.total_amount - self.billing.total_amount_paid
 
-                    return cal
-        except Exception as e:
-            print(e)
+    #                 # return cal
+    #     except Exception as e:
+    #         print(e)
 
-    def save(self, *args, **kwargs):
-        try:
-            if self.outstanding_amount != None:
-                self.outstanding_amount = self.cal_sum_ofamount()
-            billing_on_creation = self.billing.total_amount - self.billing.total_amount_paid
-            self.outstanding_amount = billing_on_creation    
-        except Exception as e:
-            print(e)
+    # def save(self, *args, **kwargs):
+    #     try:
+    #         self.outstanding_amount = self.cal_sum_ofamount()
+    #         # if self.billing.schedule.program_type == 'Onsite':
+    #         #     self.course_fee = self.billing.schedule.fee
+    #         # elif self.billing.schedule.program_type == 'Virtual':
+    #         #     self.course_fee = self.billing.schedule.fee_dollar 
+    #         # else:
+    #         #     pass
+  
+    #     except Exception as e:
+    #         print(e)
 
-        super(BillingDetail, self).save(*args, **kwargs)
+    #     super(BillingDetail, self).save(*args, **kwargs)
 
 
 class ExtraItem(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE, null=True, blank=True)
     item_name = models.CharField(max_length=255)
+    item_name_fee = models.PositiveIntegerField(blank=True,null=True)
     amount_paid = models.PositiveIntegerField()
+    outstanding_amount = models.CharField(default=0, max_length=50)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 

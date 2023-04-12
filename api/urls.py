@@ -144,10 +144,10 @@ coursemanual_router = routers.NestedDefaultRouter(
 )
 coursemanual_router.register("coursesview", views.CoursesViewSet, basename="course")
 
-billing_router = routers.NestedDefaultRouter(router, "billings", lookup="billing")
-billing_router.register(
-    "details", views.BillingDetailsViewSet, basename="billing-details"
-)
+# billing_router = routers.NestedDefaultRouter(router, "billings", lookup="billing")
+# billing_router.register(
+#     "details", views.BillingDetailsViewSet, basename="billing-details"
+# )
 
 
 applicants_router = routers.NestedDefaultRouter(
@@ -162,7 +162,7 @@ urlpatterns = [
     path("", include(courses_router.urls)),
     path("", include(navlink_router.urls)),
     path("", include(coursemanual_router.urls)),
-    path("", include(billing_router.urls)),
+    # path("", include(billing_router.urls)),
     path("", include(applicants_router.urls)),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.jwt")),
