@@ -270,6 +270,7 @@ Financial Aid - Anchorsoft Academy
             </td>
           </tr>
           <!-- GUARANTOR FULL NAME -->
+          {% if guarantor_full_name %}
           <tr>
             <td style="padding: 0 20px; background-color: white">
               <table width="100%" style="border-spacing: 0" role="presentation">
@@ -287,80 +288,90 @@ Financial Aid - Anchorsoft Academy
               </table>
             </td>
           </tr>
-            <!-- RELATIONSHIP WITH Guarantor -->
-          <tr>
-            <td style="padding: 0 20px; background-color: white">
-              <table width="100%" style="border-spacing: 0" role="presentation">
-                <tr>
-                  <td style="padding-top: 20px; padding-bottom: 10px">
-                    <p style="color: #404141">
-                      <span style="font-weight: 700">Relationship with Guarantor:</span>
-                      <span>{{ relationship_with_guarantor }}</span>
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="height: 1px; background-color: #404141"></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-            <!-- RESIDENTIAL ADDRESS  -->
-          <tr>
-            <td style="padding: 0 20px; background-color: white">
-              <table width="100%" style="border-spacing: 0" role="presentation">
-                <tr>
-                  <td style="padding-top: 20px; padding-bottom: 10px">
-                    <p style="color: #404141">
-                      <span style="font-weight: 700">Residential Address:</span>
-                      <span>{{ residential_address }}</span>
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="height: 1px; background-color: #404141"></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          
-          <!-- GUARANTOR RESIDENTIAL CONTANCT ADDRESS -->
-          <tr>
-            <td style="padding: 0 20px; background-color: white">
-              <table width="100%" style="border-spacing: 0" role="presentation">
-                <tr>
-                  <td style="padding-top: 20px; padding-bottom: 10px">
-                    <p style="color: #404141">
-                      <span style="font-weight: 700">Guarantor Residential Contact Address:</span>
-                      <span>{{ guarantor_residential_contact_address }}</span>
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="height: 1px; background-color: #404141"></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <!-- GUARANTOR MOBILE NUMBER  -->
-          <tr>
-            <td style="padding: 0 20px; background-color: white">
-              <table width="100%" style="border-spacing: 0" role="presentation">
-                <tr>
-                  <td style="padding-top: 20px; padding-bottom: 10px">
-                    <p style="color: #404141">
-                      <span style="font-weight: 700">Guarantor Mobile:</span>
-                      <span>{{ guarantor_mobile }}</span>
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="height: 1px; background-color: #404141"></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+        {% endif %}
 
+            <!-- RELATIONSHIP WITH Guarantor -->
+          {% if relationship_with_guarantor %}
+            <tr>
+              <td style="padding: 0 20px; background-color: white">
+                <table width="100%" style="border-spacing: 0" role="presentation">
+                  <tr>
+                    <td style="padding-top: 20px; padding-bottom: 10px">
+                      <p style="color: #404141">
+                        <span style="font-weight: 700">Relationship with Guarantor:</span>
+                        <span>{{ relationship_with_guarantor }}</span>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="height: 1px; background-color: #404141"></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          {% endif %}
+
+            <!-- RESIDENTIAL ADDRESS  -->
+            {% if residential_address %}
+            <tr>
+              <td style="padding: 0 20px; background-color: white">
+                <table width="100%" style="border-spacing: 0" role="presentation">
+                  <tr>
+                    <td style="padding-top: 20px; padding-bottom: 10px">
+                      <p style="color: #404141">
+                        <span style="font-weight: 700">Residential Address:</span>
+                        <span>{{ residential_address }}</span>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="height: 1px; background-color: #404141"></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          {% endif %}
+          <!-- GUARANTOR RESIDENTIAL CONTANCT ADDRESS -->
+          {% if guarantor_residential_contact_address %}
+            <tr>
+              <td style="padding: 0 20px; background-color: white">
+                <table width="100%" style="border-spacing: 0" role="presentation">
+                  <tr>
+                    <td style="padding-top: 20px; padding-bottom: 10px">
+                      <p style="color: #404141">
+                        <span style="font-weight: 700">Guarantor Residential Contact Address:</span>
+                        <span>{{ guarantor_residential_contact_address }}</span>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="height: 1px; background-color: #404141"></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          {% endif %}
+
+          <!-- GUARANTOR MOBILE NUMBER  -->
+          {% if guarantor_mobile %}
+            <tr>
+              <td style="padding: 0 20px; background-color: white">
+                <table width="100%" style="border-spacing: 0" role="presentation">
+                  <tr>
+                    <td style="padding-top: 20px; padding-bottom: 10px">
+                      <p style="color: #404141">
+                        <span style="font-weight: 700">Guarantor Mobile:</span>
+                        <span>{{ guarantor_mobile }}</span>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="height: 1px; background-color: #404141"></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          {% endif %}
           <tr>
             <td style="padding: 20px 0; background-color: #244d68">
               <table width="100%" style="border-spacing: 0" role="presentation">
