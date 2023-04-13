@@ -91,9 +91,43 @@ class Course(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     just_for_jobs = models.BooleanField(default=False)
-    # billings = models.OneToOneField("Billing", on_delete=models.CASCADE, blank=True, null=True, related_name = '+')
     full_name = models.CharField(max_length=255, blank=True, null=True)
-    student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
+    student_idcard_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
+    date_of_birth = models.CharField(max_length=50, blank=True, null=True)
+    mobile_numbers = models.CharField(max_length=250, blank=True, null=True)
+    profile_pic = models.ImageField(
+        upload_to="students_profilepix/",
+        validators=[
+            validate_file_size,
+            FileExtensionValidator(allowed_extensions=["jpg", "png", "jpeg"]),
+        ],
+    )
+    cv_upload = models.FileField(
+        upload_to="JobPortal/cv_upload",
+        validators=[
+            FileExtensionValidator(allowed_extensions=("pdf", "jpg", "jpeg", "png"))
+        ],
+        blank=True,
+        null=True,
+    )
+    residential_address = models.CharField(max_length=250, blank=True, null=True)
+    contact_address = models.CharField(max_length=250, blank=True, null=True)
+    next_of_kin_fullname = models.CharField(max_length=150, blank=True, null=True)
+    next_of_kin_contact_address = models.CharField(
+        max_length=250, blank=True, null=True
+    )
+    next_of_kin_mobile_number = models.CharField(max_length=250, blank=True, null=True)
+    relationship_with_next_kin = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.full_name} - {self.student_idcard_id}"
+
+
+class BackupStudent(models.Model):
+    student = models.OneToOneField(Student, on_delete=models.CASCADE, blank=True, null=True)
+    just_for_jobs = models.BooleanField(default=False)
+    full_name = models.CharField(max_length=255, blank=True, null=True)
+    student_idcard_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
     date_of_birth = models.CharField(max_length=50, blank=True, null=True)
     mobile_numbers = models.CharField(max_length=250, blank=True, null=True)
     profile_pic = models.ImageField(
@@ -168,7 +202,7 @@ class Batch(models.Model):
     title = models.CharField(max_length=150)
     teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
-    course_manuals = models.ManyToManyField("CourseManual")
+    course_manuals = models.ManyToManyField("CourseManual", blank=True)
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
     students = models.ManyToManyField(Student, blank=True)
@@ -396,6 +430,7 @@ class Announcement(models.Model):
 class ScholarshipSection(models.Model):
     scholarship_intro = models.TextField()
     access_text = models.TextField()
+    eligibility = models.TextField(blank=True, null=True)
     wings = models.TextField()
 
     def __str__(self):
@@ -563,6 +598,7 @@ class InternationalModel(models.Model):
     country_code = models.CharField(max_length=255)
     topbar_src = models.TextField()
     why_choose_virtual = models.TextField()
+    identify_our_virutal_courses = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.country_name

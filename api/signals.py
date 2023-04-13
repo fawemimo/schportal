@@ -1,8 +1,8 @@
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
-from .models import Billing, BillingDetail, Employer, Student, Teacher, User
+from .models import BackupStudent, Billing, BillingDetail, Employer, Student, Teacher, User
 
 
 @receiver(post_save, sender=User)
@@ -23,25 +23,18 @@ def create_teacher_profile(sender, created, instance, *args, **kwargs):
             Student.objects.create(user=instance, full_name=f"{f_name} {l_name}", mobile_numbers=mobile_numbers)
             instance.save()
 
-        # elif instance.user_type == "employer":
-        #     # f_name = instance.first_name
-        #     # l_name = instance.last_name
-        #     Employer.objects.create(user=instance)
-        #     instance.save()
-
 
 @receiver(post_save, sender=Billing)
 def create_billing_details(sender, instance,created,*args,**kwargs):
     if created:
         BillingDetail.objects.create(billing=instance,course_fee = instance.schedule.fee if instance.schedule.program_type == 'Onsite' else instance.schedule.fee_dollar )
-        # , course_fee = instance.schedule.fee if instance.schedule.program_type == 'Onsite' else instance.schedule.program_type == 'Virtual'
-        # if instance.schedule.program_type == 'Onsite':
-        #     billingdetails.course_fee = instance.schedule.fee_dollar
-        #     return instance.schedule.fee
-        # elif instance.schedule.program_type == 'Virtual':
-        #     billingdetails.course_fee = instance.schedule.fee_dollar 
-        #     return instance.schedule.fee_dollar 
-        # else:
-        #     pass
         instance.save()
 
+
+@receiver(pre_save, sender=Student)
+def create_backup_student(sender, instance, *args, **kwargs):
+
+   
+    BackupStudent.objects.create(student=instance, just_for_jobs=instance.just_for_jobs, full_name=instance.full_name, student_idcard_id=instance.student_idcard_id, date_of_birth=instance.date_of_birth, mobile_numbers=instance.mobile_numbers, profile_pic=instance.profile_pic, cv_upload=instance.cv_upload,residential_address=instance.residential_address, contact_address=instance.contact_address, next_of_kin_fullname=instance.next_of_kin_fullname, next_of_kin_contact_address=instance.next_of_kin_contact_address, next_of_kin_mobile_number=instance.next_of_kin_mobile_number, relationship_with_next_kin=instance.next_of_kin_mobile_number)
+
+    instance.save()
