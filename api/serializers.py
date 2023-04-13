@@ -161,15 +161,17 @@ class UpdateStudentSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.date_of_birth = validated_data["date_of_birth"]
-        instance.mobile_numbers = validated_data["mobile_numbers"]
-        instance.cv_upload = validated_data["cv_upload"]
-        instance.profile_pic = validated_data["profile_pic"]
+        instance.mobile_numbers = validated_data["mobile_numbers"]        
         instance.residential_address = validated_data["residential_address"]
         instance.contact_address = validated_data["contact_address"]
         instance.next_of_kin_fullname = validated_data["next_of_kin_fullname"]
         instance.next_of_kin_contact_address = validated_data["next_of_kin_contact_address"]
         instance.next_of_kin_mobile_number = validated_data["next_of_kin_mobile_number"]
         instance.relationship_with_next_kin = validated_data["relationship_with_next_kin"]
+        if instance.cv_upload:
+            instance.cv_upload = validated_data["cv_upload"]
+        if instance.profile_pic:                
+            instance.profile_pic = validated_data["profile_pic"]
 
         return super(UpdateStudentSerializer, self).update(instance, validated_data)
     
@@ -1026,11 +1028,12 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.contact_person = validated_data["contact_person"]
         instance.contact_person_mobile = validated_data["contact_person_mobile"]
-        instance.company_url = validated_data["company_url"]
-        instance.company_logo = validated_data["company_logo"]
+        instance.company_url = validated_data["company_url"]        
         instance.company_name = validated_data["company_name"]
         instance.location = validated_data["location"]
         instance.tagline = validated_data["tagline"]
+        if instance.company_logo:
+            instance.company_logo = validated_data["company_logo"]
         return super(UpdateEmployerSerializer, self).update(instance, validated_data)
 
 

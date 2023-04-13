@@ -139,6 +139,8 @@ class BackupStudent(models.Model):
             validate_file_size,
             FileExtensionValidator(allowed_extensions=["jpg", "png", "jpeg"]),
         ],
+        blank=True,
+        null=True,
     )
     cv_upload = models.FileField(
         upload_to="JobPortal/cv_upload",

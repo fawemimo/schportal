@@ -88,7 +88,7 @@ class TeacherViewSet(ModelViewSet):
 
 
 class StudentViewSet(ModelViewSet):
-    http_method_names = ["get", "patch","post"]
+    http_method_names = ["get", "post", "patch", "head", "options"]
 
     def get_serializer_class(self):
         if self.request.method in ['POST','PATCH']:
@@ -114,7 +114,7 @@ class StudentViewSet(ModelViewSet):
 
     @action(
         detail=False,
-        methods=["GET", "POST"],
+        methods=["GET", "POST","PATCH"],
         permission_classes=[IsStudentType],
         serializer_class = UpdateStudentSerializer
     )
@@ -675,7 +675,7 @@ class EmployerViewSet(ModelViewSet):
 
     @action(
         detail=False,
-        methods=["GET", "POST"],
+        methods=["GET", "POST","PATCH"],
         permission_classes=[IsEmployerType],
     )
     def profile(self, request):
