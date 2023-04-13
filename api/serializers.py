@@ -1354,6 +1354,7 @@ class BillingSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
     grand_total_paid = serializers.SerializerMethodField()
     grand_outstanding = serializers.SerializerMethodField()
+    start_date = serializers.SerializerMethodField()
     extra_payment = serializers.SerializerMethodField()
     billingdetails = serializers.SerializerMethodField()
     course_name = serializers.SerializerMethodField()
@@ -1364,6 +1365,7 @@ class BillingSerializer(serializers.ModelSerializer):
             "id",
             "student",
             "course_name",
+            "start_date",
             "payment_completion_status",
             "grand_total_paid",
             "grand_outstanding",
@@ -1371,6 +1373,9 @@ class BillingSerializer(serializers.ModelSerializer):
             "extra_payment",
         ]
 
+    def get_start_date(self, obj):
+        return obj.schedule.startdate
+    
     def get_course_name(self, obj):
         return obj.schedule.course.title
     
