@@ -1268,8 +1268,6 @@ class PostBillingSerializer(serializers.ModelSerializer):
             "payment_completion_status",
             "student_id",
             "course_id",
-            "total_amount",
-            "total_amount_paid",
         ]
 
     def create(self, validated_data):
@@ -1293,19 +1291,19 @@ class PostBillingSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         payment_completion_status = self.validated_data["payment_completion_status"]
         course_id = self.validated_data["course_id"]
-        total_amount_paid = self.validated_data["total_amount_paid"]
-        total_amount = self.validated_data["total_amount"]
+        # total_amount_paid = self.validated_data["total_amount_paid"]
+        # total_amount = self.validated_data["total_amount"]
         student_id = self.validated_data["student_id"]
-        student = Student.objects.get(id=student_id)
+        # student = Student.objects.get(id=student_id)
         try:
             billing = Billing.objects.create(
                 student_id=student_id,
                 course_id=course_id,
-                total_amount_paid=total_amount_paid,
-                total_amount=total_amount,
-                first_name=student.user.first_name,
-                last_name=student.user.last_name,
-                email=student.user.email,
+                # total_amount_paid=total_amount_paid,
+                # total_amount=total_amount,
+                # first_name=student.user.first_name,
+                # last_name=student.user.last_name,
+                # email=student.user.email,
                 payment_completion_status=payment_completion_status,
             )
             billing.save()
@@ -1317,8 +1315,6 @@ class PostBillingSerializer(serializers.ModelSerializer):
 
 class BillingSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
-    # course = serializers.StringRelatedField()
-    # grand_fee = serializers.SerializerMethodField()
     grand_total_paid = serializers.SerializerMethodField()
     grand_outstanding = serializers.SerializerMethodField()
     extra_payment = serializers.SerializerMethodField()
@@ -1329,8 +1325,6 @@ class BillingSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "student",
-            # "course",
-            "total_amount",
             "payment_completion_status",
             "grand_total_paid",
             "grand_outstanding",
@@ -1338,10 +1332,8 @@ class BillingSerializer(serializers.ModelSerializer):
             "extra_payment",
         ]
 
-    # def get_grand_fee(self, obj):
-
     def get_extra_payment(self, obj):
-        return obj.extraitem_set.filter(billing_id=obj.id).values(
+        return obj.billingextrapayment_set.filter(billing_id=obj.id).values(
             "id",
             "item_name",
             "item_name_fee",
@@ -1357,7 +1349,7 @@ class BillingSerializer(serializers.ModelSerializer):
 
     def get_grand_total_paid(self, obj):
         try:
-            extrapayment = obj.extraitem_set.filter(billing_id=obj.id).aggregate(
+            extrapayment = obj.billingextrapayment_set.filter(billing_id=obj.id).aggregate(
                 amount_paid=Sum("amount_paid")
             )
             billingdetails = obj.billingdetail_set.filter(billing_id=obj.id).values('course_fee').first()
@@ -1373,13 +1365,18 @@ class BillingSerializer(serializers.ModelSerializer):
             billingdetails = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(
                 amount_paid=Sum("amount_paid")
             )
-            extra_payment = obj.extraitem_set.filter(billing_id=obj.id).aggregate(
+            extra_payment = obj.billingextrapayment_set.filter(billing_id=obj.id).aggregate(
                 amount_paid=Sum("amount_paid")
+            )
+            extra_item_fee = (
+                obj.billingextrapayment_set.filter(billing_id=obj.id)
+                .values("item_name_fee")
+                .first()
             )
             total_amount_paid_details = 0
             total_amount_paid_extra = 0
             course_fee = obj.billingdetail_set.filter(billing_id=obj.id).values('course_fee').first()
-            grand_total = extra_payment["amount_paid"] + course_fee['course_fee']
+            grand_total = extra_item_fee["item_name_fee"] + course_fee['course_fee']
             if billingdetails and extra_payment:
                 if (
                     total_amount_paid_details != None

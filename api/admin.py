@@ -288,12 +288,19 @@ class SponsorAdmin(admin.ModelAdmin):
 
 
 @admin.register(ScholarshipAward)
-class ScholarshipAwardAdmin(admin.ModelAdmin):   
-    list_display = ['id', 'sponsor','award_date','total_amount','amount_received','date_posted']
+class ScholarshipAwardAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "sponsor",
+        "award_date",
+        "total_amount",
+        "amount_received",
+        "date_posted",
+    ]
     list_per_page = 25
-    autocomplete_fields = ['beneficiaries']
+    autocomplete_fields = ["beneficiaries"]
 
-    
+
 @admin.register(Announcement)
 class AnnouncementAdmin(admin.ModelAdmin):
     list_display = [
@@ -653,10 +660,11 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
 
 # Billing region
-@admin.register(ExtraItem)
-class ExtraItemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'billing','item_name', 'amount_paid','date_created']
-    
+@admin.register(BillingExtraPayment)
+class BillingExtraPaymentAdmin(admin.ModelAdmin):
+    list_display = ["id", "billing", "item_name","item_name_fee","amount_paid", "outstanding_amount","date_created"]
+    list_editable = ["amount_paid"]
+    list_per_page = 25
 
 @admin.register(Billing)
 class BillingAdmin(admin.ModelAdmin):
@@ -677,9 +685,12 @@ class BillingAdmin(admin.ModelAdmin):
         "id",
         "student",
         "schedule",
+        "grand_total_paid",
+        "grand_outstanding",
         "payment_completion_status",
     ]
     list_filter = ["payment_completion_status"]
+    readonly_fields = ["grand_total_paid", "grand_outstanding"]
     list_select_related = ["student", "schedule"]
     list_editable = ["student"]
     autocomplete_fields = ["student"]
@@ -704,27 +715,25 @@ class BillingDetailAdmin(admin.ModelAdmin):
             row = writer.writerow([getattr(x, field) for field in fieldnames])
         return response
 
-    def student_name(self, obj):
-        return obj.billing.student
-
     def get_queryset(self, request):
         return BillingDetail.objects.select_related("billing")
 
     list_display = [
         "id",
         "billing",
-        "student_name",
+        "course_fee",
         "amount_paid",
         "outstanding_amount",
         "date_paid",
     ]
     list_filter = ["date_paid"]
-    search_fields = ["billing__icontains"]
+    search_fields = ["billing"]
     list_select_related = ["billing"]
     autocomplete_fields = ["billing"]
     list_per_page = 25
     readonly_fields = ["outstanding_amount"]
     actions = ["export_to_csv"]
+    list_editable = ["billing", "amount_paid"]
 
 
 # End Billing

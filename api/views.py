@@ -822,7 +822,7 @@ class BillingPaymentViewSet(ModelViewSet):
     def get_queryset(self):
         return (
             Billing.objects.filter(student__user=self.request.user)
-            .prefetch_related("billingdetail_set","extraitem_set")
+            .prefetch_related("billingdetail_set","billingextrapayment_set")
             .select_related("student", "schedule")
         )
 

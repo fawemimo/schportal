@@ -33,7 +33,7 @@ def create_teacher_profile(sender, created, instance, *args, **kwargs):
 @receiver(post_save, sender=Billing)
 def create_billing_details(sender, instance,created,*args,**kwargs):
     if created:
-        BillingDetail.objects.create(billing=instance,course_fee = instance.schedule.fee if instance.schedule.program_type == 'Onsite' else instance.schedule.program_type == 'Virtual')
+        BillingDetail.objects.create(billing=instance,course_fee = instance.schedule.fee if instance.schedule.program_type == 'Onsite' else instance.schedule.fee_dollar )
         # , course_fee = instance.schedule.fee if instance.schedule.program_type == 'Onsite' else instance.schedule.program_type == 'Virtual'
         # if instance.schedule.program_type == 'Onsite':
         #     billingdetails.course_fee = instance.schedule.fee_dollar

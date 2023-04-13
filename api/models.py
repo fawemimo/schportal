@@ -14,7 +14,6 @@ from api.validate import validate_file_size
 
 
 class User(AbstractUser):
-
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=255, blank=True, null=True)
     last_name = models.CharField(max_length=255, blank=True, null=True)
@@ -163,7 +162,9 @@ class Schedule(models.Model):
 
 
 class Batch(models.Model):
-    program_type = models.CharField(max_length=50, blank=True, null=True, choices=PROGRAM_TYPE_CHOICES)
+    program_type = models.CharField(
+        max_length=50, blank=True, null=True, choices=PROGRAM_TYPE_CHOICES
+    )
     title = models.CharField(max_length=150)
     teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
@@ -419,14 +420,15 @@ class ScholarshipAward(models.Model):
     remarks = models.TextField()
 
     def __str__(self):
-        return f'{self.sponsor.name_of_sponsor}- {self.award_date}'
-
+        return f"{self.sponsor.name_of_sponsor}- {self.award_date}"
 
 
 class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    schedule = models.ForeignKey(Schedule,  on_delete=models.CASCADE, blank=True, null=True)
-    program_type = models.CharField(max_length=50,blank=True, null=True)
+    schedule = models.ForeignKey(
+        Schedule, on_delete=models.CASCADE, blank=True, null=True
+    )
+    program_type = models.CharField(max_length=50, blank=True, null=True)
     fee = models.CharField(max_length=250, blank=True, null=True)
     fee_dollar = models.CharField(max_length=250, blank=True, null=True)
     start_date = models.CharField(max_length=50, blank=True, null=True)
@@ -636,7 +638,6 @@ class VirtualVsOther(models.Model):
 
 
 class HowItWork(models.Model):
-
     how_it_work_class = models.CharField(
         max_length=50, choices=HOW_IT_WORK_CLASS_TYPE, blank=True, null=True
     )
@@ -654,19 +655,19 @@ class HowItWork(models.Model):
 
 class Employer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    contact_person = models.CharField(max_length=255,blank=True,null=True)
+    contact_person = models.CharField(max_length=255, blank=True, null=True)
     contact_person_mobile = models.CharField(max_length=50, blank=True, null=True)
     location = models.CharField(max_length=255, null=True, blank=True)
-    company_name = models.CharField(max_length=255,blank=True,null=True)
-    company_url = models.CharField(blank=True,null=True, max_length=255)
-    tagline = models.TextField(blank=True,null=True)
+    company_name = models.CharField(max_length=255, blank=True, null=True)
+    company_url = models.CharField(blank=True, null=True, max_length=255)
+    tagline = models.TextField(blank=True, null=True)
     company_logo = models.ImageField(
         upload_to="JobPortal/Company",
         validators=[
             validate_file_size,
             FileExtensionValidator(allowed_extensions=["svg", "jpg", "png", "jpeg"]),
         ],
-        default = "JobPortal/Company/loginIcon.png"
+        default="JobPortal/Company/loginIcon.png",
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)
@@ -676,19 +677,19 @@ class Employer(models.Model):
 
 
 class JobCategory(models.Model):
-
     title = models.CharField(max_length=255)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
 
+
 class JobExperience(models.Model):
     title = models.CharField(max_length=255)
 
     def __str__(self):
         return self.title
-    
+
 
 class Job(models.Model):
     employer = models.ForeignKey(Employer, on_delete=models.CASCADE)
@@ -713,7 +714,7 @@ class Job(models.Model):
     def save(self, *args, **kwargs):
         num = range(100, 1000)
         ran = random.choice(num)
-        self.slug = f'{(slugify(self.job_title))}-{ran}'
+        self.slug = f"{(slugify(self.job_title))}-{ran}"
         super(Job, self).save(*args, **kwargs)
 
     class Meta:
@@ -742,13 +743,17 @@ class JobApplication(models.Model):
 
 class Billing(models.Model):
     got_scholarship = models.BooleanField(default=False)
-    sponsor = models.ForeignKey(Sponsor, on_delete=models.CASCADE, blank=True, null=True)
-    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, blank=True, null=True)    
+    sponsor = models.ForeignKey(
+        Sponsor, on_delete=models.CASCADE, blank=True, null=True
+    )
+    schedule = models.ForeignKey(
+        Schedule, on_delete=models.CASCADE, blank=True, null=True
+    )
     student = models.ForeignKey(
         Student, on_delete=models.SET_NULL, null=True, blank=True
-    )    
-    total_amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
-    total_amount = models.PositiveBigIntegerField(blank=True, null=True, verbose_name='Total amount of the course')
+    )
+    grand_total_paid = models.PositiveBigIntegerField(blank=True, null=True)
+    grand_outstanding = models.PositiveBigIntegerField(blank=True, null=True)
     payment_completion_status = models.CharField(
         default=PENDING,
         choices=PAYMENT_COMPLETION_STATUS,
@@ -758,98 +763,168 @@ class Billing(models.Model):
     )
 
     def __str__(self):
-        return f'{str(self.student.full_name)} - {str(self.student.student_idcard_id)}-{str(self.id)}'
+        return f"{str(self.student.full_name)} - {str(self.student.student_idcard_id)}-{str(self.id)}"
 
-    # @property
-    # def get_grand_outstanding(self):
+    def get_grand_outstanding(self):
+        try:
+            billingdetails = self.billingdetail_set.filter(
+                billing_id=self.id
+            ).aggregate(amount_paid=Sum("amount_paid"))
+            extra_payment = self.billingextrapayment_set.filter(
+                billing_id=self.id
+            ).aggregate(amount_paid=Sum("amount_paid"))
+            extra_item_fee = (
+                self.billingextrapayment_set.filter(billing_id=self.id)
+                .values("item_name_fee")
+                .first()
+            )
 
-    #     try:
-    #         billings = self.billingdetail_set.filter(billing_id=self.id).aggregate(
-    #             amount_paid=Sum("amount_paid")
-    #         )
-    #         total_amount_paid = 0
+            total_amount_paid_details = 0
+            total_amount_paid_extra = 0
+            course_fee = (
+                self.billingdetail_set.filter(billing_id=self.id)
+                .values("course_fee")
+                .first()
+            )
+            grand_total = extra_item_fee["item_name_fee"] + course_fee["course_fee"]
+            if billingdetails and extra_payment:
+                if (
+                    total_amount_paid_details != None
+                    and total_amount_paid_extra != None
+                ):
+                    total_amount_paid_details = billingdetails["amount_paid"]
+                    total_amount_paid_extra = extra_payment["amount_paid"]
 
-    #         if billings:
-    #             if total_amount_paid != None:
-    #                 total_amount_paid = billings["amount_paid"]
-    #                 cal = self.total_amount - total_amount_paid
-    #                 return cal
-    #             elif total_amount_paid == None:
-    #                 total_amount_paid = 0
-    #                 cal = self.total_amount - total_amount_paid
+                    cal = grand_total - (
+                        total_amount_paid_details + total_amount_paid_extra
+                    )
+                    return cal
+                elif (
+                    total_amount_paid_details == None
+                    and total_amount_paid_extra == None
+                ):
+                    total_amount_paid_details = 0
+                    total_amount_paid_extra = 0
+                    cal = grand_total - (
+                        total_amount_paid_details + total_amount_paid_extra
+                    )
 
-    #                 return cal
-    #     except Exception as e:
-    #         return None
-    # def get_course_fee(self):
-        
-    # def save(self, *args, **kwargs):
-    #     try:
+                    return cal
+        except Exception as e:
+            print(e)
 
-       
-           
-    #     except Exception as e:
-    #         print(e)
-    #     super(Billing, self).save(*args, **kwargs)
+    def get_grand_total_paid(self):
+        try:
+            extrapayment = self.billingextrapayment_set.filter(
+                billing_id=self.id
+            ).aggregate(amount_paid=Sum("amount_paid"))
+            billingdetails = (
+                self.billingdetail_set.filter(billing_id=self.id)
+                .values("course_fee")
+                .first()
+            )
+
+            sum_total = extrapayment["amount_paid"] + billingdetails["course_fee"]
+
+            return sum_total
+        except Exception as e:
+            print(e)
+
+    def save(self, *args, **kwargs):
+        try:
+            grand_total = 0
+            if self.get_grand_total_paid != None:
+                grand_total = self.get_grand_total_paid()
+                self.grand_total_paid = grand_total
+
+            grand_outstanding = 0
+            if self.get_grand_outstanding != None:
+                grand_outstanding = self.get_grand_outstanding()
+                self.grand_outstanding = grand_outstanding
+
+        except Exception as e:
+            print(e)
+        super(Billing, self).save(*args, **kwargs)
 
 
 class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
     course_fee = models.PositiveBigIntegerField(blank=True, null=True)
     amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
-    outstanding_amount = models.CharField(default=0, max_length=50,blank=True, null=True)
+    outstanding_amount = models.CharField(
+        default=0, max_length=50, blank=True, null=True
+    )
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
 
-    # def cal_sum_ofamount(self):
-    #     try:
-    #         billings =self.billing.billingdetail_set.filter(billing_id=self.billing.id).aggregate(
-    #             amount_paid=Sum("amount_paid")
-    #         )['amount_paid']
+    def get_cal_for_outstanding(self):
+        grand_amount_paid = self.billing.billingdetail_set.filter(
+            billing_id=self.billing.id
+        ).aggregate(grand_amount_paid=Sum("amount_paid"))
+        grand_amount_paid = grand_amount_paid["grand_amount_paid"]
 
-    #         if billings:
-    #             if self.course_fee != None:
-    #                 self.billing.total_amount_paid = billings
-    #                 cal = self.course_fee - self.billing.total_amount_paid
-    #                 return cal
-    #             # elif self.billing.total_amount_paid == None:
-    #             #     self.billing.total_amount_paid = 0
-    #             #     cal = self.billing.total_amount - self.billing.total_amount_paid
+        grand_course_fee = (
+            self.billing.billingdetail_set.filter(billing_id=self.billing.id)
+            .values("course_fee")
+            .first()
+        )
+        grand_course = grand_course_fee["course_fee"]
 
-    #                 # return cal
-    #     except Exception as e:
-    #         print(e)
+        outstanding = int(grand_course) - grand_amount_paid
 
-    # def save(self, *args, **kwargs):
-    #     try:
-    #         self.outstanding_amount = self.cal_sum_ofamount()
-    #         # if self.billing.schedule.program_type == 'Onsite':
-    #         #     self.course_fee = self.billing.schedule.fee
-    #         # elif self.billing.schedule.program_type == 'Virtual':
-    #         #     self.course_fee = self.billing.schedule.fee_dollar 
-    #         # else:
-    #         #     pass
-  
-    #     except Exception as e:
-    #         print(e)
+        return outstanding
 
-    #     super(BillingDetail, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        try:
+            self.outstanding_amount = self.get_cal_for_outstanding()
+
+        except Exception as e:
+            pass
+
+        super(BillingDetail, self).save(*args, **kwargs)
 
 
-class ExtraItem(models.Model):
-    billing = models.ForeignKey(Billing, on_delete=models.CASCADE, null=True, blank=True)
+class BillingExtraPayment(models.Model):
+    billing = models.ForeignKey(
+        Billing, on_delete=models.CASCADE, null=True, blank=True
+    )
     item_name = models.CharField(max_length=255)
-    item_name_fee = models.PositiveIntegerField(blank=True,null=True)
+    item_name_fee = models.PositiveIntegerField(blank=True, null=True)
     amount_paid = models.PositiveIntegerField()
     outstanding_amount = models.CharField(default=0, max_length=50)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{str(self.billing.id)} - {self.item_name}'
-    
+        return f"{str(self.billing.id)} - {self.item_name}"
+
+    def get_cal_outstanding(self):
+        item_name_fee = (
+            self.billing.billingextrapayment_set.filter(billing_id=self.billing.id)
+            .filter(item_name=self.item_name)
+            .values("item_name_fee")
+            .first()
+        )
+
+        sum_amount_paid = self.billing.billingextrapayment_set.filter(
+            billing_id=self.billing.id
+        ).filter(item_name=self.item_name).aggregate(amount_paid=Sum("amount_paid"))
+
+        item_fee = item_name_fee["item_name_fee"]
+        outstanding = item_fee - sum_amount_paid["amount_paid"]
+        return outstanding
+
+    def save(self, *args, **kwargs):
+        try:
+            self.outstanding_amount = self.get_cal_outstanding()
+
+        except Exception as e:
+            print(e)
+
+        super(BillingExtraPayment, self).save(*args, **kwargs)
+
 
 # End Billing Information region
 
