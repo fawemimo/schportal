@@ -30,8 +30,7 @@ INSTALLED_APPS = [
     "api",
     "mainsite",
     "djoser",
-    "tinymce",
-    "signalcontrol"
+    "tinymce"
 ]
 
 if DEBUG:

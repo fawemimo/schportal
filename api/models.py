@@ -125,8 +125,13 @@ class Student(models.Model):
     def __str__(self):
         return f"{self.full_name} - {self.student_idcard_id}"
 
+    def save(self, *args, **kwargs):
+        student = Student.objects.get(id=self.id)
+        if student.is_approved == True:
+            pass
+        super(Student, self).save(*args, **kwargs)
 
-class BackupStudent(models.Model):
+class StudentBackup(models.Model):
     student = models.OneToOneField(Student, on_delete=models.CASCADE, blank=True, null=True)
     just_for_jobs = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, blank=True, null=True)

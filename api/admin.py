@@ -414,9 +414,7 @@ class StudentAdmin(admin.ModelAdmin):
         css = {"all": ["api/css/styles.css"]}
 
 
-
-
-@admin.register(BackupStudent)
+@admin.register(StudentBackup)
 class BackupStudentAdmin(admin.ModelAdmin):
     list_display = ["id", "full_name", "profile_pix", "student_idcard_id"]
     search_fields = ["full_name"]
@@ -438,8 +436,6 @@ class BackupStudentAdmin(admin.ModelAdmin):
             row = writer.writerow([getattr(x, field) for field in fieldnames])
         return response
 
-   
-
     def profile_pix(self, instance):
         if instance.profile_pic.name != "":
             return format_html(
@@ -449,7 +445,6 @@ class BackupStudentAdmin(admin.ModelAdmin):
 
     class Media:
         css = {"all": ["api/css/styles.css"]}
-
 
 
 @admin.register(Assignment)
@@ -700,9 +695,18 @@ class JobApplicationAdmin(admin.ModelAdmin):
 # Billing region
 @admin.register(BillingExtraPayment)
 class BillingExtraPaymentAdmin(admin.ModelAdmin):
-    list_display = ["id", "billing", "item_name","item_name_fee","amount_paid", "outstanding_amount","date_created"]
+    list_display = [
+        "id",
+        "billing",
+        "item_name",
+        "item_name_fee",
+        "amount_paid",
+        "outstanding_amount",
+        "date_created",
+    ]
     list_editable = ["amount_paid"]
     list_per_page = 25
+
 
 @admin.register(Billing)
 class BillingAdmin(admin.ModelAdmin):
