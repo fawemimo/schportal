@@ -89,6 +89,7 @@ class Course(models.Model):
 
 
 class Student(models.Model):
+    is_approved = models.BooleanField(default=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     just_for_jobs = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, blank=True, null=True)
@@ -101,6 +102,8 @@ class Student(models.Model):
             validate_file_size,
             FileExtensionValidator(allowed_extensions=["jpg", "png", "jpeg"]),
         ],
+        blank=True,
+        null=True,
     )
     cv_upload = models.FileField(
         upload_to="JobPortal/cv_upload",

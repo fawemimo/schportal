@@ -88,9 +88,13 @@ class TeacherViewSet(ModelViewSet):
 
 
 class StudentViewSet(ModelViewSet):
-    http_method_names = ["get", "patch"]
-    serializer_class = StudentSerializer
+    http_method_names = ["get", "patch","post"]
 
+    def get_serializer_class(self):
+        if self.request.method in ['POST','PATCH']:
+            return UpdateStudentSerializer
+        return StudentSerializer
+    
     def get_queryset(self):
         if self.request.user.user_type == "student":
             return Student.objects.filter(user_id=self.request.user.id).select_related(
@@ -98,7 +102,7 @@ class StudentViewSet(ModelViewSet):
             )
 
     def get_permissions(self):
-        if self.request.method in ["PATCH", "GET"]:
+        if self.request.method in ["POST","PATCH", "GET"]:
             return [IsStudentType()]
         return [permissions.IsAdminUser()]
 
@@ -108,6 +112,30 @@ class StudentViewSet(ModelViewSet):
         request = {"Authorization": config("SQUAD_SECRET_KEY")}
         return Response(request, status=status.HTTP_200_OK)
 
+    @action(
+        detail=False,
+        methods=["GET", "POST"],
+        permission_classes=[IsStudentType],
+        serializer_class = UpdateStudentSerializer
+    )
+    def profile(self, request):
+        student = Student.objects.get(user=self.request.user.id)
+
+        serializer = UpdateStudentSerializer(student)
+
+        if request.method == "GET":
+            serializer = UpdateStudentSerializer(student)
+            return Response(serializer.data)
+
+        elif request.method == "POST":
+            serializer = UpdateStudentSerializer(student, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 
 class StudentUpdateViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "head", "options"]

@@ -141,6 +141,39 @@ class StudentSerializer(serializers.ModelSerializer):
         ]
 
 
+class UpdateStudentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Student
+        fields = [
+            "date_of_birth",
+            "mobile_numbers",
+            "profile_pic",
+            "cv_upload",
+            "residential_address",
+            "contact_address",
+            "next_of_kin_fullname",
+            "next_of_kin_contact_address",
+            "next_of_kin_mobile_number",
+            "relationship_with_next_kin",
+        ]
+
+
+    def update(self, instance, validated_data):
+        instance.date_of_birth = validated_data["date_of_birth"]
+        instance.mobile_numbers = validated_data["mobile_numbers"]
+        instance.cv_upload = validated_data["cv_upload"]
+        instance.profile_pic = validated_data["profile_pic"]
+        instance.residential_address = validated_data["residential_address"]
+        instance.contact_address = validated_data["contact_address"]
+        instance.next_of_kin_fullname = validated_data["next_of_kin_fullname"]
+        instance.next_of_kin_contact_address = validated_data["next_of_kin_contact_address"]
+        instance.next_of_kin_mobile_number = validated_data["next_of_kin_mobile_number"]
+        instance.relationship_with_next_kin = validated_data["relationship_with_next_kin"]
+
+        return super(UpdateStudentSerializer, self).update(instance, validated_data)
+    
+
 class UpdateProfilePicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
