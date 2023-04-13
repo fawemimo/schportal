@@ -846,6 +846,7 @@ class InternationalModelSerializer(serializers.ModelSerializer):
             "country_code",
             "topbar_src",
             "why_choose_virtual",
+            "identify_our_virutal_courses"
         ]
 
     lookup_field = "country_name"
