@@ -88,7 +88,7 @@ class TeacherViewSet(ModelViewSet):
 
 
 class StudentViewSet(ModelViewSet):
-    http_method_names = ["get", "post", "patch", "head", "options"]
+    http_method_names = ["get", "post", "patch", "head", "options", "put"]
     # parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
     def get_serializer_class(self):
@@ -103,9 +103,35 @@ class StudentViewSet(ModelViewSet):
             )
 
     def get_permissions(self):
-        if self.request.method in ["POST","PATCH", "GET"]:
+        if self.request.method in ["POST","PATCH", "GET","PUT"]:
             return [IsStudentType()]
         return [permissions.IsAdminUser()]
+
+    def update(self, request, pk=None):
+        student = Student.objects.filter(user =self.request.user.id).get(id=pk)
+        if request.method == 'POST':            
+            serializer    = UpdateStudentSerializer(request.POST,request.FILES,instance=student)
+            
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data,pk=student.id)
+            else:
+                return Response(serializer.errors,pk=student.id)
+        else:
+            serializer = UpdateStudentSerializer(instance=student)
+        
+        # instance = self.get_object()
+        # serializer = UpdateStudentSerializer(instance, data=request.data, partial=True)
+        # serializer.is_valid(raise_exception=True)
+
+        # profile_pic = 'profile_pic'  
+        # if profile_pic in request.FILES:
+        #     instance.profile_pic.delete()  
+        #     instance.profile_pic = request.FILES[profile_pic]
+
+        self.perform_update(serializer)
+
+        return Response(serializer.data)    
 
     @action(detail=False, methods=["GET"])
     def payments_secret(self, request):
@@ -115,13 +141,13 @@ class StudentViewSet(ModelViewSet):
 
     @action(
         detail=False,
-        methods=["GET","PATCH"],
+        methods=["GET","PATCH","PUT","POST"],
         permission_classes=[IsStudentType],
         serializer_class = UpdateStudentSerializer,
         # parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     )
-    def profile(self, request, *args,**kwargs):
-        student = Student.objects.get(user=self.request.user.id)
+    def profile(self, request, pk=None,*args,**kwargs):
+        student = Student.objects.get(user=self.request.user.id).get(id=pk)
 
         serializer = UpdateStudentSerializer(student)
 
@@ -129,15 +155,25 @@ class StudentViewSet(ModelViewSet):
             serializer = UpdateStudentSerializer(student)
             return Response(serializer.data)
 
-        elif request.method == "PATCH":
-            serializer = UpdateStudentSerializer(student, data=request.data)
+        elif request.method == "POST":
+            serializer = UpdateStudentSerializer(student,request.POST,request.FILES,instance=student)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return Response(serializer.data)
+            if request.method == 'POST':            
+                serializer    = UpdateStudentSerializer()
+                
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data,pk=student.id)
+                else:
+                    return Response(serializer.errors,pk=student.id)
+            else:
+                serializer = UpdateStudentSerializer(instance=student)
+                return Response(serializer.data)
 
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+            # else:
+            #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
 
 class StudentUpdateViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "head", "options"]
@@ -659,15 +695,13 @@ class SponsorshipsViewSet(ModelViewSet):
 
 
 class EmployerViewSet(ModelViewSet):
-    http_method_names = ["get", "patch", "head", "options"]
-
+    http_method_names = ["get", "post","patch", "head", "options"]
     permission_classes = [IsEmployerType]
-    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
     def get_serializer_class(self):
         if self.request.method == "GET":
             return EmployerSerializer
-        elif self.request.method == "PATCH":
+        elif self.request.method == "POST":
             return UpdateEmployerSerializer
         else:
             return EmployerSerializer
@@ -684,12 +718,10 @@ class EmployerViewSet(ModelViewSet):
     @action(
         detail=False,
         methods=["GET","PATCH","POST"],
-        permission_classes=[IsEmployerType],
-        parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+        permission_classes=[IsEmployerType]
     )
-    def profile(self, request):
+    def profile(self, request, *args,**kwargs):
         employer = Employer.objects.get(user=self.request.user.id)
-        # employer = employer.objects.get(user=self.kwargs.get('user_pk'))
 
         serializer = UpdateEmployerSerializer(employer)
 
@@ -697,16 +729,14 @@ class EmployerViewSet(ModelViewSet):
             serializer = UpdateEmployerSerializer(employer)
             return Response(serializer.data)
 
-        elif request.method == ["PATCH", "POST", "PUT"]:
+        elif request.method == 'POST':
             serializer = UpdateEmployerSerializer(employer, data=request.data)
-            # serializer.is_valid(raise_exception=True)
-            # serializer.save()
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
 
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class JobViewSet(ModelViewSet):

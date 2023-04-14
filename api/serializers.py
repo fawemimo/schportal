@@ -168,11 +168,19 @@ class UpdateStudentSerializer(serializers.ModelSerializer):
         instance.next_of_kin_contact_address = validated_data["next_of_kin_contact_address"]
         instance.next_of_kin_mobile_number = validated_data["next_of_kin_mobile_number"]
         instance.relationship_with_next_kin = validated_data["relationship_with_next_kin"]
-        if instance.cv_upload:
-            instance.cv_upload = validated_data.get("cv_upload")
-        if instance.profile_pic:                
-            instance.profile_pic = validated_data.pop("profile_pic", None)
 
+        if instance.cv_upload:
+
+            if 'cv_upload' in validated_data:
+                instance.cv_upload.delete()
+            instance.cv_upload = validated_data.get("cv_upload")
+
+        if instance.profile_pic:         
+
+            if 'profile_pic' in validated_data:
+                instance.profile_pic.delete()   
+            instance.profile_pic = validated_data.get("profile_pic")
+        Student.objects.update(profile_pic=instance.profile_pic,cv_upload=instance.cv_upload)
         return super(UpdateStudentSerializer, self).update(instance, validated_data)
     
 
@@ -1033,7 +1041,7 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
         company_name = validated_data.get("company_name",instance.company_name)
         location = validated_data.get("location",instance.location)
         tagline = validated_data.get("tagline",instance.tagline)
-        company_logo = validated_data.get("tagline",instance.company_logo)
+        company_logo = validated_data.get("company_logo",instance.company_logo)
         instance.contact_person = contact_person
         instance.contact_person_mobile = contact_person_mobile
         instance.company_url = company_url
@@ -1042,16 +1050,16 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
         instance.tagline = tagline
         instance.company_logo = company_logo
 
-        self.is_valid(raise_exception=True)
-        # if not self.context['request'].content_type.startswith('multipart/form-data'):
-        #     raise serializers.ValidationError('Invalid content type')
-        instance = super().update(instance, validated_data)
+        # self.is_valid(raise_exception=True)
+        # # if not self.context['request'].content_type.startswith('multipart/form-data'):
+        # #     raise serializers.ValidationError('Invalid content type')
+        # instance = super().update(instance, validated_data)
 
-        # company_logo = validated_data.get('company_logo', None)
-        if company_logo:
-            instance.company_logo.save(company_logo.name, company_logo, save=True) 
+        # # company_logo = validated_data.get('company_logo', None)
+        # if company_logo:
+        #     instance.company_logo.save(company_logo.name, company_logo, save=True) 
 
-        return instance
+        return super(UpdateEmployerSerializer, self).update(instance, validated_data)
 
 
 class JobCategorySerializer(serializers.ModelSerializer):

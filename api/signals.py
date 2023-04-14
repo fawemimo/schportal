@@ -46,25 +46,7 @@ def create_billing_details(sender, instance, created, *args, **kwargs):
     if created:
         BillingDetail.objects.create(
             billing=instance,
-            course_fee=instance.schedule.fee
-            if instance.schedule.program_type == "Onsite"
-            else instance.schedule.fee_dollar,
+            course_fee=instance.course_fee
         )
         instance.save()
 
-
-# @receiver(post_save, sender=Student)
-# def create_backup_student(sender, instance,created, *args, **kwargs):
-
-#     try:
-#         if created:
-#             print('Sender sending .....')
-#             if instance.is_approved == True:
-#                 print('is approved is true .....')
-#                 BackupStudent.objects.create(student=instance, just_for_jobs=instance.just_for_jobs, full_name=instance.full_name, student_idcard_id=instance.student_idcard_id, date_of_birth=instance.date_of_birth, mobile_numbers=instance.mobile_numbers, profile_pic=instance.profile_pic, cv_upload=instance.cv_upload,residential_address=instance.residential_address, contact_address=instance.contact_address, next_of_kin_fullname=instance.next_of_kin_fullname, next_of_kin_contact_address=instance.next_of_kin_contact_address, next_of_kin_mobile_number=instance.next_of_kin_mobile_number, relationship_with_next_kin=instance.next_of_kin_mobile_number)
-
-#                 print('Instance created and save')
-#                 instance.save()
-
-#     except Exception as e:
-#         print(e)
