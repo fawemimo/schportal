@@ -813,9 +813,9 @@ class Billing(models.Model):
     sponsor = models.ForeignKey(
         Sponsor, on_delete=models.CASCADE, blank=True, null=True
     )
-    schedule = models.ForeignKey(
-        Schedule, on_delete=models.CASCADE, blank=True, null=True
-    )
+    course_name = models.CharField(blank=True, null=True, max_length=255)
+    course_fee = models.PositiveBigIntegerField(blank=True, null=True)
+    start_date = models.DateTimeField(blank=True, null=True)
     student = models.ForeignKey(
         Student, on_delete=models.SET_NULL, null=True, blank=True
     )

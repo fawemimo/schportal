@@ -1370,16 +1370,15 @@ class BillingSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
     grand_total_paid = serializers.SerializerMethodField()
     grand_outstanding = serializers.SerializerMethodField()
-    start_date = serializers.SerializerMethodField()
     extra_payment = serializers.SerializerMethodField()
     billingdetails = serializers.SerializerMethodField()
-    course_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Billing
         fields = [
             "id",
             "student",
+            "course_fee",
             "course_name",
             "start_date",
             "payment_completion_status",
@@ -1388,12 +1387,6 @@ class BillingSerializer(serializers.ModelSerializer):
             "billingdetails",
             "extra_payment",
         ]
-
-    def get_start_date(self, obj):
-        return obj.schedule.startdate
-    
-    def get_course_name(self, obj):
-        return obj.schedule.course.title
     
     def get_extra_payment(self, obj):
         return obj.billingextrapayment_set.filter(billing_id=obj.id).values(

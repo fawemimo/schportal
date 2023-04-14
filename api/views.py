@@ -89,7 +89,7 @@ class TeacherViewSet(ModelViewSet):
 
 class StudentViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "head", "options"]
-
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     def get_serializer_class(self):
         if self.request.method in ['POST','PATCH']:
             return UpdateStudentSerializer
@@ -116,9 +116,10 @@ class StudentViewSet(ModelViewSet):
         detail=False,
         methods=["GET","PATCH"],
         permission_classes=[IsStudentType],
-        serializer_class = UpdateStudentSerializer
+        serializer_class = UpdateStudentSerializer,
+        parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     )
-    def profile(self, request):
+    def profile(self, request, *args,**kwargs):
         student = Student.objects.get(user=self.request.user.id)
 
         serializer = UpdateStudentSerializer(student)
@@ -660,7 +661,7 @@ class EmployerViewSet(ModelViewSet):
     http_method_names = ["get", "patch", "head", "options"]
 
     permission_classes = [IsEmployerType]
-    # parser_classes = [parsers.MultiPartParser]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -683,6 +684,7 @@ class EmployerViewSet(ModelViewSet):
         detail=False,
         methods=["GET","PATCH","POST"],
         permission_classes=[IsEmployerType],
+        parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     )
     def profile(self, request):
         employer = Employer.objects.get(user=self.request.user.id)
@@ -859,7 +861,7 @@ class BillingPaymentViewSet(ModelViewSet):
         return (
             Billing.objects.filter(student__user=self.request.user)
             .prefetch_related("billingdetail_set","billingextrapayment_set")
-            .select_related("student", "schedule")
+            .select_related("student")
         )
 
     def get_serializer_context(self):
