@@ -125,17 +125,19 @@ class Student(models.Model):
     def __str__(self):
         return f"{self.full_name} - {self.student_idcard_id}"
 
-    def save(self, *args, **kwargs):
-        student = Student.objects.get(id=self.id)
-        if student.is_approved == True:
+    def image_img(self):
+        if self.profile_pic:
+            return u'<img src="%s" width="50" height="50" />' % self.profile_pic.url
+        else:
             pass
-        super(Student, self).save(*args, **kwargs)
+    image_img.short_description = 'Thumb'
+    image_img.allow_tags = True
 
 class StudentBackup(models.Model):
     student = models.OneToOneField(Student, on_delete=models.CASCADE, blank=True, null=True)
     just_for_jobs = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, blank=True, null=True)
-    student_idcard_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
+    student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
     date_of_birth = models.CharField(max_length=50, blank=True, null=True)
     mobile_numbers = models.CharField(max_length=250, blank=True, null=True)
     profile_pic = models.ImageField(
@@ -167,7 +169,26 @@ class StudentBackup(models.Model):
     def __str__(self):
         return f"{self.full_name} - {self.student_idcard_id}"
 
-
+    def save(self, *args, **kwargs):
+        try:
+            student = Student.objects.get(id=self.student.id)
+            if student.is_approved == True:
+                self.just_for_jobs=student.just_for_jobs
+                self.full_name=student.full_name
+                self.student_idcard_id=student.student_idcard_id
+                self.date_of_birth=student.date_of_birth
+                self.mobile_numbers=student.mobile_numbers
+                self.profile_pic=student.profile_pic
+                self.contact_address=student.contact_address
+                self.next_of_kin_fullname=student.next_of_kin_fullname
+                self.next_of_kin_contact_address=student.next_of_kin_contact_address
+                self.next_of_kin_mobile_number=student.next_of_kin_mobile_number
+                self.relationship_with_next_kin=student.relationship_with_next_kin
+                self.cv_upload=student.cv_upload
+                
+            super(StudentBackup, self).save(*args, **kwargs)
+        except Exception as e:
+            print(e)
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     full_name = models.CharField(max_length=255, blank=True, null=True)

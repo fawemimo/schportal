@@ -4,7 +4,7 @@ from decouple import config
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, permissions, status
+from rest_framework import filters, permissions, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -114,7 +114,7 @@ class StudentViewSet(ModelViewSet):
 
     @action(
         detail=False,
-        methods=["GET", "POST","PATCH"],
+        methods=["GET","PATCH"],
         permission_classes=[IsStudentType],
         serializer_class = UpdateStudentSerializer
     )
@@ -127,7 +127,7 @@ class StudentViewSet(ModelViewSet):
             serializer = UpdateStudentSerializer(student)
             return Response(serializer.data)
 
-        elif request.method == "POST":
+        elif request.method == "PATCH":
             serializer = UpdateStudentSerializer(student, data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -657,25 +657,31 @@ class SponsorshipsViewSet(ModelViewSet):
 
 
 class EmployerViewSet(ModelViewSet):
-    http_method_names = ["get", "patch", "head", "options", "post"]
+    http_method_names = ["get", "patch", "head", "options"]
 
     permission_classes = [IsEmployerType]
+    # parser_classes = [parsers.MultiPartParser]
 
     def get_serializer_class(self):
         if self.request.method == "GET":
             return EmployerSerializer
-        elif self.request.method == "POST":
+        elif self.request.method == "PATCH":
             return UpdateEmployerSerializer
         else:
-            return UpdateEmployerSerializer
+            return EmployerSerializer
 
     def get_queryset(self):
         if self.request.user.user_type == "employer":
             return Employer.objects.filter(user_id=self.request.user.id)
-
+        
+    def get_serializer_context(self):
+        return {
+            'user_id': self.request.user.id
+        }
+    
     @action(
         detail=False,
-        methods=["GET", "POST","PATCH"],
+        methods=["GET","PATCH","POST"],
         permission_classes=[IsEmployerType],
     )
     def profile(self, request):
@@ -688,14 +694,16 @@ class EmployerViewSet(ModelViewSet):
             serializer = UpdateEmployerSerializer(employer)
             return Response(serializer.data)
 
-        elif request.method == "POST":
+        elif request.method == ["PATCH", "POST", "PUT"]:
             serializer = UpdateEmployerSerializer(employer, data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
+            # serializer.is_valid(raise_exception=True)
+            # serializer.save()
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
 
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class JobViewSet(ModelViewSet):

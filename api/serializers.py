@@ -1027,15 +1027,31 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
         extra_kwargs = {"company_logo": {"required": False, "allow_null": True}}
 
     def update(self, instance, validated_data):
-        instance.contact_person = validated_data["contact_person"]
-        instance.contact_person_mobile = validated_data["contact_person_mobile"]
-        instance.company_url = validated_data["company_url"]        
-        instance.company_name = validated_data["company_name"]
-        instance.location = validated_data["location"]
-        instance.tagline = validated_data["tagline"]
-        if instance.company_logo:
-            instance.company_logo = validated_data["company_logo"]
-        return super(UpdateEmployerSerializer, self).update(instance, validated_data)
+        contact_person = validated_data.get("contact_person", instance.contact_person)
+        contact_person_mobile = validated_data.get("contact_person_mobile",instance.contact_person_mobile)
+        company_url = validated_data.get("company_url",instance.company_url)
+        company_name = validated_data.get("company_name",instance.company_name)
+        location = validated_data.get("location",instance.location)
+        tagline = validated_data.get("tagline",instance.tagline)
+        company_logo = validated_data.get("tagline",instance.company_logo)
+        instance.contact_person = contact_person
+        instance.contact_person_mobile = contact_person_mobile
+        instance.company_url = company_url
+        instance.company_name = company_name
+        instance.location = location
+        instance.tagline = tagline
+        instance.company_logo = company_logo
+
+        self.is_valid(raise_exception=True)
+        # if not self.context['request'].content_type.startswith('multipart/form-data'):
+        #     raise serializers.ValidationError('Invalid content type')
+        instance = super().update(instance, validated_data)
+
+        # company_logo = validated_data.get('company_logo', None)
+        if company_logo:
+            instance.company_logo.save(company_logo.name, company_logo, save=True) 
+
+        return instance
 
 
 class JobCategorySerializer(serializers.ModelSerializer):
