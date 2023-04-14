@@ -828,7 +828,8 @@ class Billing(models.Model):
         blank=True,
         null=True,
     )
-
+    date_posted = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    date_update= models.DateTimeField(auto_now=True, blank=True,null=True)
     def __str__(self):
         return f"{str(self.student.full_name)} - {str(self.student.student_idcard_id)}-{str(self.id)}"
 
