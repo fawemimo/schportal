@@ -811,13 +811,13 @@ class JobApplication(models.Model):
 class Billing(models.Model):
     got_scholarship = models.BooleanField(default=False)
     sponsor = models.ForeignKey(
-        Sponsor, on_delete=models.CASCADE, blank=True, null=True
+        Sponsor, on_delete=models.DO_NOTHING, blank=True, null=True
     )
-    course_name = models.CharField(blank=True, null=True, max_length=255)
+    course_name = models.ForeignKey(Course,blank=True, null=True, on_delete=models.PROTECT)
     course_fee = models.PositiveBigIntegerField(blank=True, null=True)
     start_date = models.DateTimeField(blank=True, null=True)
     student = models.ForeignKey(
-        Student, on_delete=models.SET_NULL, null=True, blank=True
+        Student, on_delete=models.PROTECT, null=True, blank=True
     )
     grand_total_paid = models.PositiveBigIntegerField(blank=True, null=True)
     grand_outstanding = models.PositiveBigIntegerField(blank=True, null=True)

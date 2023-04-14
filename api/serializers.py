@@ -169,9 +169,9 @@ class UpdateStudentSerializer(serializers.ModelSerializer):
         instance.next_of_kin_mobile_number = validated_data["next_of_kin_mobile_number"]
         instance.relationship_with_next_kin = validated_data["relationship_with_next_kin"]
         if instance.cv_upload:
-            instance.cv_upload = validated_data["cv_upload"]
+            instance.cv_upload = validated_data.get("cv_upload")
         if instance.profile_pic:                
-            instance.profile_pic = validated_data["profile_pic"]
+            instance.profile_pic = validated_data.pop("profile_pic", None)
 
         return super(UpdateStudentSerializer, self).update(instance, validated_data)
     

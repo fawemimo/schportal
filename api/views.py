@@ -89,7 +89,8 @@ class TeacherViewSet(ModelViewSet):
 
 class StudentViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "head", "options"]
-    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+    # parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+
     def get_serializer_class(self):
         if self.request.method in ['POST','PATCH']:
             return UpdateStudentSerializer
@@ -117,7 +118,7 @@ class StudentViewSet(ModelViewSet):
         methods=["GET","PATCH"],
         permission_classes=[IsStudentType],
         serializer_class = UpdateStudentSerializer,
-        parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+        # parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     )
     def profile(self, request, *args,**kwargs):
         student = Student.objects.get(user=self.request.user.id)
