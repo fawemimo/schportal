@@ -695,6 +695,20 @@ class JobApplicationAdmin(admin.ModelAdmin):
 # Billing region
 @admin.register(BillingExtraPayment)
 class BillingExtraPaymentAdmin(admin.ModelAdmin):
+
+    @admin.display(description="Export as CSV")
+    def export_to_csv(self, request, queryset):
+        meta = self.model._meta
+        fieldnames = [field.name for field in meta.fields]
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename={}.csv".format(meta)
+
+        writer = csv.writer(response)
+        writer.writerow(fieldnames)
+        for x in queryset:
+            row = writer.writerow([getattr(x, field) for field in fieldnames])
+        return response
+
     list_display = [
         "id",
         "billing",
@@ -706,6 +720,7 @@ class BillingExtraPaymentAdmin(admin.ModelAdmin):
     ]
     list_editable = ["amount_paid"]
     list_per_page = 25
+    actions = ["export_to_csv"]
 
 
 @admin.register(Billing)

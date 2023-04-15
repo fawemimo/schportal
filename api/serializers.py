@@ -119,13 +119,13 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    # user = UserSerializer()
 
     class Meta:
         model = Student
         fields = [
             "id",
-            "user",
+            # "user",
             "full_name",
             "student_idcard_id",
             "date_of_birth",
@@ -159,29 +159,29 @@ class UpdateStudentSerializer(serializers.ModelSerializer):
         ]
 
 
-    def update(self, instance, validated_data):
-        instance.date_of_birth = validated_data["date_of_birth"]
-        instance.mobile_numbers = validated_data["mobile_numbers"]        
-        instance.residential_address = validated_data["residential_address"]
-        instance.contact_address = validated_data["contact_address"]
-        instance.next_of_kin_fullname = validated_data["next_of_kin_fullname"]
-        instance.next_of_kin_contact_address = validated_data["next_of_kin_contact_address"]
-        instance.next_of_kin_mobile_number = validated_data["next_of_kin_mobile_number"]
-        instance.relationship_with_next_kin = validated_data["relationship_with_next_kin"]
+    # def update(self, instance, validated_data):
+    #     instance.date_of_birth = validated_data["date_of_birth"]
+    #     instance.mobile_numbers = validated_data["mobile_numbers"]        
+    #     instance.residential_address = validated_data["residential_address"]
+    #     instance.contact_address = validated_data["contact_address"]
+    #     instance.next_of_kin_fullname = validated_data["next_of_kin_fullname"]
+    #     instance.next_of_kin_contact_address = validated_data["next_of_kin_contact_address"]
+    #     instance.next_of_kin_mobile_number = validated_data["next_of_kin_mobile_number"]
+    #     instance.relationship_with_next_kin = validated_data["relationship_with_next_kin"]
 
-        if instance.cv_upload:
+    #     if instance.cv_upload:
 
-            if 'cv_upload' in validated_data:
-                instance.cv_upload.delete()
-            instance.cv_upload = validated_data.get("cv_upload")
+    #         if 'cv_upload' in validated_data:
+    #             instance.cv_upload.delete()
+    #         instance.cv_upload = validated_data.get("cv_upload")
 
-        if instance.profile_pic:         
+    #     if instance.profile_pic:         
 
-            if 'profile_pic' in validated_data:
-                instance.profile_pic.delete()   
-            instance.profile_pic = validated_data.get("profile_pic")
-        Student.objects.update(profile_pic=instance.profile_pic,cv_upload=instance.cv_upload)
-        return super(UpdateStudentSerializer, self).update(instance, validated_data)
+    #         if 'profile_pic' in validated_data:
+    #             instance.profile_pic.delete()   
+    #         instance.profile_pic = validated_data.get("profile_pic")
+    #     Student.objects.update(profile_pic=instance.profile_pic,cv_upload=instance.cv_upload)
+    #     return super(UpdateStudentSerializer, self).update(instance, validated_data)
     
 
 class UpdateProfilePicSerializer(serializers.ModelSerializer):
@@ -1416,9 +1416,10 @@ class BillingSerializer(serializers.ModelSerializer):
             extrapayment = obj.billingextrapayment_set.filter(billing_id=obj.id).aggregate(
                 amount_paid=Sum("amount_paid")
             )
-            billingdetails = obj.billingdetail_set.filter(billing_id=obj.id).values('course_fee').first()
-
-            sum_total = extrapayment["amount_paid"] + billingdetails["course_fee"]
+            billingdetails = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(
+                amount_paid=Sum("amount_paid")
+            )
+            sum_total = extrapayment["amount_paid"] + billingdetails["amount_paid"]
 
             return sum_total
         except Exception as e:

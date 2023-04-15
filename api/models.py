@@ -830,6 +830,7 @@ class Billing(models.Model):
     )
     date_posted = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     date_update= models.DateTimeField(auto_now=True, blank=True,null=True)
+    
     def __str__(self):
         return f"{str(self.student.full_name)} - {str(self.student.student_idcard_id)}-{str(self.id)}"
 
@@ -838,48 +839,55 @@ class Billing(models.Model):
             billingdetails = self.billingdetail_set.filter(
                 billing_id=self.id
             ).aggregate(amount_paid=Sum("amount_paid"))
+
+            course_fee = self.course_fee
+
+            # getting the item name
+            extra_item_fee = 0
+
+            # getting the item fee  
+            extra_payment = 0
+
+            # declaring grand total none
+            grand_total = 0
             extra_payment = self.billingextrapayment_set.filter(
-                billing_id=self.id
-            ).aggregate(amount_paid=Sum("amount_paid"))
+                    billing_id=self.id
+                ).aggregate(amount_paid=Sum("amount_paid"))
+
             extra_item_fee = (
-                self.billingextrapayment_set.filter(billing_id=self.id)
-                .values("item_name_fee")
-                .first()
-            )
-
-            total_amount_paid_details = 0
-            total_amount_paid_extra = 0
-            course_fee = (
-                self.billingdetail_set.filter(billing_id=self.id)
-                .values("course_fee")
-                .first()
-            )
-            grand_total = extra_item_fee["item_name_fee"] + course_fee["course_fee"]
-            if billingdetails and extra_payment:
-                if (
-                    total_amount_paid_details != None
-                    and total_amount_paid_extra != None
-                ):
-                    total_amount_paid_details = billingdetails["amount_paid"]
-                    total_amount_paid_extra = extra_payment["amount_paid"]
-
-                    cal = grand_total - (
-                        total_amount_paid_details + total_amount_paid_extra
-                    )
+            self.billingextrapayment_set.filter(billing_id=self.id)
+            .values("item_name_fee")
+            .first()
+            ) 
+            
+            if extra_payment != 0 and extra_item_fee != 0:
+                # add course fee and the xtra payment to get grand total
+                xif = extra_item_fee['item_name_fee']
+                print('xif: ',xif)
+                grand_total =  xif + course_fee
+                print('grand_total1: ', grand_total)
+            else:
+                xif = 0
+                grand_total = xif + course_fee
+                # print('xif: ',xif)
+                # print('grand_total2: ',grand_total)   
+                total_amount_paid_details = billingdetails["amount_paid"]
+                # print('total_amount_paid_details: ',total_amount_paid_details)
+                total_amount_paid_extra = extra_payment["amount_paid"]
+                # print('total_amount_paid_extra:', total_amount_paid_extra)
+                # print('course_fee: ',course_fee)
+               
+                
+                if total_amount_paid_details != 0 and total_amount_paid_extra != 0:
+                    cal = grand_total - (total_amount_paid_details + total_amount_paid_extra)
                     return cal
-                elif (
-                    total_amount_paid_details == None
-                    and total_amount_paid_extra == None
-                ):
-                    total_amount_paid_details = 0
-                    total_amount_paid_extra = 0
-                    cal = grand_total - (
-                        total_amount_paid_details + total_amount_paid_extra
-                    )
-
+                else:
+                    cal = grand_total - (total_amount_paid_details + 0)
                     return cal
+            
         except Exception as e:
-            print(e)
+            # print('exception from grand outstanding function',e)
+            pass
 
     def get_grand_total_paid(self):
         try:
@@ -888,30 +896,40 @@ class Billing(models.Model):
             ).aggregate(amount_paid=Sum("amount_paid"))
             billingdetails = (
                 self.billingdetail_set.filter(billing_id=self.id)
-                .values("course_fee")
-                .first()
+                .aggregate(amount_paid=Sum("amount_paid"))
+                
             )
-
-            sum_total = extrapayment["amount_paid"] + billingdetails["course_fee"]
-
-            return sum_total
+            expayment = extrapayment["amount_paid"]
+            bd = billingdetails["amount_paid"]
+            if expayment is not None and bd is not None:
+                sum_total =  bd + expayment
+                return sum_total
+            else:
+                sum_total =  bd + 0
+                return sum_total
+            
         except Exception as e:
-            print(e)
+            # print('Exception fron grand total',e)
+            pass
 
     def save(self, *args, **kwargs):
         try:
             grand_total = 0
-            if self.get_grand_total_paid != None:
+            if self.get_grand_total_paid != 0:
                 grand_total = self.get_grand_total_paid()
                 self.grand_total_paid = grand_total
+            else:    
+                self.get_grand_total_paid = grand_total
 
-            grand_outstanding = 0
-            if self.get_grand_outstanding != None:
+            self.grand_outstanding = self.course_fee
+            if self.get_grand_outstanding != 0:
                 grand_outstanding = self.get_grand_outstanding()
                 self.grand_outstanding = grand_outstanding
-
+         
+                
         except Exception as e:
-            print(e)
+            # print('Exception from save method',e)
+            pass
         super(Billing, self).save(*args, **kwargs)
 
 
@@ -933,12 +951,9 @@ class BillingDetail(models.Model):
         ).aggregate(grand_amount_paid=Sum("amount_paid"))
         grand_amount_paid = grand_amount_paid["grand_amount_paid"]
 
-        grand_course_fee = (
-            self.billing.billingdetail_set.filter(billing_id=self.billing.id)
-            .values("course_fee")
-            .first()
-        )
-        grand_course = grand_course_fee["course_fee"]
+        grand_course_fee = self.billing.course_fee
+        
+        grand_course = grand_course_fee
 
         outstanding = int(grand_course) - grand_amount_paid
 
