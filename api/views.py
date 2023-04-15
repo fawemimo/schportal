@@ -12,7 +12,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.models import *
 from api.pdf import *
-
+from api.parsers import *
 from .filters import *
 from .models import *
 from .paginations import *
@@ -89,7 +89,6 @@ class TeacherViewSet(ModelViewSet):
 
 class StudentViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "head", "options", "put"]
-    # parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
     def get_serializer_class(self):
         if self.request.method in ['POST','PATCH']:
@@ -107,74 +106,60 @@ class StudentViewSet(ModelViewSet):
             return [IsStudentType()]
         return [permissions.IsAdminUser()]
 
-    # def update(self, request, pk=None):
-    #     student = Student.objects.filter(user =self.request.user.id).get(id=pk)
-    #     if request.method == 'POST':            
-    #         serializer    = UpdateStudentSerializer(request.POST,request.FILES,instance=student)
-            
-    #         if serializer.is_valid():
-    #             serializer.save()
-    #             return Response(serializer.data,pk=student.id)
-    #         else:
-    #             return Response(serializer.errors,pk=student.id)
-    #     else:
-    #         serializer = UpdateStudentSerializer(instance=student)
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        date_of_birth = request.data.get('date_of_birth', None)
+        mobile_numbers = request.data.get('mobile_numbers', None)
+        residential_address = request.data.get('residential_address', None)
+        contact_address = request.data.get('contact_address', None)
+        next_of_kin_fullname = request.data.get('next_of_kin_fullname', None)
+        next_of_kin_contact_address = request.data.get('next_of_kin_contact_address', None)
+        next_of_kin_mobile_number = request.data.get('next_of_kin_mobile_number', None)
+        relationship_with_next_kin = request.data.get('relationship_with_next_kin', None)
+        cv_upload = request.data.get('cv_upload', None)
+        profile_pic = request.data.get('profile_pic', None) 
         
-        # instance = self.get_object()
-        # serializer = UpdateStudentSerializer(instance, data=request.data, partial=True)
-        # serializer.is_valid(raise_exception=True)
+        if profile_pic:
+            setattr(instance, 'profile_pic', profile_pic)
 
-        # profile_pic = 'profile_pic'  
-        # if profile_pic in request.FILES:
-        #     instance.profile_pic.delete()  
-        #     instance.profile_pic = request.FILES[profile_pic]
+        if cv_upload:
+            setattr(instance, 'cv_upload', cv_upload)
 
-        # self.perform_update(serializer)
+        if date_of_birth:
+            setattr(instance, 'date_of_birth', date_of_birth) 
 
-        # return Response(serializer.data)    
+        if mobile_numbers:
+            setattr(instance, 'mobile_numbers', mobile_numbers) 
+
+        if residential_address:
+            setattr(instance, 'residential_address', residential_address) 
+
+        if contact_address:
+            setattr(instance, 'contact_address', contact_address) 
+
+        if next_of_kin_contact_address:
+            setattr(instance, 'next_of_kin_contact_address', next_of_kin_contact_address)         
+
+        if next_of_kin_mobile_number:
+            setattr(instance, 'next_of_kin_mobile_number', next_of_kin_mobile_number)   
+
+        if relationship_with_next_kin:
+            setattr(instance, 'relationship_with_next_kin', relationship_with_next_kin) 
+
+        if next_of_kin_fullname:
+            setattr(instance, 'next_of_kin_fullname', next_of_kin_fullname) 
+
+        instance.save()
+        serializer = UpdateStudentSerializer(instance)
+        return Response(serializer.data)    
 
     @action(detail=False, methods=["GET"])
     def payments_secret(self, request):
         #  squad authoriztion key
         request = {"Authorization": config("SQUAD_SECRET_KEY")}
         return Response(request, status=status.HTTP_200_OK)
-
-    @action(
-        detail=False,
-        methods=["GET","PATCH","PUT","POST"],
-        permission_classes=[IsStudentType],
-        serializer_class = UpdateStudentSerializer,
-        # parser_classes = [parsers.MultiPartParser, parsers.FormParser]
-    )
-    def profile(self, request, pk=None,*args,**kwargs):
-        student = Student.objects.filter(user=self.request.user.id).filter(id=pk)
-
-        serializer = UpdateStudentSerializer(student)
-
-        if request.method == "GET":
-            serializer = UpdateStudentSerializer(student)
-            return Response(serializer.data)
-
-        elif request.method == "POST":
-            serializer = UpdateStudentSerializer(request.POST,request.FILES,instance=student)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            if request.method == 'POST':            
-                serializer    = UpdateStudentSerializer()
-                
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data,pk=student.id)
-                else:
-                    return Response(serializer.errors,pk=student.id)
-            else:
-                serializer = UpdateStudentSerializer(instance=student)
-                return Response(serializer.data)
-
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
         
-
 class StudentUpdateViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "head", "options"]
 
@@ -695,13 +680,13 @@ class SponsorshipsViewSet(ModelViewSet):
 
 
 class EmployerViewSet(ModelViewSet):
-    http_method_names = ["get", "post","patch", "head", "options"]
+    http_method_names = ["get", "post", "patch", "head", "options", "put"]
     permission_classes = [IsEmployerType]
 
     def get_serializer_class(self):
         if self.request.method == "GET":
             return EmployerSerializer
-        elif self.request.method == "POST":
+        elif self.request.method in ["POST", "PATCH"]:
             return UpdateEmployerSerializer
         else:
             return EmployerSerializer
@@ -715,28 +700,44 @@ class EmployerViewSet(ModelViewSet):
             'user_id': self.request.user.id
         }
     
-    @action(
-        detail=False,
-        methods=["GET","PATCH","POST"],
-        permission_classes=[IsEmployerType]
-    )
-    def profile(self, request, *args,**kwargs):
-        employer = Employer.objects.get(user=self.request.user.id)
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        tagline = request.data.get('tagline', None)
+        location = request.data.get('location', None)
+        contact_person = request.data.get('contact_person', None)
+        contact_address = request.data.get('contact_address', None)
+        company_name = request.data.get('company_name', None)
+        company_logo = request.data.get('company_logo', None)
+        contact_person_mobile = request.data.get('contact_person_mobile', None)
+        company_url = request.data.get('company_url', None)
+        
+        if company_logo:
+            setattr(instance, 'company_logo', company_logo)
 
-        serializer = UpdateEmployerSerializer(employer)
+        if tagline:
+            setattr(instance, 'tagline', tagline) 
 
-        if request.method == "GET":
-            serializer = UpdateEmployerSerializer(employer)
-            return Response(serializer.data)
+        if location:
+            setattr(instance, 'location', location) 
 
-        elif request.method == 'POST':
-            serializer = UpdateEmployerSerializer(employer, data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
+        if contact_person:
+            setattr(instance, 'contact_person', contact_person) 
 
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if contact_address:
+            setattr(instance, 'contact_address', contact_address) 
+
+        if contact_person_mobile:
+            setattr(instance, 'contact_person_mobile', contact_person_mobile)   
+
+        if company_url:
+            setattr(instance, 'company_url', company_url) 
+
+        if company_name:
+            setattr(instance, 'company_name', company_name) 
+
+        instance.save()
+        serializer = UpdateEmployerSerializer(instance)
+        return Response(serializer.data) 
 
 
 class JobViewSet(ModelViewSet):
