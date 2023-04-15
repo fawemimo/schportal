@@ -12,7 +12,6 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.models import *
 from api.pdf import *
-from api.parsers import *
 from .filters import *
 from .models import *
 from .paginations import *
