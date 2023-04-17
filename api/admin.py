@@ -378,6 +378,43 @@ class StudentAdmin(admin.ModelAdmin):
     paginator = CachingPaginator
     list_select_related = ["user"]
     actions = ["export_to_csv"]
+    fieldsets = (
+        ("Privileges", {"fields": ("is_approved", "job_ready", "just_for_jobs")}),
+        (
+            "Student Information",
+            {
+                "fields": (
+                    "user",
+                    "full_name",
+                    "student_idcard_id",
+                    "date_of_birth",
+                    "mobile_numbers",
+                    "profile_pic",
+                )
+            },
+        ),
+        ("Job Credentials", {"fields": ("cv_upload",)}),
+        (
+            "Contact Address",
+            {
+                "fields": (
+                    "contact_address",
+                    "residential_address",
+                )
+            },
+        ),
+        (
+            "Family Related",
+            {
+                "fields": (
+                    "next_of_kin_fullname",
+                    "next_of_kin_contact_address",
+                    "relationship_with_next_kin",
+                    "next_of_kin_mobile_number",
+                )
+            },
+        ),
+    )
 
     @admin.display(description="Export as CSV")
     def export_to_csv(self, request, queryset):
@@ -646,17 +683,21 @@ class EmployerAdmin(admin.ModelAdmin):
 
 @admin.register(JobCategory)
 class JobCategoryAdmin(admin.ModelAdmin):
-    list_display = ["title", "date_created"]
+    list_display = ["title", "ordering", "date_created"]
+    list_editable = ["ordering"]
     search_fields = ["title"]
     date_hierarchy = "date_created"
     ordering = ["title"]
+    ordering = ["-ordering"]
     list_per_page = 25
 
 
 @admin.register(JobExperience)
 class JobExperienceAdmin(admin.ModelAdmin):
-    list_display = ["id", "title"]
+    list_display = ["id", "title", "ordering"]
+    list_editable = ["ordering"]
     search_fields = ["title"]
+    ordering = ["-ordering"]
 
 
 @admin.register(Job)
@@ -695,7 +736,6 @@ class JobApplicationAdmin(admin.ModelAdmin):
 # Billing region
 @admin.register(BillingExtraPayment)
 class BillingExtraPaymentAdmin(admin.ModelAdmin):
-
     @admin.display(description="Export as CSV")
     def export_to_csv(self, request, queryset):
         meta = self.model._meta

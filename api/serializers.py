@@ -183,8 +183,8 @@ class UploadCvSerializer(serializers.ModelSerializer):
 class ScheduleSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
     teacher = serializers.StringRelatedField()
-    fee_dollar = serializers.SerializerMethodField()
-
+    fee = serializers.SerializerMethodField()
+    discount_fee = serializers.SerializerMethodField()
     class Meta:
         model = Schedule
         fields = [
@@ -194,17 +194,22 @@ class ScheduleSerializer(serializers.ModelSerializer):
             "registration_status",
             "teacher",
             "fee",
-            "discounted_fee",
-            "fee_dollar",
-            "discounted_fee_dollar",
+            "discount_fee",
             "startdate",
             "duration",
             "timing",
         ]
 
-    def get_fee_dollar(self, obj):
+    def get_fee(self, obj):
+        if obj.program_type == "Onsite":
+            return obj.fee
         return obj.fee_dollar
-
+    
+    def get_discount_fee(self, obj):
+        if obj.program_type == "Onsite":
+            return obj.discounted_fee
+        return obj.discounted_fee_dollar
+    
 
 class AddScheduleSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()

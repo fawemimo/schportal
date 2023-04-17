@@ -89,8 +89,9 @@ class Course(models.Model):
 
 
 class Student(models.Model):
-    is_approved = models.BooleanField(default=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+    is_approved = models.BooleanField(default=False)
+    job_ready = models.BooleanField(default=False)
     just_for_jobs = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, blank=True, null=True)
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
@@ -124,14 +125,7 @@ class Student(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.student_idcard_id}"
-
-    def image_img(self):
-        if self.profile_pic:
-            return u'<img src="%s" width="50" height="50" />' % self.profile_pic.url
-        else:
-            pass
-    image_img.short_description = 'Thumb'
-    image_img.allow_tags = True
+    
 
 class StudentBackup(models.Model):
     student = models.OneToOneField(Student, on_delete=models.CASCADE, blank=True, null=True)
@@ -746,18 +740,25 @@ class Employer(models.Model):
 
 class JobCategory(models.Model):
     title = models.CharField(max_length=255)
+    ordering = models.PositiveIntegerField(blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
 
+    class Meta:
+        ordering = ["-ordering"]
 
 class JobExperience(models.Model):
     title = models.CharField(max_length=255)
+    ordering = models.PositiveIntegerField(blank=True, null=True)
+    date_created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return self.title
 
+    class Meta:
+        ordering = ["-ordering"]
 
 class Job(models.Model):
     employer = models.ForeignKey(Employer, on_delete=models.CASCADE)
