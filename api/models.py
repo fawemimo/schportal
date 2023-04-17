@@ -90,8 +90,8 @@ class Course(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    is_approved = models.BooleanField(default=False)
-    job_ready = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False,help_text="it is used for creating the backup")
+    job_ready = models.BooleanField(default=False, help_text="to control student for job applications")
     just_for_jobs = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, blank=True, null=True)
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
@@ -129,6 +129,8 @@ class Student(models.Model):
 
 class StudentBackup(models.Model):
     student = models.OneToOneField(Student, on_delete=models.CASCADE, blank=True, null=True)
+    is_approved = models.BooleanField(default=False)
+    job_ready = models.BooleanField(default=False)
     just_for_jobs = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, blank=True, null=True)
     student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
@@ -169,6 +171,8 @@ class StudentBackup(models.Model):
             if student.is_approved == True:
                 self.just_for_jobs=student.just_for_jobs
                 self.full_name=student.full_name
+                self.is_approved=student.is_approved
+                self.job_ready=student.job_ready
                 self.student_idcard_id=student.student_idcard_id
                 self.date_of_birth=student.date_of_birth
                 self.mobile_numbers=student.mobile_numbers

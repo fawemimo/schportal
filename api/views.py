@@ -842,12 +842,10 @@ class StudentAppliedJobViewSet(ModelViewSet):
 class StudentApplicationForJobViewSet(ModelViewSet):
     http_method_names = ["post", "get"]
 
-    permission_classes = [IsStudentType]
-
     def get_permissions(self):
-        if not self.request.user.user_type == "student":
-            return Response({"error": "User is not a student"})
-        return [IsStudentType()]
+        if self.request.user.user_type == "student":
+            return [IsStudentType()]
+        return Response({"error": "User is not a student"})
 
     def get_queryset(self):
         return JobApplication.objects.filter(
@@ -867,8 +865,8 @@ class StudentApplicationForJobViewSet(ModelViewSet):
             data=request.data, context={"user_id": self.request.user.id}
         )
         serializer.is_valid(raise_exception=True)
-        order = serializer.save()
-        serializer = JobApplicationSerializer(order)
+        post_job = serializer.save()
+        serializer = JobApplicationSerializer(post_job)
         return Response(serializer.data)
 
 

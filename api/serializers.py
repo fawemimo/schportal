@@ -1259,11 +1259,19 @@ class JobApplicationSerializer(serializers.ModelSerializer):
         student_id = self.validated_data["student_id"]
         job_id = self.validated_data["job_id"]
 
-        jobapplication = JobApplication.objects.create(
-            student_id=student_id, job_id=job_id, applied=True
-        )
+        # get the student obj
+        student_obj = Student.objects.get(id=student_id)
+        try:
+            if student_obj.job_ready == True:
+                jobapplication = JobApplication.objects.create(
+                    student_id=student_id, job_id=job_id, applied=True
+                )
 
-        return jobapplication
+                return jobapplication
+            else:
+                raise serializers.ValidationError('Student is not Job ready yet')
+        except Exception as e:
+            raise serializers.ValidationError('Student is not Job ready yet')
 
 
 # EndJobPortalRegion
