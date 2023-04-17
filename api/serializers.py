@@ -119,13 +119,13 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    # user = UserSerializer()
+    email = serializers.SerializerMethodField()
 
     class Meta:
         model = Student
         fields = [
             "id",
-            # "user",
+            "email",
             "full_name",
             "student_idcard_id",
             "date_of_birth",
@@ -140,6 +140,8 @@ class StudentSerializer(serializers.ModelSerializer):
             "relationship_with_next_kin",
         ]
 
+    def get_email(self, obj):
+        return obj.user.email
 
 class UpdateStudentSerializer(serializers.ModelSerializer):
 
