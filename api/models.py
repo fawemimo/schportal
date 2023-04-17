@@ -463,6 +463,7 @@ class ScholarshipSection(models.Model):
     access_text = models.TextField()
     eligibility = models.TextField(blank=True, null=True)
     wings = models.TextField()
+    terms_and_conditions = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return str(self.id)
@@ -850,6 +851,7 @@ class Billing(models.Model):
 
             # declaring grand total none
             grand_total = 0
+            
             extra_payment = self.billingextrapayment_set.filter(
                     billing_id=self.id
                 ).aggregate(amount_paid=Sum("amount_paid"))
