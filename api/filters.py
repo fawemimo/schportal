@@ -17,14 +17,13 @@ class JobFilter(FilterSet):
     @classmethod
     def filter_by_job_location(cls, queryset, name, value):
         names = value.strip().split(",")
-        return queryset.filter(Q(job_location__in=names)).filter(save_as="Published").exclude(close_job=True).select_related("employer")
-        
+        return queryset.filter(Q(job_location__title__in=names)).filter(save_as="Published").exclude(close_job=True).select_related("employer").distinct()       
         
 
     @classmethod
     def filter_by_job_type(cls, queryset, name, value):
         names = value.strip().split(",")
-        return queryset.filter(Q(job_type__in=names)).filter(save_as="Published").exclude(close_job=True).select_related("employer").distinct()
+        return queryset.filter(Q(job_type__title__in=names)).filter(save_as="Published").exclude(close_job=True).select_related("employer").distinct()
 
     @classmethod
     def filter_by_experience(cls, queryset, name, value):

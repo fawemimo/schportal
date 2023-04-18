@@ -678,7 +678,20 @@ class AlbumViewSet(ModelViewSet):
     http_method_names = ["get"]
     queryset = Album.objects.prefetch_related('albumdetail_set')
     serializer_class = AlbumSerializer
-
+    # filter_backends = [
+    #     DjangoFilterBackend,
+    #     filters.SearchFilter,
+    #     filters.OrderingFilter,
+    # ]
+    # filterset_class = JobFilter
+    # search_fields = [
+    #     "job_title",
+    #     "job_category__title",
+    #     "employer__company_name",
+    #     "experience__title",
+    # ]
+    # ordering_fields = ["date_posted", "date_updated"]
+    # pagination_class = BasePagination
 
 # JobPortal region
 
@@ -789,6 +802,17 @@ class JobViewSet(ModelViewSet):
             "job_category_id": self.kwargs.get("job_category_pk"),
             "experience_id": self.kwargs.get("experience_pk"),
         }
+
+class JobTypeViewSet(ModelViewSet):
+    http_method_name = ["get"]
+    serializer_class = JobTypeSerializer
+    queryset = JobType.objects.all()
+
+
+class JobLocationViewSet(ModelViewSet):
+    http_method_name = ["get"]
+    serializer_class = JobLocationSerializer
+    queryset = JobLocation.objects.all()
 
 
 class JobCategoryViewSet(ModelViewSet):

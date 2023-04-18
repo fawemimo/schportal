@@ -110,9 +110,12 @@ router.register(
 router.register(
     "jobapplications", views.StudentApplicationForJobViewSet, basename="jobapplications"
 )
-router.register("jobcategories", views.JobCategoryViewSet, basename="jobcategories")
 router.register("applicants", views.ApplicantsViewSet, basename="applicants")
+router.register("jobcategories", views.JobCategoryViewSet, basename="jobcategories")
 router.register('jobexperiences', views.JobExperienceViewSet, basename="jobexperiences")
+router.register('jobtypes', views.JobTypeViewSet, basename="jobtypes")
+router.register('joblocations', views.JobLocationViewSet, basename="joblocations")
+
 # END JOB PORTAL REGION
 
 
