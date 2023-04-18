@@ -115,7 +115,7 @@ class Student(models.Model):
     cv_upload = models.FileField(
         upload_to="JobPortal/cv_upload",
         validators=[
-            FileExtensionValidator(allowed_extensions=("pdf", "jpg", "jpeg", "png"))
+            FileExtensionValidator(allowed_extensions=("pdf",))
         ],
         blank=True,
         null=True,
