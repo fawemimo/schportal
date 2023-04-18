@@ -1270,6 +1270,7 @@ class JobApplicationSerializer(serializers.ModelSerializer):
                 return jobapplication
             else:
                 raise serializers.ValidationError('Student is not Job ready yet')
+                # raise serializers.ValidationError({"message":'Student is not Job ready yet'})            
         except Exception as e:
             raise serializers.ValidationError('Student is not Job ready yet')
 

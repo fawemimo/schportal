@@ -90,11 +90,17 @@ class Course(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    is_approved = models.BooleanField(default=False,help_text="it is used for creating the backup")
-    job_ready = models.BooleanField(default=False, help_text="to control student for job applications")
+    is_approved = models.BooleanField(
+        default=False, help_text="it is used for creating the backup"
+    )
+    job_ready = models.BooleanField(
+        default=False, help_text="to control student for job applications"
+    )
     just_for_jobs = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, blank=True, null=True)
-    student_idcard_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
+    student_idcard_id = models.CharField(
+        max_length=50, null=True, blank=True, unique=True
+    )
     date_of_birth = models.CharField(max_length=50, blank=True, null=True)
     mobile_numbers = models.CharField(max_length=250, blank=True, null=True)
     profile_pic = models.ImageField(
@@ -125,10 +131,12 @@ class Student(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.student_idcard_id}"
-    
+
 
 class StudentBackup(models.Model):
-    student = models.OneToOneField(Student, on_delete=models.CASCADE, blank=True, null=True)
+    student = models.OneToOneField(
+        Student, on_delete=models.CASCADE, blank=True, null=True
+    )
     is_approved = models.BooleanField(default=False)
     job_ready = models.BooleanField(default=False)
     just_for_jobs = models.BooleanField(default=False)
@@ -169,24 +177,26 @@ class StudentBackup(models.Model):
         try:
             student = Student.objects.get(id=self.student.id)
             if student.is_approved == True:
-                self.just_for_jobs=student.just_for_jobs
-                self.full_name=student.full_name
-                self.is_approved=student.is_approved
-                self.job_ready=student.job_ready
-                self.student_idcard_id=student.student_idcard_id
-                self.date_of_birth=student.date_of_birth
-                self.mobile_numbers=student.mobile_numbers
-                self.profile_pic=student.profile_pic
-                self.contact_address=student.contact_address
-                self.next_of_kin_fullname=student.next_of_kin_fullname
-                self.next_of_kin_contact_address=student.next_of_kin_contact_address
-                self.next_of_kin_mobile_number=student.next_of_kin_mobile_number
-                self.relationship_with_next_kin=student.relationship_with_next_kin
-                self.cv_upload=student.cv_upload
-                
+                self.just_for_jobs = student.just_for_jobs
+                self.full_name = student.full_name
+                self.is_approved = student.is_approved
+                self.job_ready = student.job_ready
+                self.student_idcard_id = student.student_idcard_id
+                self.date_of_birth = student.date_of_birth
+                self.mobile_numbers = student.mobile_numbers
+                self.profile_pic = student.profile_pic
+                self.contact_address = student.contact_address
+                self.next_of_kin_fullname = student.next_of_kin_fullname
+                self.next_of_kin_contact_address = student.next_of_kin_contact_address
+                self.next_of_kin_mobile_number = student.next_of_kin_mobile_number
+                self.relationship_with_next_kin = student.relationship_with_next_kin
+                self.cv_upload = student.cv_upload
+
             super(StudentBackup, self).save(*args, **kwargs)
         except Exception as e:
             print(e)
+
+
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     full_name = models.CharField(max_length=255, blank=True, null=True)
@@ -465,6 +475,48 @@ class ScholarshipSection(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+class Album(models.Model):
+    ordering = models.PositiveIntegerField()
+    main_title = models.CharField(max_length=255)
+    main_description = models.TextField(blank=True, null=True)
+    event_date = models.DateTimeField(blank=True, null=True)
+    image_cover = models.ImageField(
+        upload_to="album/cover/",
+        validators=[
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "svg"])
+        ],
+        blank=True,
+        null=True,
+    )
+    date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.main_title
+
+    class Meta:
+        ordering = ["-ordering"]
+
+
+class AlbumDetail(models.Model):
+    ordering = models.PositiveIntegerField()
+    album = models.ForeignKey(Album, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    descriptions = models.TextField()
+    image = models.ImageField(
+        upload_to="album/details/",
+        validators=[
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "svg"])
+        ],
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ["-ordering"]
 
 
 # endregion
@@ -753,6 +805,7 @@ class JobCategory(models.Model):
     class Meta:
         ordering = ["-ordering"]
 
+
 class JobExperience(models.Model):
     title = models.CharField(max_length=255)
     ordering = models.PositiveIntegerField(blank=True, null=True)
@@ -763,6 +816,7 @@ class JobExperience(models.Model):
 
     class Meta:
         ordering = ["-ordering"]
+
 
 class Job(models.Model):
     employer = models.ForeignKey(Employer, on_delete=models.CASCADE)
@@ -819,7 +873,9 @@ class Billing(models.Model):
     sponsor = models.ForeignKey(
         Sponsor, on_delete=models.DO_NOTHING, blank=True, null=True
     )
-    course_name = models.ForeignKey(Course,blank=True, null=True, on_delete=models.PROTECT)
+    course_name = models.ForeignKey(
+        Course, blank=True, null=True, on_delete=models.PROTECT
+    )
     course_fee = models.PositiveBigIntegerField(blank=True, null=True)
     start_date = models.DateTimeField(blank=True, null=True)
     student = models.ForeignKey(
@@ -835,8 +891,8 @@ class Billing(models.Model):
         null=True,
     )
     date_posted = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    date_update= models.DateTimeField(auto_now=True, blank=True,null=True)
-    
+    date_update = models.DateTimeField(auto_now=True, blank=True, null=True)
+
     def __str__(self):
         return f"{str(self.student.full_name)} - {str(self.student.student_idcard_id)}-{str(self.id)}"
 
@@ -851,47 +907,48 @@ class Billing(models.Model):
             # getting the item name
             extra_item_fee = 0
 
-            # getting the item fee  
+            # getting the item fee
             extra_payment = 0
 
             # declaring grand total none
             grand_total = 0
-            
+
             extra_payment = self.billingextrapayment_set.filter(
-                    billing_id=self.id
-                ).aggregate(amount_paid=Sum("amount_paid"))
+                billing_id=self.id
+            ).aggregate(amount_paid=Sum("amount_paid"))
 
             extra_item_fee = (
-            self.billingextrapayment_set.filter(billing_id=self.id)
-            .values("item_name_fee")
-            .first()
-            ) 
-            
+                self.billingextrapayment_set.filter(billing_id=self.id)
+                .values("item_name_fee")
+                .first()
+            )
+
             if extra_payment != 0 and extra_item_fee != 0:
                 # add course fee and the xtra payment to get grand total
-                xif = extra_item_fee['item_name_fee']
-                print('xif: ',xif)
-                grand_total =  xif + course_fee
-                print('grand_total1: ', grand_total)
+                xif = extra_item_fee["item_name_fee"]
+                print("xif: ", xif)
+                grand_total = xif + course_fee
+                print("grand_total1: ", grand_total)
             else:
                 xif = 0
                 grand_total = xif + course_fee
                 # print('xif: ',xif)
-                # print('grand_total2: ',grand_total)   
+                # print('grand_total2: ',grand_total)
                 total_amount_paid_details = billingdetails["amount_paid"]
                 # print('total_amount_paid_details: ',total_amount_paid_details)
                 total_amount_paid_extra = extra_payment["amount_paid"]
                 # print('total_amount_paid_extra:', total_amount_paid_extra)
                 # print('course_fee: ',course_fee)
-               
-                
+
                 if total_amount_paid_details != 0 and total_amount_paid_extra != 0:
-                    cal = grand_total - (total_amount_paid_details + total_amount_paid_extra)
+                    cal = grand_total - (
+                        total_amount_paid_details + total_amount_paid_extra
+                    )
                     return cal
                 else:
                     cal = grand_total - (total_amount_paid_details + 0)
                     return cal
-            
+
         except Exception as e:
             # print('exception from grand outstanding function',e)
             pass
@@ -901,20 +958,18 @@ class Billing(models.Model):
             extrapayment = self.billingextrapayment_set.filter(
                 billing_id=self.id
             ).aggregate(amount_paid=Sum("amount_paid"))
-            billingdetails = (
-                self.billingdetail_set.filter(billing_id=self.id)
-                .aggregate(amount_paid=Sum("amount_paid"))
-                
-            )
+            billingdetails = self.billingdetail_set.filter(
+                billing_id=self.id
+            ).aggregate(amount_paid=Sum("amount_paid"))
             expayment = extrapayment["amount_paid"]
             bd = billingdetails["amount_paid"]
             if expayment is not None and bd is not None:
-                sum_total =  bd + expayment
+                sum_total = bd + expayment
                 return sum_total
             else:
-                sum_total =  bd + 0
+                sum_total = bd + 0
                 return sum_total
-            
+
         except Exception as e:
             # print('Exception fron grand total',e)
             pass
@@ -925,15 +980,14 @@ class Billing(models.Model):
             if self.get_grand_total_paid != 0:
                 grand_total = self.get_grand_total_paid()
                 self.grand_total_paid = grand_total
-            else:    
+            else:
                 self.get_grand_total_paid = grand_total
 
             self.grand_outstanding = self.course_fee
             if self.get_grand_outstanding != 0:
                 grand_outstanding = self.get_grand_outstanding()
                 self.grand_outstanding = grand_outstanding
-         
-                
+
         except Exception as e:
             # print('Exception from save method',e)
             pass
@@ -959,7 +1013,7 @@ class BillingDetail(models.Model):
         grand_amount_paid = grand_amount_paid["grand_amount_paid"]
 
         grand_course_fee = self.billing.course_fee
-        
+
         grand_course = grand_course_fee
 
         outstanding = int(grand_course) - grand_amount_paid
@@ -998,9 +1052,11 @@ class BillingExtraPayment(models.Model):
             .first()
         )
 
-        sum_amount_paid = self.billing.billingextrapayment_set.filter(
-            billing_id=self.billing.id
-        ).filter(item_name=self.item_name).aggregate(amount_paid=Sum("amount_paid"))
+        sum_amount_paid = (
+            self.billing.billingextrapayment_set.filter(billing_id=self.billing.id)
+            .filter(item_name=self.item_name)
+            .aggregate(amount_paid=Sum("amount_paid"))
+        )
 
         item_fee = item_name_fee["item_name_fee"]
         outstanding = item_fee - sum_amount_paid["amount_paid"]

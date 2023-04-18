@@ -320,6 +320,22 @@ class ScholarshipSectionAdmin(admin.ModelAdmin):
     list_display = ["id", "scholarship_intro"]
 
 
+@admin.register(Album)
+class AlbumAdmin(admin.ModelAdmin):
+    list_display = ["id", "main_title", "event_date", "date_posted", "ordering"]
+    list_filter = ["event_date", "date_posted"]
+    list_editable = ["event_date", "ordering"]
+    search_fields = ["main_title"]
+
+
+@admin.register(AlbumDetail)
+class AlbumDetailAdmin(admin.ModelAdmin):
+    list_display = ["id", "album", "title", "ordering", "date_created"]
+    list_filter = ["date_created"]
+    list_editable = ["ordering"]
+    search_fields = ["title", "album__main_title"]
+
+
 @admin.register(StudentAttendance)
 class StudentAttendanceAdmin(admin.ModelAdmin):
     list_display = ["student_name", "batch_", "attendance", "timestamp"]
@@ -373,6 +389,10 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = ["id", "full_name", "profile_pix", "student_idcard_id", "batch_name"]
+    list_display_link = [
+        "id",
+        "full_name",
+    ]
     search_fields = ["user__first_name", "user__last_name__istartswith"]
     list_per_page = 25
     paginator = CachingPaginator
