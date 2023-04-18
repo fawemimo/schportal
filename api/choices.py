@@ -56,19 +56,19 @@ HOW_IT_WORK_CLASS_TYPE = (
 
 
 # JobCategory Model
-EXPERIENCE_LEVEL = (
-        ("Experienced", "Experienced"),
-        ("Intermediate", "Intermediate"),
-        ("Internship", "Internship"),
-    )
+# EXPERIENCE_LEVEL = (
+#         ("Experienced", "Experienced"),
+#         ("Intermediate", "Intermediate"),
+#         ("Internship", "Internship"),
+#     )
 
-JOB_TYPE = (
-    ("Full-time", "Full-time"),
-    ("Part-time", "Part-time"),
-    ("Contractor", "Contractor"),
-)
+# JOB_TYPE = (
+#     ("Full-time", "Full-time"),
+#     ("Part-time", "Part-time"),
+#     ("Contractor", "Contractor"),
+# )
 
-JOB_LOCATION = (("On-site", "On-site"), ("Hybrid", "Hybrid"), ("Remote", "Remote"))
+# JOB_LOCATION = (("On-site", "On-site"), ("Hybrid", "Hybrid"), ("Remote", "Remote"))
 
 
 # Job Model

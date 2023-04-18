@@ -688,6 +688,23 @@ class OurTeamAdmin(admin.ModelAdmin):
 
 
 # JobPortal region
+class BaseJobSelectionAdmin(admin.ModelAdmin):
+    list_display = ["id","title", "ordering", "date_created"]
+    list_editable = ["ordering"]
+    search_fields = ["title"]
+    date_hierarchy = "date_created"
+    ordering = ["title"]
+    ordering = ["-ordering"]
+    list_per_page = 25
+
+@admin.register(JobType)
+class JobTypeAdmin(BaseJobSelectionAdmin):
+    pass
+
+
+@admin.register(JobLocation)
+class JobLocationAdmin(BaseJobSelectionAdmin):
+    pass
 
 
 @admin.register(Employer)
@@ -718,6 +735,7 @@ class JobExperienceAdmin(admin.ModelAdmin):
     list_editable = ["ordering"]
     search_fields = ["title"]
     ordering = ["-ordering"]
+    list_per_page = 25
 
 
 @admin.register(Job)
@@ -735,7 +753,7 @@ class JobAdmin(admin.ModelAdmin):
     ordering = ["-date_posted"]
     date_hierarchy = "date_posted"
     list_select_related = ["employer"]
-    autocomplete_fields = ["job_category", "employer", "experience"]
+    autocomplete_fields = ["job_category", "employer", "experience","job_type","job_location"]
     list_per_page = 25
     # preserve_filters = ['job_category']
 

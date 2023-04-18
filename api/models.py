@@ -132,7 +132,6 @@ class Student(models.Model):
     def __str__(self):
         return f"{self.full_name} - {self.student_idcard_id}"
 
-
 class StudentBackup(models.Model):
     student = models.OneToOneField(
         Student, on_delete=models.CASCADE, blank=True, null=True
@@ -818,14 +817,31 @@ class JobExperience(models.Model):
         ordering = ["-ordering"]
 
 
+class BaseJobSelection(models.Model):
+    title = models.CharField(max_length=255)
+    ordering = models.PositiveIntegerField(blank=True, null=True)
+    date_created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+
+    def __str__(self):
+        return self.title    
+    class Meta:
+        ordering = ["-ordering"]
+
+
+class JobType(BaseJobSelection):
+    pass
+
+
+class JobLocation(BaseJobSelection):
+    pass
+
+
 class Job(models.Model):
     employer = models.ForeignKey(Employer, on_delete=models.CASCADE)
     job_category = models.ManyToManyField(JobCategory)
-    experience = models.ManyToManyField(JobExperience)
-    job_type = models.CharField(max_length=50, choices=JOB_TYPE, blank=True, null=True)
-    job_location = models.CharField(
-        max_length=50, choices=JOB_LOCATION, blank=True, null=True
-    )
+    experience = models.ManyToManyField(JobExperience)    
+    job_type = models.ForeignKey(JobType, on_delete =models.CASCADE,blank=True, null=True)
+    job_location = models.ForeignKey(JobLocation,on_delete =models.CASCADE, blank=True, null=True)
     job_title = models.CharField(max_length=255)
     slug = models.SlugField(blank=True, null=True)
     save_as = models.CharField(max_length=50, choices=STATUS, default="Draft")

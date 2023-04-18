@@ -1039,6 +1039,18 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
         ]
 
 
+class JobTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobType 
+        fields = "__all__"
+
+
+class JobLocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobLocation 
+        fields = "__all__"
+        
+
 class JobCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = JobCategory
@@ -1055,6 +1067,8 @@ class PostJobSerializer(serializers.ModelSerializer):
     employer_id = serializers.IntegerField()
     job_category = JobCategorySerializer(many=True)
     experience = JobExperienceSerializer(many=True)
+    job_type_id = serializers.IntegerField()
+    job_location_id = serializers.IntegerField()
 
     class Meta:
         model = Job
@@ -1063,9 +1077,9 @@ class PostJobSerializer(serializers.ModelSerializer):
             "employer_id",
             "job_category",
             "job_title",
-            "job_location",
+            "job_location_id",
             "experience",
-            "job_type",
+            "job_type_id",
             "save_as",
             "close_job",
             "job_summary",
@@ -1075,8 +1089,10 @@ class PostJobSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         employer_id = validated_data["employer_id"]
         job_category = validated_data["job_category"]
+        job_location_id = validated_data["job_location_id"]
+        job_type_id = validated_data["job_type_id"]
         experience = validated_data["experience"]
-        job = Job.objects.create(employer_id=employer_id, **validated_data)
+        job = Job.objects.create(employer_id=employer_id, job_location_id=job_location_id,job_type_id=job_type_id, **validated_data)
 
         for x in job_category:
             job_category = JobCategory.objects.filter(**x)
@@ -1096,9 +1112,23 @@ class PostJobSerializer(serializers.ModelSerializer):
             )
         return value
 
+    def validate_job_type_id(self, value):
+        if not JobType.objects.filter(id=value).exists():
+            raise serializers.ValidationError(
+                "JobType with the given ID does not exist"
+            )
+        return value
+    
+    def validate_job_location_id(self, value):
+        if not JobLocation.objects.filter(id=value).exists():
+            raise serializers.ValidationError(
+                "JobLocation with the given ID does not exist"
+            )    
+        return value
+
     def save(self, **kwargs):
-        job_type = self.validated_data["job_type"]
-        job_location = self.validated_data["job_location"]
+        job_type_id = self.validated_data["job_type_id"]
+        job_location_id = self.validated_data["job_location_id"]
         job_title = self.validated_data["job_title"]
         save_as = self.validated_data["save_as"]
         job_summary = self.validated_data["job_summary"]
@@ -1116,8 +1146,8 @@ class PostJobSerializer(serializers.ModelSerializer):
 
             job = Job.objects.create(
                 employer_id=employer_id,
-                job_type=job_type,
-                job_location=job_location,
+                job_type_id=job_type_id,
+                job_location_id=job_location_id,
                 job_title=job_title,
                 save_as=save_as,
                 job_summary=job_summary,
@@ -1150,7 +1180,8 @@ class PatchJobSerializer(serializers.ModelSerializer):
 
 class JobSerializer(serializers.ModelSerializer):
     employer = EmployerSerializer()
-
+    job_type = serializers.StringRelatedField()
+    job_location = serializers.StringRelatedField()
     class Meta:
         model = Job
         fields = "__all__"
@@ -1158,7 +1189,7 @@ class JobSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         self.fields["job_category"] = JobCategorySerializer(many=True)
-        self.fields["experience"] = JobExperienceSerializer(many=True)
+        self.fields["experience"] = JobExperienceSerializer(many=True)        
         return super().to_representation(instance)
 
 
