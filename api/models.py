@@ -114,9 +114,7 @@ class Student(models.Model):
     )
     cv_upload = models.FileField(
         upload_to="JobPortal/cv_upload",
-        validators=[
-            FileExtensionValidator(allowed_extensions=("pdf",))
-        ],
+        validators=[FileExtensionValidator(allowed_extensions=("pdf",))],
         blank=True,
         null=True,
     )
@@ -131,25 +129,25 @@ class Student(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.student_idcard_id}"
-    
+
     def save(self, *args, **kwargs):
         try:
             if self.is_approved == True:
                 studentbackup = StudentBackup.objects.create(
-                just_for_jobs = self.just_for_jobs,
-                is_approved = self.is_approved,
-                job_ready = self.job_ready,
-                full_name = self.full_name,
-                student_idcard_id = self.student_idcard_id,
-                date_of_birth = self.date_of_birth,
-                mobile_numbers = self.mobile_numbers,
-                profile_pic = self.profile_pic,
-                contact_address = self.contact_address,
-                next_of_kin_fullname = self.next_of_kin_fullname,
-                next_of_kin_contact_address = self.next_of_kin_contact_address,
-                next_of_kin_mobile_number = self.next_of_kin_mobile_number,
-                relationship_with_next_kin = self.relationship_with_next_kin,
-                cv_upload = self.cv_upload
+                    just_for_jobs=self.just_for_jobs,
+                    is_approved=self.is_approved,
+                    job_ready=self.job_ready,
+                    full_name=self.full_name,
+                    student_idcard_id=self.student_idcard_id,
+                    date_of_birth=self.date_of_birth,
+                    mobile_numbers=self.mobile_numbers,
+                    profile_pic=self.profile_pic,
+                    contact_address=self.contact_address,
+                    next_of_kin_fullname=self.next_of_kin_fullname,
+                    next_of_kin_contact_address=self.next_of_kin_contact_address,
+                    next_of_kin_mobile_number=self.next_of_kin_mobile_number,
+                    relationship_with_next_kin=self.relationship_with_next_kin,
+                    cv_upload=self.cv_upload,
                 )
                 studentbackup.save()
                 super(Student, self).save(args, kwargs)
@@ -352,14 +350,53 @@ class StudentLoanSection(models.Model):
 
 
 class CareerSection(models.Model):
-    is_published = models.BooleanField(default=False)
-    intro_banner = models.TextField()
-    our_story = models.TextField()
-    mission_values = models.TextField()
-    team_description = models.TextField()
+    our_culture = models.TextField()
+    how_we_hire = models.TextField()
+    what_we_offer = models.TextField()
+    find_your_role = models.TextField()
 
     def __str__(self):
         return str(self.id)
+
+
+class CareerCategory(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+
+class CareerOpening(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    job_location = models.ForeignKey("JobLocation", on_delete=models.CASCADE)
+    employment_type = models.ForeignKey("JobType", on_delete=models.CASCADE)
+    career_category = models.ForeignKey(CareerCategory, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
+
+class CareerApplicant(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255, unique=True)
+    mobile = models.CharField(max_length=255)
+    career_opening = models.ForeignKey(CareerOpening, on_delete=models.CASCADE)
+    resume = models.FileField(
+        upload_to="career/applicant/",
+        validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
+        blank=True,
+        null=True,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
 
 class AlbumSection(models.Model):
@@ -822,7 +859,8 @@ class BaseJobSelection(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
-        return self.title    
+        return self.title
+
     class Meta:
         ordering = ["-ordering"]
 
@@ -838,9 +876,13 @@ class JobLocation(BaseJobSelection):
 class Job(models.Model):
     employer = models.ForeignKey(Employer, on_delete=models.CASCADE)
     job_category = models.ManyToManyField(JobCategory)
-    experience = models.ManyToManyField(JobExperience)    
-    job_type = models.ForeignKey(JobType, on_delete =models.CASCADE,blank=True, null=True)
-    job_location = models.ForeignKey(JobLocation,on_delete =models.CASCADE, blank=True, null=True)
+    experience = models.ManyToManyField(JobExperience)
+    job_type = models.ForeignKey(
+        JobType, on_delete=models.CASCADE, blank=True, null=True
+    )
+    job_location = models.ForeignKey(
+        JobLocation, on_delete=models.CASCADE, blank=True, null=True
+    )
     job_title = models.CharField(max_length=255)
     slug = models.SlugField(blank=True, null=True)
     save_as = models.CharField(max_length=50, choices=STATUS, default="Draft")
@@ -941,7 +983,6 @@ class Billing(models.Model):
             else:
                 self.get_grand_total_paid = grand_total
 
-
         except Exception as e:
             # print('Exception from save method',e)
             pass
@@ -981,7 +1022,7 @@ class BillingDetail(models.Model):
         except Exception as e:
             pass
 
-        super(BillingDetail, self).save(args,kwargs)
+        super(BillingDetail, self).save(args, kwargs)
 
 
 class BillingExtraPayment(models.Model):

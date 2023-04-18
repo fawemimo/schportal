@@ -112,8 +112,23 @@ class StudentLoanSectionAdmin(admin.ModelAdmin):
 
 @admin.register(CareerSection)
 class CareerSectionAdmin(admin.ModelAdmin):
-    list_display = ["id", "is_published"]
-    list_filter = ["is_published"]
+    list_display = ["id"]
+
+
+@admin.register(CareerOpening)
+class CareerOpeningAdmin(admin.ModelAdmin):
+    list_display = ['title', 'job_location', 'employment_type', 'career_category']
+    list_filter = ['job_location', 'employment_type']
+
+
+@admin.register(CareerCategory)
+class CareerCategoryAdmin(admin.ModelAdmin):
+    list_display = ['title', 'date_created', 'date_updated']
+
+
+@admin.register(CareerApplicant)   
+class CareerApplicantAdmin(admin.ModelAdmin):
+    list_display = ['first_name', 'last_name', 'email', 'mobile', 'career_opening']
 
 
 @admin.register(AlbumSection)
