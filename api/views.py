@@ -674,6 +674,11 @@ class SponsorshipsViewSet(ModelViewSet):
     queryset = Sponsor.objects.all()
     serializer_class = SponsorshipSerializer
 
+class AlbumViewSet(ModelViewSet):
+    http_method_names = ["get"]
+    queryset = Album.objects.prefetch_related('albumdetail_set')
+    serializer_class = AlbumSerializer
+
 
 # JobPortal region
 

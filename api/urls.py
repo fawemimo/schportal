@@ -94,7 +94,7 @@ router.register(
     views.ScholarshipSectionViewSet,
     basename="scholarshipsections",
 )
-
+router.register("albums", views.AlbumViewSet, basename="albums")
 
 # JOB PORTAL REGION
 router.register("employers", views.EmployerViewSet, basename="employerprofile")

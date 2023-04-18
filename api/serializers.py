@@ -144,8 +144,8 @@ class StudentSerializer(serializers.ModelSerializer):
     def get_email(self, obj):
         return obj.user.email
 
-class UpdateStudentSerializer(serializers.ModelSerializer):
 
+class UpdateStudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = [
@@ -160,6 +160,7 @@ class UpdateStudentSerializer(serializers.ModelSerializer):
             "next_of_kin_mobile_number",
             "relationship_with_next_kin",
         ]
+
 
 class UpdateProfilePicSerializer(serializers.ModelSerializer):
     class Meta:
@@ -186,6 +187,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
     teacher = serializers.StringRelatedField()
     fee = serializers.SerializerMethodField()
     discount_fee = serializers.SerializerMethodField()
+
     class Meta:
         model = Schedule
         fields = [
@@ -205,12 +207,12 @@ class ScheduleSerializer(serializers.ModelSerializer):
         if obj.program_type == "Onsite":
             return obj.fee
         return obj.fee_dollar
-    
+
     def get_discount_fee(self, obj):
         if obj.program_type == "Onsite":
             return obj.discounted_fee
         return obj.discounted_fee_dollar
-    
+
 
 class AddScheduleSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
@@ -836,7 +838,7 @@ class InternationalModelSerializer(serializers.ModelSerializer):
             "country_code",
             "topbar_src",
             "why_choose_virtual",
-            "identify_our_virutal_courses"
+            "identify_our_virutal_courses",
         ]
 
     lookup_field = "country_name"
@@ -978,6 +980,27 @@ class ScholarshipSectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScholarshipSection
         fields = "__all__"
+
+
+class AlbumSerializer(serializers.ModelSerializer):
+    album_details = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Album
+        fields = [
+            "id",
+            "main_title",
+            "main_description",
+            "image_cover",
+            "event_date",
+            "date_posted",
+            "album_details",
+        ]
+
+    def get_album_details(self, obj):
+        return obj.albumdetail_set.filter(album_id=obj.id).values(
+            "title", "descriptions", "image", "date_created"
+        )
 
 
 # JobPortal region
@@ -1269,10 +1292,10 @@ class JobApplicationSerializer(serializers.ModelSerializer):
 
                 return jobapplication
             else:
-                raise serializers.ValidationError('Student is not Job ready yet')
-                # raise serializers.ValidationError({"message":'Student is not Job ready yet'})            
+                raise serializers.ValidationError("Student is not Job ready yet")
+                # raise serializers.ValidationError({"message":'Student is not Job ready yet'})
         except Exception as e:
-            raise serializers.ValidationError('Student is not Job ready yet')
+            raise serializers.ValidationError("Student is not Job ready yet")
 
 
 # EndJobPortalRegion
@@ -1358,7 +1381,7 @@ class BillingSerializer(serializers.ModelSerializer):
             "billingdetails",
             "extra_payment",
         ]
-    
+
     def get_extra_payment(self, obj):
         return obj.billingextrapayment_set.filter(billing_id=obj.id).values(
             "id",
@@ -1376,9 +1399,9 @@ class BillingSerializer(serializers.ModelSerializer):
 
     def get_grand_total_paid(self, obj):
         try:
-            extrapayment = obj.billingextrapayment_set.filter(billing_id=obj.id).aggregate(
-                amount_paid=Sum("amount_paid")
-            )
+            extrapayment = obj.billingextrapayment_set.filter(
+                billing_id=obj.id
+            ).aggregate(amount_paid=Sum("amount_paid"))
             billingdetails = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(
                 amount_paid=Sum("amount_paid")
             )
@@ -1393,9 +1416,9 @@ class BillingSerializer(serializers.ModelSerializer):
             billingdetails = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(
                 amount_paid=Sum("amount_paid")
             )
-            extra_payment = obj.billingextrapayment_set.filter(billing_id=obj.id).aggregate(
-                amount_paid=Sum("amount_paid")
-            )
+            extra_payment = obj.billingextrapayment_set.filter(
+                billing_id=obj.id
+            ).aggregate(amount_paid=Sum("amount_paid"))
             extra_item_fee = (
                 obj.billingextrapayment_set.filter(billing_id=obj.id)
                 .values("item_name_fee")
@@ -1403,16 +1426,20 @@ class BillingSerializer(serializers.ModelSerializer):
             )
             total_amount_paid_details = 0
             total_amount_paid_extra = 0
-            course_fee = obj.billingdetail_set.filter(billing_id=obj.id).values('course_fee').first()
-            grand_total = extra_item_fee["item_name_fee"] + course_fee['course_fee']
+            course_fee = (
+                obj.billingdetail_set.filter(billing_id=obj.id)
+                .values("course_fee")
+                .first()
+            )
+            grand_total = extra_item_fee["item_name_fee"] + course_fee["course_fee"]
             if billingdetails and extra_payment:
                 if (
                     total_amount_paid_details != None
                     and total_amount_paid_extra != None
                 ):
                     total_amount_paid_details = billingdetails["amount_paid"]
-                    total_amount_paid_extra = extra_payment["amount_paid"]                    
-                    
+                    total_amount_paid_extra = extra_payment["amount_paid"]
+
                     cal = grand_total - (
                         total_amount_paid_details + total_amount_paid_extra
                     )
