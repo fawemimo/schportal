@@ -131,11 +131,33 @@ class Student(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.student_idcard_id}"
+    
+    def save(self, *args, **kwargs):
+        try:
+            if self.is_approved == True:
+                studentbackup = StudentBackup.objects.create(
+                just_for_jobs = self.just_for_jobs,
+                is_approved = self.is_approved,
+                job_ready = self.job_ready,
+                full_name = self.full_name,
+                student_idcard_id = self.student_idcard_id,
+                date_of_birth = self.date_of_birth,
+                mobile_numbers = self.mobile_numbers,
+                profile_pic = self.profile_pic,
+                contact_address = self.contact_address,
+                next_of_kin_fullname = self.next_of_kin_fullname,
+                next_of_kin_contact_address = self.next_of_kin_contact_address,
+                next_of_kin_mobile_number = self.next_of_kin_mobile_number,
+                relationship_with_next_kin = self.relationship_with_next_kin,
+                cv_upload = self.cv_upload
+                )
+                studentbackup.save()
+                super(Student, self).save(args, kwargs)
+        except Exception as e:
+            pass
+
 
 class StudentBackup(models.Model):
-    student = models.OneToOneField(
-        Student, on_delete=models.CASCADE, blank=True, null=True
-    )
     is_approved = models.BooleanField(default=False)
     job_ready = models.BooleanField(default=False)
     just_for_jobs = models.BooleanField(default=False)
@@ -171,29 +193,6 @@ class StudentBackup(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.student_idcard_id}"
-
-    def save(self, *args, **kwargs):
-        try:
-            student = Student.objects.get(id=self.student.id)
-            if student.is_approved == True:
-                self.just_for_jobs = student.just_for_jobs
-                self.full_name = student.full_name
-                self.is_approved = student.is_approved
-                self.job_ready = student.job_ready
-                self.student_idcard_id = student.student_idcard_id
-                self.date_of_birth = student.date_of_birth
-                self.mobile_numbers = student.mobile_numbers
-                self.profile_pic = student.profile_pic
-                self.contact_address = student.contact_address
-                self.next_of_kin_fullname = student.next_of_kin_fullname
-                self.next_of_kin_contact_address = student.next_of_kin_contact_address
-                self.next_of_kin_mobile_number = student.next_of_kin_mobile_number
-                self.relationship_with_next_kin = student.relationship_with_next_kin
-                self.cv_upload = student.cv_upload
-
-            super(StudentBackup, self).save(*args, **kwargs)
-        except Exception as e:
-            print(e)
 
 
 class Teacher(models.Model):

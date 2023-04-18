@@ -125,7 +125,6 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = [
             "id",
-            "job_ready",
             "email",
             "full_name",
             "student_idcard_id",
@@ -159,6 +158,7 @@ class UpdateStudentSerializer(serializers.ModelSerializer):
             "next_of_kin_contact_address",
             "next_of_kin_mobile_number",
             "relationship_with_next_kin",
+            
         ]
 
 
