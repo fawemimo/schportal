@@ -383,12 +383,12 @@ class CareerOpening(models.Model):
 class CareerApplicant(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255, unique=True)
+    email = models.EmailField(max_length=255)
     mobile = models.CharField(max_length=255)
     career_opening = models.ForeignKey(CareerOpening, on_delete=models.CASCADE)
     resume = models.FileField(
         upload_to="career/applicant/",
-        validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
+        validators=[validate_file_size,FileExtensionValidator(allowed_extensions=["pdf"])],
         blank=True,
         null=True,
     )
@@ -520,7 +520,7 @@ class Album(models.Model):
     image_cover = models.ImageField(
         upload_to="album/cover/",
         validators=[
-            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "svg"])
+            validate_file_size,FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "svg"])
         ],
         blank=True,
         null=True,
@@ -542,7 +542,7 @@ class AlbumDetail(models.Model):
     image = models.ImageField(
         upload_to="album/details/",
         validators=[
-            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "svg"])
+            validate_file_size,FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "svg"])
         ],
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -838,7 +838,7 @@ class JobCategory(models.Model):
         return self.title
 
     class Meta:
-        ordering = ["-ordering"]
+        ordering = ["ordering"]
 
 
 class JobExperience(models.Model):

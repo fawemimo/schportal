@@ -28,6 +28,8 @@ router.register("shortquizes", views.ShortQuizViewSet)
 router.register("inquiries", views.InquiryViewSet)
 router.register("profilepics", views.StudentUpdateViewSet, basename="profilepics")
 router.register("careersections", views.CareerSectionViewSet)
+router.register("careerapplicants", views.CareerApplicantViewSet, basename="careerapplicants")
+router.register("careercategories", views.CareerCategoryViewSet, basename="careercategories")
 router.register("albumsections", views.AlbumSectionViewSet)
 router.register("alumiconnectsections", views.AlumiConnectSectionViewSet)
 

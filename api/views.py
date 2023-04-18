@@ -62,6 +62,17 @@ class CareerSectionViewSet(ModelViewSet):
     queryset = CareerSection.objects.all()
 
 
+class CareerApplicantViewSet(ModelViewSet):
+    http_method_names = ["get", "post"]
+    serializer_class = CareerApplicantSerializer
+    queryset = CareerApplicant.objects.select_related("career_opening")
+
+class CareerCategoryViewSet(ModelViewSet):
+    htto_method_names = ['get']
+    serializer_class = CareerCategorySerializer
+    queryset = CareerCategory.objects.prefetch_related('careeropening_set')
+    
+
 class AlbumSectionViewSet(ModelViewSet):
     http_method_names = ["get"]
     serializer_class = AlbumSectionSerializer
@@ -688,7 +699,13 @@ class AlbumViewSet(ModelViewSet):
     queryset = Album.objects.prefetch_related("albumdetail_set")
     serializer_class = AlbumSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ["main_title", "event_date", "main_description","albumdetail__title","albumdetail__descriptions"]
+    search_fields = [
+        "main_title",
+        "event_date",
+        "main_description",
+        "albumdetail__title",
+        "albumdetail__descriptions",
+    ]
     pagination_class = BasePagination
 
 

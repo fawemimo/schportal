@@ -740,7 +740,7 @@ class JobCategoryAdmin(admin.ModelAdmin):
     search_fields = ["title"]
     date_hierarchy = "date_created"
     ordering = ["title"]
-    ordering = ["-ordering"]
+    ordering = ["ordering"]
     list_per_page = 25
 
 

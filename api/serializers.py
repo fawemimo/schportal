@@ -158,7 +158,6 @@ class UpdateStudentSerializer(serializers.ModelSerializer):
             "next_of_kin_contact_address",
             "next_of_kin_mobile_number",
             "relationship_with_next_kin",
-            
         ]
 
 
@@ -284,6 +283,72 @@ class CareerSectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CareerSection
         fields = "__all__"
+
+
+class CareerApplicantSerializer(serializers.ModelSerializer):
+    career_opening_id = serializers.IntegerField()
+
+    class Meta:
+        model = CareerApplicant
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "mobile",
+            "career_opening_id",
+            "resume",
+        ]
+
+    def validate_career_opening_id(self, value):
+        if not CareerOpening.objects.filter(id=value).exists():
+            raise serializers.ValidationError(
+                "Career opening with the given ID does not exist."
+            )
+        return value
+
+    def create(self, validated_data):
+        career_opening_id = validated_data["career_opening_id"]
+        return CareerApplicant.objects.create(
+            career_opening_id=career_opening_id, **validated_data
+        )
+
+    def save(self, **kwargs):
+        career_opening_id = self.validated_data["career_opening_id"]
+        first_name = self.validated_data["first_name"]
+        last_name = self.validated_data["last_name"]
+        email = self.validated_data["email"]
+        mobile = self.validated_data["mobile"]
+        resume = self.validated_data["resume"]
+
+        try:
+            careerapplicant = CareerApplicant.objects.create(
+                career_opening_id=career_opening_id,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                mobile=mobile,
+                resume=resume,
+            )
+            careerapplicant.save()
+
+            return careerapplicant
+
+        except Exception as e:
+            pass
+
+
+class CareerCategorySerializer(serializers.ModelSerializer):
+    career_opening = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CareerCategory
+        fields = ["id", "title", "description", "career_opening"]
+
+    def get_career_opening(self, obj):
+        return obj.careeropening_set.filter(career_category_id=obj.id).values(
+            "title", "description", "job_location__title", "employment_type__title"
+        )
 
 
 class AlbumSectionSerializer(serializers.ModelSerializer):
@@ -1041,15 +1106,15 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
 
 class JobTypeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = JobType 
+        model = JobType
         fields = "__all__"
 
 
 class JobLocationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = JobLocation 
+        model = JobLocation
         fields = "__all__"
-        
+
 
 class JobCategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -1092,7 +1157,12 @@ class PostJobSerializer(serializers.ModelSerializer):
         job_location_id = validated_data["job_location_id"]
         job_type_id = validated_data["job_type_id"]
         experience = validated_data["experience"]
-        job = Job.objects.create(employer_id=employer_id, job_location_id=job_location_id,job_type_id=job_type_id, **validated_data)
+        job = Job.objects.create(
+            employer_id=employer_id,
+            job_location_id=job_location_id,
+            job_type_id=job_type_id,
+            **validated_data,
+        )
 
         for x in job_category:
             job_category = JobCategory.objects.filter(**x)
@@ -1118,12 +1188,12 @@ class PostJobSerializer(serializers.ModelSerializer):
                 "JobType with the given ID does not exist"
             )
         return value
-    
+
     def validate_job_location_id(self, value):
         if not JobLocation.objects.filter(id=value).exists():
             raise serializers.ValidationError(
                 "JobLocation with the given ID does not exist"
-            )    
+            )
         return value
 
     def save(self, **kwargs):
@@ -1182,6 +1252,7 @@ class JobSerializer(serializers.ModelSerializer):
     employer = EmployerSerializer()
     job_type = serializers.StringRelatedField()
     job_location = serializers.StringRelatedField()
+
     class Meta:
         model = Job
         fields = "__all__"
@@ -1189,7 +1260,7 @@ class JobSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         self.fields["job_category"] = JobCategorySerializer(many=True)
-        self.fields["experience"] = JobExperienceSerializer(many=True)        
+        self.fields["experience"] = JobExperienceSerializer(many=True)
         return super().to_representation(instance)
 
 
