@@ -804,11 +804,11 @@ class BillingAdmin(admin.ModelAdmin):
         "course_name",
         "course_fee",
         "grand_total_paid",
-        "grand_outstanding",
+        # "grand_outstanding",
         "payment_completion_status",
     ]
     list_filter = ["payment_completion_status"]
-    readonly_fields = ["grand_total_paid", "grand_outstanding"]
+    readonly_fields = ["grand_total_paid"]
     list_select_related = ["student"]
     list_editable = ["student"]
     autocomplete_fields = ["student"]

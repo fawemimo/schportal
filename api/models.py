@@ -877,12 +877,12 @@ class Billing(models.Model):
         Course, blank=True, null=True, on_delete=models.PROTECT
     )
     course_fee = models.PositiveBigIntegerField(blank=True, null=True)
-    start_date = models.DateTimeField(blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
     student = models.ForeignKey(
         Student, on_delete=models.PROTECT, null=True, blank=True
     )
     grand_total_paid = models.PositiveBigIntegerField(blank=True, null=True)
-    grand_outstanding = models.PositiveBigIntegerField(blank=True, null=True)
+    # grand_outstanding = models.PositiveBigIntegerField(blank=True, null=True)
     payment_completion_status = models.CharField(
         default=PENDING,
         choices=PAYMENT_COMPLETION_STATUS,
@@ -895,63 +895,6 @@ class Billing(models.Model):
 
     def __str__(self):
         return f"{str(self.student.full_name)} - {str(self.student.student_idcard_id)}-{str(self.id)}"
-
-    def get_grand_outstanding(self):
-        try:
-            billingdetails = self.billingdetail_set.filter(
-                billing_id=self.id
-            ).aggregate(amount_paid=Sum("amount_paid"))
-
-            course_fee = self.course_fee
-
-            # getting the item name
-            extra_item_fee = 0
-
-            # getting the item fee
-            extra_payment = 0
-
-            # declaring grand total none
-            grand_total = 0
-
-            extra_payment = self.billingextrapayment_set.filter(
-                billing_id=self.id
-            ).aggregate(amount_paid=Sum("amount_paid"))
-
-            extra_item_fee = (
-                self.billingextrapayment_set.filter(billing_id=self.id)
-                .values("item_name_fee")
-                .first()
-            )
-
-            if extra_payment != 0 and extra_item_fee != 0:
-                # add course fee and the xtra payment to get grand total
-                xif = extra_item_fee["item_name_fee"]
-                print("xif: ", xif)
-                grand_total = xif + course_fee
-                print("grand_total1: ", grand_total)
-            else:
-                xif = 0
-                grand_total = xif + course_fee
-                # print('xif: ',xif)
-                # print('grand_total2: ',grand_total)
-                total_amount_paid_details = billingdetails["amount_paid"]
-                # print('total_amount_paid_details: ',total_amount_paid_details)
-                total_amount_paid_extra = extra_payment["amount_paid"]
-                # print('total_amount_paid_extra:', total_amount_paid_extra)
-                # print('course_fee: ',course_fee)
-
-                if total_amount_paid_details != 0 and total_amount_paid_extra != 0:
-                    cal = grand_total - (
-                        total_amount_paid_details + total_amount_paid_extra
-                    )
-                    return cal
-                else:
-                    cal = grand_total - (total_amount_paid_details + 0)
-                    return cal
-
-        except Exception as e:
-            # print('exception from grand outstanding function',e)
-            pass
 
     def get_grand_total_paid(self):
         try:
@@ -983,15 +926,11 @@ class Billing(models.Model):
             else:
                 self.get_grand_total_paid = grand_total
 
-            self.grand_outstanding = self.course_fee
-            if self.get_grand_outstanding != 0:
-                grand_outstanding = self.get_grand_outstanding()
-                self.grand_outstanding = grand_outstanding
 
         except Exception as e:
             # print('Exception from save method',e)
             pass
-        super(Billing, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class BillingDetail(models.Model):
@@ -1027,7 +966,7 @@ class BillingDetail(models.Model):
         except Exception as e:
             pass
 
-        super(BillingDetail, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class BillingExtraPayment(models.Model):
@@ -1069,7 +1008,7 @@ class BillingExtraPayment(models.Model):
         except Exception as e:
             print(e)
 
-        super(BillingExtraPayment, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 # End Billing Information region
