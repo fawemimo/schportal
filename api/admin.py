@@ -851,7 +851,7 @@ class BillingDetailAdmin(admin.ModelAdmin):
     list_per_page = 25
     readonly_fields = ["outstanding_amount"]
     actions = ["export_to_csv"]
-    list_editable = ["billing", "amount_paid"]
+    # list_editable = ["billing", "amount_paid"]
 
 
 # End Billing

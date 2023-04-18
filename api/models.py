@@ -966,7 +966,7 @@ class BillingDetail(models.Model):
         except Exception as e:
             pass
 
-        super().save(*args, **kwargs)
+        super(BillingDetail, self).save(args,kwargs)
 
 
 class BillingExtraPayment(models.Model):
