@@ -15,6 +15,7 @@ from api.emails import (
     send_short_quizze_email,
     send_sponsorship_email,
     send_virtualclass_email,
+    send_employer_sign_up_email
 )
 
 from .models import *
@@ -1084,6 +1085,8 @@ class EmployerSerializer(serializers.ModelSerializer):
             "company_url",
             "tagline",
             "company_logo",
+            "profile_approval",
+            "kyc_document",
             "date_created",
             "date_updated",
         ]
@@ -1145,7 +1148,6 @@ class PostJobSerializer(serializers.ModelSerializer):
             "job_location_id",
             "experience",
             "job_type_id",
-            "save_as",
             "close_job",
             "job_summary",
             "job_responsibilities",
@@ -1200,7 +1202,6 @@ class PostJobSerializer(serializers.ModelSerializer):
         job_type_id = self.validated_data["job_type_id"]
         job_location_id = self.validated_data["job_location_id"]
         job_title = self.validated_data["job_title"]
-        save_as = self.validated_data["save_as"]
         job_summary = self.validated_data["job_summary"]
         job_responsibilities = self.validated_data["job_responsibilities"]
         close_job = self.validated_data["close_job"]
@@ -1210,6 +1211,7 @@ class PostJobSerializer(serializers.ModelSerializer):
         experience = self.validated_data["experience"]
 
         try:
+            
             num = range(100, 1000)
             ran = random.choice(num)
             slug = f"{(slugify(job_title))}-{ran}"
@@ -1219,7 +1221,6 @@ class PostJobSerializer(serializers.ModelSerializer):
                 job_type_id=job_type_id,
                 job_location_id=job_location_id,
                 job_title=job_title,
-                save_as=save_as,
                 job_summary=job_summary,
                 slug=slug,
                 job_responsibilities=job_responsibilities,
@@ -1239,7 +1240,8 @@ class PostJobSerializer(serializers.ModelSerializer):
             return job
 
         except Exception as e:
-            pass
+            print(e)
+          
 
 
 class PatchJobSerializer(serializers.ModelSerializer):
@@ -1739,3 +1741,35 @@ class UserCreateSerializer(serializers.ModelSerializer):
             company_url=company_url,
         )
         return user
+
+    def save(self, **kwargs):
+        try:
+            employer = self.validated_data.pop("employer")
+            contact_person = employer.pop("contact_person")
+            contact_person_mobile = employer.pop("contact_person_mobile")
+            company_name = employer.pop("company_name")
+            company_url = employer.pop("company_url")
+            user_type = self.validated_data["user_type"]
+            email = self.validated_data["email"]
+            username = self.validated_data["username"]
+            mobile_numbers = self.validated_data["mobile_numbers"]
+            user = User.objects.create(
+                user_type=user_type,
+                email=email,
+                username=username,
+                mobile_numbers=mobile_numbers,
+            )
+            employerobj = Employer.objects.create(
+                user=user,
+                contact_person=contact_person,
+                contact_person_mobile=contact_person_mobile,
+                company_name=company_name,
+                company_url=company_url,
+            )
+
+            
+            send_employer_sign_up_email(email)
+            
+            return user
+        except Exception as e:
+            print(e)        

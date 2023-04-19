@@ -333,8 +333,7 @@ class AboutUsSection(models.Model):
     about_intro = models.TextField()
     our_mission = models.TextField()
     our_mission_item = models.TextField()
-    why_anchorsoft = models.TextField()
-    join_out_team = models.TextField(blank=True, null=True)
+    join_our_team = models.TextField(blank=True, null=True)
     ordering = models.CharField(max_length=10)
 
     def __str__(self):
@@ -835,7 +834,6 @@ class Employer(models.Model):
             validate_file_size,
             FileExtensionValidator(allowed_extensions=["pdf"]),
         ],
-        default="JobPortal/Company/Docs/loginIcon.pdf",
         blank=True,
         null=True,
     )

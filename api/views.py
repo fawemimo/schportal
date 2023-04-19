@@ -817,6 +817,10 @@ class JobViewSet(ModelViewSet):
             "experience_id": self.kwargs.get("experience_pk"),
         }
 
+    def create(self, request, *args, **kwargs):
+        super().create(request, *args, **kwargs)
+        return Response({'success': 'Job Already Save....waiting for approval to be publish'}, status=201)
+        
 
 class JobTypeViewSet(ModelViewSet):
     http_method_name = ["get"]

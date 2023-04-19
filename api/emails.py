@@ -179,3 +179,23 @@ def send_sponsorship_email(
 
     except Exception as e:
         return e
+
+
+def send_employer_sign_up_email(email):
+
+    try:
+        message = BaseEmailMessage(
+            template_name="api/email_response/employer_sign_up.html",
+            context={
+                # "contact_person": contact_person,
+                # "contact_person_mobile": contact_person_mobile,
+                # "company_name":company_name,
+                # "company_url": company_url,
+                "email": email,
+            },
+        )
+
+        message.send([email, settings.EMAIL_HOST_USER])
+
+    except Exception as e:
+        print(e)
