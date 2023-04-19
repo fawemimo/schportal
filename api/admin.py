@@ -492,7 +492,6 @@ class BackupStudentAdmin(admin.ModelAdmin):
     search_fields = ["full_name"]
     list_per_page = 25
     paginator = CachingPaginator
-    list_select_related = ["student"]
     actions = ["export_to_csv"]
 
     @admin.display(description="Export as CSV")
@@ -760,10 +759,10 @@ class JobAdmin(admin.ModelAdmin):
         "employer",
         "job_title",
         "slug",
-        "save_as",
+        "posting_approval",
         "close_job",
     ]
-    list_editable = ["save_as", "close_job"]
+    list_editable = ["posting_approval","close_job"]
     list_filter = ["date_posted", "date_updated"]
     ordering = ["-date_posted"]
     date_hierarchy = "date_posted"

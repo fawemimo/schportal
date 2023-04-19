@@ -900,7 +900,7 @@ class Job(models.Model):
     )
     job_title = models.CharField(max_length=255)
     slug = models.SlugField(blank=True, null=True)
-    save_as = models.CharField(max_length=50, choices=STATUS, default="Draft")
+    posting_approval = models.BooleanField(default=False, blank=True, null=True)
     job_summary = tinymce_models.HTMLField()
     job_responsibilities = tinymce_models.HTMLField()
     close_job = models.BooleanField(default=False)

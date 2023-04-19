@@ -1297,6 +1297,7 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
 class EmployerPostedJobSerializer(serializers.ModelSerializer):
     # applicants = serializers.SerializerMethodField()
     total_applicants = serializers.SerializerMethodField()
+    posting_approval = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
@@ -1309,22 +1310,18 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
             "job_responsibilities",
             "date_posted",
             "date_updated",
-            # "applicants",
+            "posting_approval",
             "total_applicants",
         ]
 
     def get_total_applicants(self, obj):
         return obj.jobapplication_set.count()
 
-    # def get_applicants(self, obj):
-    #     return obj.jobapplication_set.values(
-    #         "id",
-    #         "student",
-    #         "student__date_of_birth",
-    #         "job",
-    #         "student__cv_upload",
-    #         "date_applied",
-    #     )
+    def get_posting_approval(self, obj):
+        if obj.posting_approval == True:
+            return "Approved"
+        else:
+            return "Pending Approval"    
 
 
 class ApplicantsSerializer(serializers.ModelSerializer):

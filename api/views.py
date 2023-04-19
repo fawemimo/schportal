@@ -67,11 +67,12 @@ class CareerApplicantViewSet(ModelViewSet):
     serializer_class = CareerApplicantSerializer
     queryset = CareerApplicant.objects.select_related("career_opening")
 
+
 class CareerCategoryViewSet(ModelViewSet):
-    htto_method_names = ['get']
+    htto_method_names = ["get"]
     serializer_class = CareerCategorySerializer
-    queryset = CareerCategory.objects.prefetch_related('careeropening_set')
-    
+    queryset = CareerCategory.objects.prefetch_related("careeropening_set")
+
 
 class AlbumSectionViewSet(ModelViewSet):
     http_method_names = ["get"]
@@ -775,7 +776,7 @@ class JobViewSet(ModelViewSet):
     http_method_names = ["get", "post", "delete", "patch", "put"]
 
     queryset = (
-        Job.objects.filter(save_as="Published")
+        Job.objects.filter(posting_approval=True)
         .exclude(close_job=True)
         .select_related("employer")
     )
@@ -819,8 +820,11 @@ class JobViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         super().create(request, *args, **kwargs)
-        return Response({'success': 'Job Already Save....waiting for approval to be publish'}, status=201)
-        
+        return Response(
+            {"success": "Your Profile is Pending Approval. Contact the Admin"},
+            status=201,
+        )
+
 
 class JobTypeViewSet(ModelViewSet):
     http_method_name = ["get"]
