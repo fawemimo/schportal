@@ -334,7 +334,7 @@ class AboutUsSection(models.Model):
     our_mission = models.TextField()
     our_mission_item = models.TextField()
     why_anchorsoft = models.TextField()
-    join_out_team = models.TextField(blank=True,null=True)
+    join_out_team = models.TextField(blank=True, null=True)
     ordering = models.CharField(max_length=10)
 
     def __str__(self):
@@ -389,7 +389,10 @@ class CareerApplicant(models.Model):
     career_opening = models.ForeignKey(CareerOpening, on_delete=models.CASCADE)
     resume = models.FileField(
         upload_to="career/applicant/",
-        validators=[validate_file_size,FileExtensionValidator(allowed_extensions=["pdf"])],
+        validators=[
+            validate_file_size,
+            FileExtensionValidator(allowed_extensions=["pdf"]),
+        ],
         blank=True,
         null=True,
     )
@@ -521,7 +524,8 @@ class Album(models.Model):
     image_cover = models.ImageField(
         upload_to="album/cover/",
         validators=[
-            validate_file_size,FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "svg"])
+            validate_file_size,
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "svg"]),
         ],
         blank=True,
         null=True,
@@ -543,7 +547,8 @@ class AlbumDetail(models.Model):
     image = models.ImageField(
         upload_to="album/details/",
         validators=[
-            validate_file_size,FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "svg"])
+            validate_file_size,
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "svg"]),
         ],
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -809,6 +814,7 @@ class HowItWork(models.Model):
 
 class Employer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_approval = models.BooleanField(default=False, blank=True, null=True)
     contact_person = models.CharField(max_length=255, blank=True, null=True)
     contact_person_mobile = models.CharField(max_length=50, blank=True, null=True)
     location = models.CharField(max_length=255, null=True, blank=True)
@@ -822,6 +828,16 @@ class Employer(models.Model):
             FileExtensionValidator(allowed_extensions=["svg", "jpg", "png", "jpeg"]),
         ],
         default="JobPortal/Company/loginIcon.png",
+    )
+    kyc_document = models.FileField(
+        upload_to="JobPortal/Company",
+        validators=[
+            validate_file_size,
+            FileExtensionValidator(allowed_extensions=["pdf"]),
+        ],
+        default="JobPortal/Company/Docs/loginIcon.pdf",
+        blank=True,
+        null=True,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)
