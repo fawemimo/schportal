@@ -334,6 +334,7 @@ class AboutUsSection(models.Model):
     our_mission = models.TextField()
     our_mission_item = models.TextField()
     why_anchorsoft = models.TextField()
+    join_out_team = models.TextField(blank=True,null=True)
     ordering = models.CharField(max_length=10)
 
     def __str__(self):
