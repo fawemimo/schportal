@@ -734,7 +734,7 @@ class EmployerViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == "GET":
             return EmployerSerializer
-        elif self.request.method in ["POST", "PATCH"]:
+        elif self.request.method in ["POST", "PATCH","PUT"]:
             return UpdateEmployerSerializer
         else:
             return EmployerSerializer
@@ -754,8 +754,12 @@ class EmployerViewSet(ModelViewSet):
         contact_address = request.data.get("contact_address", None)
         company_name = request.data.get("company_name", None)
         company_logo = request.data.get("company_logo", None)
+        kyc_document = request.data.get("kyc_document", None)
         contact_person_mobile = request.data.get("contact_person_mobile", None)
         company_url = request.data.get("company_url", None)
+
+        if kyc_document:
+            setattr(instance,"kyc_document", kyc_document)
 
         if company_logo:
             setattr(instance, "company_logo", company_logo)

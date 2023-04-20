@@ -1102,6 +1102,7 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
             "contact_person",
             "company_name",
             "company_logo",
+            "kyc_document",
             "contact_person_mobile",
             "company_url",
         ]
