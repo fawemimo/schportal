@@ -129,7 +129,7 @@ class CareerCategoryAdmin(admin.ModelAdmin):
 @admin.register(CareerApplicant)   
 class CareerApplicantAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'email', 'mobile', 'career_opening']
-
+    list_filter = ['highest_qualification']
 
 @admin.register(AlbumSection)
 class AlbumSectionAdmin(admin.ModelAdmin):

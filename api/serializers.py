@@ -294,6 +294,7 @@ class CareerApplicantSerializer(serializers.ModelSerializer):
             "last_name",
             "email",
             "mobile",
+            "highest_qualification",
             "career_opening_id",
             "resume",
         ]
@@ -317,6 +318,7 @@ class CareerApplicantSerializer(serializers.ModelSerializer):
         last_name = self.validated_data["last_name"]
         email = self.validated_data["email"]
         mobile = self.validated_data["mobile"]
+        highest_qualification= self.validated_data["highest_qualification"]
         resume = self.validated_data["resume"]
 
         try:
@@ -326,6 +328,7 @@ class CareerApplicantSerializer(serializers.ModelSerializer):
                 last_name=last_name,
                 email=email,
                 mobile=mobile,
+                highest_qualification=highest_qualification,
                 resume=resume,
             )
             careerapplicant.save()

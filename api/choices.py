@@ -20,62 +20,37 @@ ATTENDANCE_CHOICES = (
 )
 
 # Kids Model
-AGE_BRACKET_CHOICES = (
-        ("6-9", "6-9"),
-        ("10-14", "10-14")
-      )
+AGE_BRACKET_CHOICES = (("6-9", "6-9"), ("10-14", "10-14"))
 
 
 # Financial Aid Model
 AID_TYPE_CHOICES = (
-        ("Student Loan", "Student Loan"),
-        (
-            "Full Scholarship(Tuition + Laptop + Stipends)",
-            "Full Scholarship(Tuition + Laptop + Stipends)",
-        ),
-        (
-            "Scholarship Tier 1 (Tuition + Laptop)",
-            "Scholarship Tier 1 (Tuition + Laptop)",
-        ),
-        ("Scholarship Tier 2 (Tuition)", "Scholarship Tier 2 (Tuition)"),
-    )
+    ("Student Loan", "Student Loan"),
+    (
+        "Full Scholarship(Tuition + Laptop + Stipends)",
+        "Full Scholarship(Tuition + Laptop + Stipends)",
+    ),
+    (
+        "Scholarship Tier 1 (Tuition + Laptop)",
+        "Scholarship Tier 1 (Tuition + Laptop)",
+    ),
+    ("Scholarship Tier 2 (Tuition)", "Scholarship Tier 2 (Tuition)"),
+)
 
 
 # Community Connect Models
-COMMUNITY_TYPE = (
-        ("Webinars", "Webinars"),
-        ("Meetups", "Meetups")
-    )
+COMMUNITY_TYPE = (("Webinars", "Webinars"), ("Meetups", "Meetups"))
 
 
 # HowItWork Models
 HOW_IT_WORK_CLASS_TYPE = (
-        ("Physical Class", "Physical Class"),
-        ("Virtual Class", "Virtual Class"),
-    )
-
-
-# JobCategory Model
-# EXPERIENCE_LEVEL = (
-#         ("Experienced", "Experienced"),
-#         ("Intermediate", "Intermediate"),
-#         ("Internship", "Internship"),
-#     )
-
-# JOB_TYPE = (
-#     ("Full-time", "Full-time"),
-#     ("Part-time", "Part-time"),
-#     ("Contractor", "Contractor"),
-# )
-
-# JOB_LOCATION = (("On-site", "On-site"), ("Hybrid", "Hybrid"), ("Remote", "Remote"))
+    ("Physical Class", "Physical Class"),
+    ("Virtual Class", "Virtual Class"),
+)
 
 
 # Job Model
-STATUS = (
-        ("Draft", "Draft"), 
-        ("Published", "Published")
-    )
+STATUS = (("Draft", "Draft"), ("Published", "Published"))
 
 
 # Billing Model
@@ -91,10 +66,17 @@ PAYMENT_COMPLETION_STATUS = (
 
 
 # Billing Detail Models
-PROGRAM_TYPE_CHOICES = (
-    ("Onsite", "Onsite"), 
-    ("Virtual", "Virtual")
-    )
+PROGRAM_TYPE_CHOICES = (("Onsite", "Onsite"), ("Virtual", "Virtual"))
 
 # Blog Model
 OPTIONS = (("published", "Published"), ("draft", "Draft"))
+
+# CAREER OPENING
+QUALIFICATION_CHOICES = (
+    ("PhD", "PhD"),
+    ("Msc", "Msc"),
+    ("Bsc/B.Tech", "Bsc/B.Tech"),
+    ("HND", "HND"),
+    ("OND/NCE", "OND/NCE"),
+    ("SSCE", "SSCE"),
+)
