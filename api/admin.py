@@ -723,11 +723,11 @@ class JobLocationAdmin(BaseJobSelectionAdmin):
 
 @admin.register(Employer)
 class EmployerAdmin(admin.ModelAdmin):
-    list_display = ["id", "contact_person", "location", "company_name", "date_created"]
+    list_display = ["id", "contact_person", "location", "company_name", "date_created","date_updated"]
     date_hierarchy = "date_created"
     search_fields = ["contact_person", "company_name"]
     ordering = [
-        "company_name",
+        "-date_updated",
     ]
     list_per_page = 25
 

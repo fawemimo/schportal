@@ -827,7 +827,6 @@ class Employer(models.Model):
             validate_file_size,
             FileExtensionValidator(allowed_extensions=["svg", "jpg", "png", "jpeg"]),
         ],
-        default="JobPortal/Company/loginIcon.png",
         blank=True,
         null=True,
     )
@@ -841,7 +840,7 @@ class Employer(models.Model):
         null=True,
     )
     date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateField(auto_now=True)
+    date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.user}"
