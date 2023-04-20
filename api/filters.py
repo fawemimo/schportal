@@ -17,23 +17,23 @@ class JobFilter(FilterSet):
     @classmethod
     def filter_by_job_location(cls, queryset, name, value):
         names = value.strip().split(",")
-        return queryset.filter(Q(job_location__title__in=names)).filter(save_as="Published").exclude(close_job=True).select_related("employer").distinct()       
+        return queryset.filter(Q(job_location__title__in=names)).filter(posting_approval=True).exclude(close_job=True).select_related("employer").distinct()       
         
 
     @classmethod
     def filter_by_job_type(cls, queryset, name, value):
         names = value.strip().split(",")
-        return queryset.filter(Q(job_type__title__in=names)).filter(save_as="Published").exclude(close_job=True).select_related("employer").distinct()
+        return queryset.filter(Q(job_type__title__in=names)).filter(posting_approval=True).exclude(close_job=True).select_related("employer").distinct()
 
     @classmethod
     def filter_by_experience(cls, queryset, name, value):
         names = value.strip().split(",")
-        return queryset.filter(Q(experience__title__in=names)).filter(save_as="Published").exclude(close_job=True).select_related("employer").distinct()
+        return queryset.filter(Q(experience__title__in=names)).filter(posting_approval=True).exclude(close_job=True).select_related("employer").distinct()
 
     @classmethod
     def filter_by_job_category(cls,queryset, name, value):
         names = value.strip().split(",")        
-        return queryset.filter(Q(job_category__title__in=names)).filter(save_as="Published").exclude(close_job=True).select_related("employer").distinct()
+        return queryset.filter(Q(job_category__title__in=names)).filter(posting_approval=True).exclude(close_job=True).select_related("employer").distinct()
 
 
 class EmployerFilterSet(FilterSet):

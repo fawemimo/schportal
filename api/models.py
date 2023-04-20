@@ -828,6 +828,8 @@ class Employer(models.Model):
             FileExtensionValidator(allowed_extensions=["svg", "jpg", "png", "jpeg"]),
         ],
         default="JobPortal/Company/loginIcon.png",
+        blank=True,
+        null=True,
     )
     kyc_document = models.FileField(
         upload_to="JobPortal/Company",
