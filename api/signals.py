@@ -1,14 +1,8 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from .models import (
-    StudentBackup,
-    Billing,
-    BillingDetail,
-    Employer,
-    Student,
-    Teacher,
-    User,
-)
+
+from .models import (Billing, BillingDetail, Employer, Student, StudentBackup,
+                     Teacher, User)
 
 
 @receiver(post_save, sender=User)

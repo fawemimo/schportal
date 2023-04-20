@@ -1,5 +1,5 @@
-import uuid
 import random
+import uuid
 from datetime import datetime
 
 from django.contrib.auth.models import AbstractUser
@@ -813,7 +813,7 @@ class HowItWork(models.Model):
 
 class Employer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_approval = models.BooleanField(default=False, blank=True, null=True)
+    profile_approval = models.BooleanField(default=False)
     contact_person = models.CharField(max_length=255, blank=True, null=True)
     contact_person_mobile = models.CharField(max_length=50, blank=True, null=True)
     location = models.CharField(max_length=255, null=True, blank=True)

@@ -4,6 +4,7 @@ from rest_framework_nested import routers
 from api import pdf
 
 from . import views
+from .views import UserViewSet
 
 router = routers.DefaultRouter()
 router.register("topbars", views.TopBarViewSet)
@@ -176,4 +177,5 @@ urlpatterns = [
         views.MyTokenObtainPairView.as_view(),
         name="token_obtain_pair",
     ),
+    path('auth/users/', UserViewSet.as_view({'post': 'create'}), name='user-create'),
 ]

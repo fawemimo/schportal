@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
+
 def validate_file_size(file):
     max_size_kb = 2000
 

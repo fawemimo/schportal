@@ -1,26 +1,18 @@
+import random
+
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError, transaction
 from django.db.models import *
+from django.utils.text import slugify
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from django.utils.text import slugify
-from django.core.exceptions import ValidationError
-from django.db import transaction
-from django.db import IntegrityError
-from api.emails import (
-    send_financial_aid_email,
-    send_inquiries_email,
-    send_interested_email,
-    send_kids_coding_email,
-    send_short_quizze_email,
-    send_sponsorship_email,
-    send_virtualclass_email,
-    send_employer_sign_up_email
-)
+
+from .emails import *
 
 from .models import *
-import random
 
 
 class BaseTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -49,13 +41,13 @@ class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
                 if self.user.employer.profile_approval == True:
                     data["employer_id"] = self.user.employer.id
                 else:    
-                    raise ValidationError({"message":"Can't login for now awaiting approval"})
+                    raise ValidationError({"message":"Your profile is approval pending"})
 
             else:
                 pass
 
         except Exception as e:
-            raise ValidationError({"message":"Can't login for now awaiting approval"})
+            raise ValidationError({"message":"Your profile is approval pending"})
         return data
 
     def validate_user_type(self, value):
@@ -353,7 +345,7 @@ class CareerCategorySerializer(serializers.ModelSerializer):
 
     def get_career_opening(self, obj):
         return obj.careeropening_set.filter(career_category_id=obj.id).values(
-            "title", "description", "job_location__title", "employment_type__title"
+            "id","title", "description", "job_location__title", "employment_type__title"
         )
 
 
@@ -1730,6 +1722,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             user_type=user_type,
             email=email,
             username=username,
+            first_name=contact_person,
             mobile_numbers=mobile_numbers,
         )
         if password:
@@ -1744,34 +1737,38 @@ class UserCreateSerializer(serializers.ModelSerializer):
         )
         return user
 
-    def save(self, **kwargs):
-        try:
-            employer = self.validated_data.pop("employer")
-            contact_person = employer.pop("contact_person")
-            contact_person_mobile = employer.pop("contact_person_mobile")
-            company_name = employer.pop("company_name")
-            company_url = employer.pop("company_url")
-            user_type = self.validated_data["user_type"]
-            email = self.validated_data["email"]
-            username = self.validated_data["username"]
-            mobile_numbers = self.validated_data["mobile_numbers"]
-            user = User.objects.create(
-                user_type=user_type,
-                email=email,
-                username=username,
-                mobile_numbers=mobile_numbers,
-            )
-            employerobj = Employer.objects.create(
-                user=user,
-                contact_person=contact_person,
-                contact_person_mobile=contact_person_mobile,
-                company_name=company_name,
-                company_url=company_url,
-            )
+    # def save(self, **kwargs):
+    #     try:
+    #         employer = self.validated_data.pop("employer")
+    #         contact_person = employer.pop("contact_person")
+    #         contact_person_mobile = employer.pop("contact_person_mobile")
+    #         company_name = employer.pop("company_name")
+    #         company_url = employer.pop("company_url")
+    #         user_type = self.validated_data["user_type"]
+    #         email = self.validated_data.get["email"]
+    #         username = self.validated_data["username"]
+    #         mobile_numbers = self.validated_data["mobile_numbers"]
+    #         user = User.objects.create(
+    #             user_type=user_type,
+    #             email=email,
+    #             username=username,
+    #             first_name=contact_person,
+    #             mobile_numbers=mobile_numbers,
+    #         )
+    #         if password:
+    #             user.set_password(password)
+    #             user.save()
+    #         employerobj = Employer.objects.create(
+    #             user=user,
+    #             contact_person=contact_person,
+    #             contact_person_mobile=contact_person_mobile,
+    #             company_name=company_name,
+    #             company_url=company_url,
+    #         )
 
             
-            send_employer_sign_up_email(email)
+    #         send_employer_sign_up_email(email)
             
-            return user
-        except Exception as e:
-            print(e)        
+    #         return user
+    #     except Exception as e:
+    #         print(e)        

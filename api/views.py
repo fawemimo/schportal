@@ -4,7 +4,8 @@ from decouple import config
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, permissions, status, parsers
+from djoser.views import UserViewSet as DjoserUserViewSet
+from rest_framework import filters, parsers, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -12,12 +13,25 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.models import *
 from api.pdf import *
+
 from .filters import *
 from .models import *
 from .paginations import *
 from .permissions import *
 from .serializers import *
+from .emails import *
 
+
+class UserViewSet(DjoserUserViewSet):
+    # serializer_class = UserCreateSerializer
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        user = self.get_queryset().get(pk=response.data['id'])
+        email = user.email
+        message = 'Thank you for registering with us!'
+        send_employer_sign_up_email(email)
+        return response
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = UserTokenObtainPairSerializer
