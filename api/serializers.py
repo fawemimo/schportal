@@ -5,6 +5,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.utils.text import slugify
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db import IntegrityError
 from api.emails import (
@@ -45,12 +46,16 @@ class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
             if self.user.user_type == "student":
                 data["student_id"] = self.user.student.id
             elif self.user.user_type == "employer":
-                data["employer_id"] = self.user.employer.id
+                if self.user.employer.profile_approval == True:
+                    data["employer_id"] = self.user.employer.id
+                else:    
+                    raise ValidationError({"message":"Can't login for now awaiting approval"})
+
             else:
                 pass
 
         except Exception as e:
-            print(e)
+            raise ValidationError({"message":"Can't login for now awaiting approval"})
         return data
 
     def validate_user_type(self, value):
