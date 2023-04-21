@@ -1739,40 +1739,5 @@ class UserCreateSerializer(serializers.ModelSerializer):
             company_name=company_name,
             company_url=company_url,
         )
+        send_employer_sign_up_email(email,contact_person)
         return user
-
-    # def save(self, **kwargs):
-    #     try:
-    #         employer = self.validated_data.pop("employer")
-    #         contact_person = employer.pop("contact_person")
-    #         contact_person_mobile = employer.pop("contact_person_mobile")
-    #         company_name = employer.pop("company_name")
-    #         company_url = employer.pop("company_url")
-    #         user_type = self.validated_data["user_type"]
-    #         email = self.validated_data.get["email"]
-    #         username = self.validated_data["username"]
-    #         mobile_numbers = self.validated_data["mobile_numbers"]
-    #         user = User.objects.create(
-    #             user_type=user_type,
-    #             email=email,
-    #             username=username,
-    #             first_name=contact_person,
-    #             mobile_numbers=mobile_numbers,
-    #         )
-    #         if password:
-    #             user.set_password(password)
-    #             user.save()
-    #         employerobj = Employer.objects.create(
-    #             user=user,
-    #             contact_person=contact_person,
-    #             contact_person_mobile=contact_person_mobile,
-    #             company_name=company_name,
-    #             company_url=company_url,
-    #         )
-
-            
-    #         send_employer_sign_up_email(email)
-            
-    #         return user
-    #     except Exception as e:
-    #         print(e)        

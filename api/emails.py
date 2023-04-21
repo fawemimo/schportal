@@ -181,13 +181,13 @@ def send_sponsorship_email(
         return e
 
 
-def send_employer_sign_up_email(email):
+def send_employer_sign_up_email(email,contact_person):
 
     try:
         message = BaseEmailMessage(
             template_name="api/email_response/employer_sign_up.html",
             context={
-                # "contact_person": contact_person,
+                "contact_person": contact_person,
                 # "contact_person_mobile": contact_person_mobile,
                 # "company_name":company_name,
                 # "company_url": company_url,

@@ -22,17 +22,6 @@ from .serializers import *
 from .emails import *
 
 
-class UserViewSet(DjoserUserViewSet):
-    # serializer_class = UserCreateSerializer
-
-    def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        user = self.get_queryset().get(pk=response.data['id'])
-        email = user.email
-        message = 'Thank you for registering with us!'
-        send_employer_sign_up_email(email)
-        return response
-
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = UserTokenObtainPairSerializer
 

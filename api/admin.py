@@ -10,10 +10,13 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import path, reverse
 from django.utils.html import format_html, urlencode
-
+from django.contrib import messages
+from django.utils.translation import ngettext
+from django.core.exceptions import ValidationError
 from api.forms import CsvImportAdminForm
 
 from .models import *
+from .emails import *
 
 admin.site.site_header = "Anchorsoft Academy"
 admin.site.site_title = "Anchorsoft Academy Admin"
@@ -723,12 +726,71 @@ class JobLocationAdmin(BaseJobSelectionAdmin):
 
 @admin.register(Employer)
 class EmployerAdmin(admin.ModelAdmin):
-    list_display = ["id", "contact_person", "location", "company_name", "date_created","date_updated"]
+
+    @admin.action(description="Export as CSV")
+    def export_to_csv(self, request, queryset):
+        meta = self.model._meta
+        fieldnames = [field.name for field in meta.fields]
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename={}.csv".format(meta)
+
+        writer = csv.writer(response)
+        writer.writerow(fieldnames)
+        for x in queryset:
+            row = writer.writerow([getattr(x, field) for field in fieldnames])
+        return response
+
+    @admin.action(description="Make Approval")
+    def make_approval(self, request,queryset):
+        try:
+            
+            queryset.update(profile_approval=True)
+
+            self.message_user(
+                request,
+                ngettext(
+                    "%d Employer was successfully approved.",
+                    "%d Employers were successfully approved.",
+                    queryset,
+                )
+                % queryset,
+                messages.SUCCESS,
+            )
+                  
+        except Exception as e:
+            print(e)
+
+    @admin.action(description="Make Disapproval")
+    def disapprove(self, request,queryset):
+        try:
+
+            
+            queryset.update(profile_approval=False)
+
+            self.message_user(
+                request,
+                ngettext(
+                    "%d Employer was successfully disapproved.",
+                    "%d Employers were successfully disapproved.",
+                    queryset,
+                )
+                % queryset,
+                messages.SUCCESS,
+            )
+                  
+        except Exception as e:
+            print(e)   
+            
+    list_display = ["id", "contact_person", "location", "company_name","profile_approval", "date_created","date_updated"]
+    list_filter = ["profile_approval"]
+    list_editable = ["profile_approval"]
+    list_display_links = ["id", "contact_person","company_name"]
     date_hierarchy = "date_created"
     search_fields = ["contact_person", "company_name"]
     ordering = [
         "-date_updated",
     ]
+    actions = ["export_to_csv","make_approval","disapprove"]
     list_per_page = 25
 
 
