@@ -1288,10 +1288,10 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
             "job_id",
             "job__employer__company_name",
             "job__employer__company_logo",
-            "job__job_category",
+            "job__job_category__title",
             "job__job_title",
-            "job__job_location",
-            "job__job_type",
+            "job__job_location__title",
+            "job__job_type__title",
             "job__date_posted",
             "date_applied",
         ).distinct()
