@@ -37,11 +37,9 @@ class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         try:
             if self.user.user_type == "student":
                 data["student_id"] = self.user.student.id
-                return data["student_id"]
             elif self.user.user_type == "employer":
                 if self.user.employer.profile_approval == True:
                     data["employer_id"] = self.user.employer.id
-                    return data["employer_id"]
                 else:    
                     raise serializers.ValidationError({"message":"Your profile is approval pending"})
 
@@ -1075,6 +1073,7 @@ class AlbumSerializer(serializers.ModelSerializer):
 
 
 class EmployerSerializer(serializers.ModelSerializer):
+    profile_approval = serializers.SerializerMethodField()
     class Meta:
         model = Employer
         fields = [
@@ -1092,6 +1091,12 @@ class EmployerSerializer(serializers.ModelSerializer):
             "date_created",
             "date_updated",
         ]
+
+    def get_profile_approval(self, obj):
+        if obj.profile_approval:
+            return 'Approved'
+        else: 
+            return 'Pending approval'    
     
 
 class UpdateEmployerSerializer(serializers.ModelSerializer):
