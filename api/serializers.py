@@ -37,17 +37,19 @@ class UserTokenObtainPairSerializer(BaseTokenObtainPairSerializer):
         try:
             if self.user.user_type == "student":
                 data["student_id"] = self.user.student.id
+                return data["student_id"]
             elif self.user.user_type == "employer":
                 if self.user.employer.profile_approval == True:
                     data["employer_id"] = self.user.employer.id
+                    return data["employer_id"]
                 else:    
-                    raise ValidationError({"message":"Your profile is approval pending"})
+                    raise serializers.ValidationError({"message":"Your profile is approval pending"})
 
             else:
-                pass
+                raise serializers.ValidationError({"message":"User type is not given"})
 
         except Exception as e:
-            raise ValidationError({"message":"Your profile is approval pending"})
+            raise serializers.ValidationError({"message":"Your profile is approval pending"},e)
         return data
 
     def validate_user_type(self, value):
@@ -1090,7 +1092,7 @@ class EmployerSerializer(serializers.ModelSerializer):
             "date_created",
             "date_updated",
         ]
-
+    
 
 class UpdateEmployerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -1282,7 +1284,7 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
         ]
 
     def get_job_applied_for(self, obj):
-        return obj.jobapplication_set.values(
+        return obj.jobapplication_set.filter(student__job_ready=True).filter(job__posting_approval=True).values(
             "job_id",
             "job__employer__company_name",
             "job__employer__company_logo",
@@ -1292,20 +1294,26 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
             "job__job_type",
             "job__date_posted",
             "date_applied",
-        )
+        ).distinct()
 
 
 class EmployerPostedJobSerializer(serializers.ModelSerializer):
-    # applicants = serializers.SerializerMethodField()
     total_applicants = serializers.SerializerMethodField()
     posting_approval = serializers.SerializerMethodField()
+    company_logo = serializers.SerializerMethodField()
+    job_type = serializers.StringRelatedField()
+    job_location = serializers.StringRelatedField()
 
     class Meta:
         model = Job
         fields = [
             "id",
             "employer",
+            "company_logo",
             "job_category",
+            "experience",
+            "job_type",
+            "job_location",
             "job_title",
             "job_summary",
             "job_responsibilities",
@@ -1314,6 +1322,14 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
             "posting_approval",
             "total_applicants",
         ]
+
+    def to_representation(self, instance):
+        self.fields['job_category'] = JobCategorySerializer(many=True)
+        self.fields['experience'] = JobExperienceSerializer(many=True)
+        return super().to_representation(instance)
+
+    def get_company_logo(self, obj):
+        return obj.employer.company_logo.url
 
     def get_total_applicants(self, obj):
         return obj.jobapplication_set.count()
@@ -1366,17 +1382,19 @@ class JobApplicationSerializer(serializers.ModelSerializer):
         ]
 
     def validate_job_id(self, value):
-        if not Job.objects.filter(pk=value).exists():
-            raise serializers.ValidationError("The selected Job ID does not exist")
+        if not Job.objects.filter(pk=value).filter(posting_approval=True).exists():
+            raise serializers.ValidationError("Is either the Job ID does not exist or the Job ID is not yet approved")
         return value
 
     def validate_student_id(self, value):
-        if not Student.objects.filter(pk=value).exists():
-            raise serializers.ValidationError("The selected Student ID does not exist")
+        if not Student.objects.filter(pk=value).filter(job_ready=True).exists():
+            raise serializers.ValidationError("Is either the Student ID does not exist or the Student is not job ready")
         return value
 
     def create(self, validated_data):
-        jobapplication = JobApplication(**validated_data)
+        student_id = validated_data["student_id"]
+        job_id = validated_data["job_id"]
+        jobapplication = JobApplication(student_id=student_id, job_id=job_id, **validated_data)
         jobapplication.save()
         return jobapplication
 
@@ -1391,11 +1409,10 @@ class JobApplicationSerializer(serializers.ModelSerializer):
                 jobapplication = JobApplication.objects.create(
                     student_id=student_id, job_id=job_id, applied=True
                 )
-
+                jobapplication.save()
                 return jobapplication
             else:
                 raise serializers.ValidationError("Student is not Job ready yet")
-                # raise serializers.ValidationError({"message":'Student is not Job ready yet'})
         except Exception as e:
             raise serializers.ValidationError("Student is not Job ready yet")
 

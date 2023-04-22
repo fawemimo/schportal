@@ -27,20 +27,16 @@ def create_teacher_profile(sender, created, instance, *args, **kwargs):
                     user=instance,
                     full_name=f"{f_name} {l_name}",
                     mobile_numbers=mobile_numbers,
+                    is_approved= False,
+                    job_ready=False,
+                    just_for_jobs=False
                 )
 
                 instance.save()
+            else:
+                pass    
 
     except Exception as e:
         print(e)
 
-
-@receiver(post_save, sender=Billing)
-def create_billing_details(sender, instance, created, *args, **kwargs):
-    if created:
-        BillingDetail.objects.create(
-            billing=instance,
-            course_fee=instance.course_fee
-        )
-        instance.save()
 

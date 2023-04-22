@@ -902,7 +902,7 @@ class Job(models.Model):
     )
     job_title = models.CharField(max_length=255)
     slug = models.SlugField(blank=True, null=True)
-    posting_approval = models.BooleanField(default=False, blank=True, null=True)
+    posting_approval = models.BooleanField(default=False)
     job_summary = tinymce_models.HTMLField()
     job_responsibilities = tinymce_models.HTMLField()
     close_job = models.BooleanField(default=False)
@@ -933,7 +933,7 @@ class JobApplication(models.Model):
 
     class Meta:
         ordering = ["-date_applied"]
-        unique_together = ["student", "job"]
+        unique_together = [("student", "job")]
 
 
 # endportal region

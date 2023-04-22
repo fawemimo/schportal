@@ -723,7 +723,7 @@ class EmployerViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == "GET":
             return EmployerSerializer
-        elif self.request.method in ["POST", "PATCH","PUT"]:
+        elif self.request.method in ["POST", "PATCH", "PUT"]:
             return UpdateEmployerSerializer
         else:
             return EmployerSerializer
@@ -748,7 +748,7 @@ class EmployerViewSet(ModelViewSet):
         company_url = request.data.get("company_url", None)
 
         if kyc_document:
-            setattr(instance,"kyc_document", kyc_document)
+            setattr(instance, "kyc_document", kyc_document)
 
         if company_logo:
             setattr(instance, "company_logo", company_logo)
@@ -893,8 +893,10 @@ class StudentAppliedJobViewSet(ModelViewSet):
     pagination_class = BasePagination
 
     def get_queryset(self):
-        return Student.objects.filter(user=self.request.user).prefetch_related(
-            "jobapplication_set"
+        return (
+            Student.objects.filter(user=self.request.user)
+            .prefetch_related("jobapplication_set")
+            .distinct()
         )
 
 
