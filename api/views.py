@@ -10,7 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
-
+from rest_framework.exceptions import PermissionDenied
 from api.models import *
 from api.pdf import *
 
@@ -20,6 +20,7 @@ from .paginations import *
 from .permissions import *
 from .serializers import *
 from .emails import *
+from .responses import *
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -213,7 +214,7 @@ class StudentUpdateViewSet(ModelViewSet):
             return Response(serializer.data)
 
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors)
 
     @action(
         detail=False,
@@ -237,7 +238,7 @@ class StudentUpdateViewSet(ModelViewSet):
             return Response(serializer.data)
 
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors)
 
 
 class ScheduleViewSet(ModelViewSet):
@@ -717,8 +718,20 @@ class AlbumViewSet(ModelViewSet):
 
 
 class EmployerViewSet(ModelViewSet):
-    http_method_names = ["get", "post", "patch", "head", "options", "put"]
-    permission_classes = [IsEmployerType]
+    http_method_names = ["get", "post", "patch", "head", "options", "put"]    
+
+    def get_permissions(self):
+        try:
+            response_data = {
+                    'message': 'Permission Denied',
+                    'errors': "You are not allowed to access this resources"
+                }
+            if not self.request.user.user_type == "employer" or not self.request.user:
+                
+                raise PermissionDenied(response_data)
+            return [IsEmployerType()]
+        except Exception as e:
+            raise PermissionDenied(response_data) 
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -827,10 +840,11 @@ class JobViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         super().create(request, *args, **kwargs)
-        return Response(
-            {"success": "Your Profile is Pending Approval. Contact the Admin"},
-            status=201,
-        )
+        response_data = {
+                'message': 'Job created successfully.',
+                'data': "Your Profile is Pending Approval. Contact the Admin"
+            }
+        return Response(response_data)
 
 
 class JobTypeViewSet(ModelViewSet):
@@ -861,7 +875,6 @@ class EmployerJobApplicantViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = EmployerPostedJobSerializer
-    permission_classes = [IsEmployerType]
     pagination_class = BasePagination
     filter_backends = [DjangoFilterBackend]
 
@@ -870,12 +883,24 @@ class EmployerJobApplicantViewSet(ModelViewSet):
             "employer"
         )
 
+    def get_permissions(self):
+        try:
+            response_data = {
+                    'message': 'Permission Denied',
+                    'errors': "You are not allowed to access this resources"
+                }
+            if not self.request.user.user_type == "employer" or not self.request.user:
+                
+                raise PermissionDenied(response_data)
+            return [IsEmployerType()]
+        except Exception as e:
+            raise PermissionDenied(response_data)  
+
 
 class ApplicantsViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = ApplicantsSerializer
-    permission_classes = [IsEmployerType]
     pagination_class = BasePagination
     filter_backends = [DjangoFilterBackend]
 
@@ -884,12 +909,25 @@ class ApplicantsViewSet(ModelViewSet):
             job_id=self.kwargs.get("job_pk")
         ).select_related("job")
 
+    def get_permissions(self):
+        try:
+            response_data = {
+                    'message': 'Permission Denied',
+                    'errors': "You are not allowed to access this resources"
+                }
+            if not self.request.user.user_type == "employer" or not self.request.user:
+                
+                raise PermissionDenied(response_data)
+            return [IsEmployerType()]
+        except Exception as e:
+            raise PermissionDenied(response_data) 
+
 
 class StudentAppliedJobViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = StudentJobApplicationSerializer
-    permission_classes = [IsStudentType]
+    # permission_classes = [IsStudentType]
     pagination_class = BasePagination
 
     def get_queryset(self):
@@ -899,14 +937,35 @@ class StudentAppliedJobViewSet(ModelViewSet):
             .distinct()
         )
 
+    def get_permissions(self):
+        try:
+            response_data = {
+                    'message': 'Permission Denied',
+                    'errors': "You are not allowed to access this resources"
+                }
+            if not self.request.user.user_type == "student" or not self.request.user:
+                
+                raise PermissionDenied(response_data)
+            return [IsStudentType()]
+        except Exception as e:
+            raise PermissionDenied(response_data) 
+
 
 class StudentApplicationForJobViewSet(ModelViewSet):
     http_method_names = ["post", "get"]
 
     def get_permissions(self):
-        if self.request.user.user_type == "student":
+        try:
+            response_data = {
+                    'message': 'Permission Denied',
+                    'errors': "You are not allowed to access this resources"
+                }
+            if not self.request.user.user_type == "student" or not self.request.user:
+                
+                raise PermissionDenied(response_data)
             return [IsStudentType()]
-        return Response({"error": "User is not a student"})
+        except Exception as e:
+            raise PermissionDenied(response_data) 
 
     def get_queryset(self):
         return JobApplication.objects.filter(
