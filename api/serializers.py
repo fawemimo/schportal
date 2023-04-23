@@ -11,7 +11,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .emails import *
-from .responses import *
+from .exceptions import *
 from .models import *
 
 

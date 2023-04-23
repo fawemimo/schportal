@@ -128,7 +128,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "api.User"
 
 REST_FRAMEWORK = {
-    "EXCEPTION_HANDLER": "api.responses.custom_exception_handler",
+    "EXCEPTION_HANDLER": "api.exceptions.custom_exception_handler",
     "COERCE_DECIMAL_TO_STRING": False,
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -143,14 +143,11 @@ SIMPLE_JWT = {
 
 DJOSER = {
     # "USER_CREATE_PASSWORD_RETYPE": True,
-   
     "SERIALIZERS": {
         "user_create": "api.serializers.UserCreateSerializer",
         "current_user": "api.serializers.UserSerializer",
+        'login': 'api.responses.CustomLoginSerializer'
     },
-    # "CONSTANTS": {
-    #     "messages": "api.responses.custom_exception_handler"
-    # },
 }
 
 LOGGING = {
