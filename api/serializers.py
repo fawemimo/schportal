@@ -11,7 +11,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models.functions import Concat
-from django.db.models import Value
+from django.db.models import *
 from .emails import *
 from .exceptions import *
 from .models import *
@@ -1323,12 +1323,13 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
             obj.jobapplication_set.only('id').filter(student__job_ready=True)
             .filter(job__posting_approval=True)
             .annotate(category = ArrayAgg('job__job_category__title', distinct=True),experience=ArrayAgg('job__experience__title',distinct=True))
-            # .annotate(absoulte_url = Concat(settings.MEDIA_ROOT, Value(''), 'job__employer__company_logo'), output_field=CharField())
+            .annotate(logo_absoulte_url = Concat(Value(settings.MEDIA_URL),'job__employer__company_logo',output_field=ImageField()))
             .distinct()
             .values(
                 "job_id",
                 "job__employer__company_name",
                 "job__employer__company_logo",
+                "logo_absoulte_url",
                 "category",
                 "experience",
                 "job__job_title",
