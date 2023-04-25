@@ -9,7 +9,7 @@ from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+from django.contrib.postgres.aggregates import ArrayAgg
 from .emails import *
 from .exceptions import *
 from .models import *
@@ -1320,20 +1320,23 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
 
     def get_job_applied_for(self, obj):
         return (
-            obj.jobapplication_set.filter(student__job_ready=True)
+            obj.jobapplication_set.only('id').filter(student__job_ready=True)
             .filter(job__posting_approval=True)
+            .annotate(category = ArrayAgg('job__job_category__title', distinct=True),experience=ArrayAgg('job__experience__title',distinct=True))
+            .distinct()
             .values(
                 "job_id",
                 "job__employer__company_name",
                 "job__employer__company_logo",
-                "job__job_category__title",
+                "category",
+                "experience",
                 "job__job_title",
                 "job__job_location__title",
                 "job__job_type__title",
                 "job__date_posted",
                 "date_applied",
             )
-            .distinct()
+            
         )
 
 
@@ -1431,7 +1434,7 @@ class JobApplicationSerializer(serializers.ModelSerializer):
     def validate_student_id(self, value):
         if not Student.objects.filter(pk=value).filter(job_ready=True).exists():
             raise serializers.ValidationError(
-                "Is either the Student ID does not exist or the Student is not job ready"
+                "Your profile is not job ready, please contact the admin"
             )
         return value
 
