@@ -10,6 +10,8 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models.functions import Concat
+from django.db.models import Value
 from .emails import *
 from .exceptions import *
 from .models import *
@@ -341,22 +343,19 @@ class CareerApplicantSerializer(serializers.ModelSerializer):
         highest_qualification = self.validated_data["highest_qualification"]
         resume = self.validated_data["resume"]
 
-        try:
-            careerapplicant = CareerApplicant.objects.create(
-                career_opening_id=career_opening_id,
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                mobile=mobile,
-                highest_qualification=highest_qualification,
-                resume=resume,
-            )
-            careerapplicant.save()
+        
+        careerapplicant = CareerApplicant.objects.create(
+            career_opening_id=career_opening_id,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            mobile=mobile,
+            highest_qualification=highest_qualification,
+            resume=resume,
+        )
+        send_career_applicant_email(career_opening_id,first_name,last_name,email,mobile,highest_qualification)
 
-            return careerapplicant
-
-        except Exception as e:
-            pass
+        return careerapplicant
 
 
 class CareerCategorySerializer(serializers.ModelSerializer):
@@ -1317,12 +1316,14 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
             "mobile_numbers",
             "job_applied_for",
         ]
-
+    print(settings.MEDIA_ROOT)
     def get_job_applied_for(self, obj):
+        # media_root = settings.MEDIA_ROOT
         return (
             obj.jobapplication_set.only('id').filter(student__job_ready=True)
             .filter(job__posting_approval=True)
             .annotate(category = ArrayAgg('job__job_category__title', distinct=True),experience=ArrayAgg('job__experience__title',distinct=True))
+            # .annotate(absoulte_url = Concat(settings.MEDIA_ROOT, Value(''), 'job__employer__company_logo'), output_field=CharField())
             .distinct()
             .values(
                 "job_id",

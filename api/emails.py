@@ -188,10 +188,28 @@ def send_employer_sign_up_email(email,contact_person):
             template_name="api/email_response/employer_sign_up.html",
             context={
                 "contact_person": contact_person,
-                # "contact_person_mobile": contact_person_mobile,
-                # "company_name":company_name,
-                # "company_url": company_url,
                 "email": email,
+            },
+        )
+
+        message.send([email, settings.EMAIL_HOST_USER])
+
+    except Exception as e:
+        print(e)
+
+
+def send_career_applicant_email(career_opening,first_name,last_name,email,mobile,highest_qualification):
+
+    try:
+        message = BaseEmailMessage(
+            template_name="api/email_response/career_opening.html",
+            context={
+                "career_opening": career_opening,
+                "email": email,
+                "first_name":first_name,
+                "last_name":last_name,
+                "mobile":mobile,
+                "highest_qualification":highest_qualification
             },
         )
 
