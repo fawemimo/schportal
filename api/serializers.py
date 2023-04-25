@@ -299,7 +299,6 @@ class CareerSectionSerializer(serializers.ModelSerializer):
 
 
 class CareerApplicantSerializer(serializers.ModelSerializer):
-    career_opening_id = serializers.IntegerField()
 
     class Meta:
         model = CareerApplicant
@@ -310,7 +309,24 @@ class CareerApplicantSerializer(serializers.ModelSerializer):
             "email",
             "mobile",
             "highest_qualification",
-            "career_opening_id",
+            "career_opening",
+            "resume",
+        ]
+
+
+class PostCareerApplicantSerializer(serializers.ModelSerializer):
+    # career_opening_id = serializers.IntegerField()
+
+    class Meta:
+        model = CareerApplicant
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "mobile",
+            "highest_qualification",
+            "career_opening",
             "resume",
         ]
 
@@ -321,21 +337,21 @@ class CareerApplicantSerializer(serializers.ModelSerializer):
             response = custom_exception_handler(exc, self.context)
             raise serializers.ValidationError(response.data)
 
-    def validate_career_opening_id(self, value):
-        if not CareerOpening.objects.filter(id=value).exists():
+    def validate_career_opening(self, value):
+        if not CareerOpening.objects.filter(title=value).exists():
             raise serializers.ValidationError(
                 {"career_id": "Career opening with the given ID does not exist."}
             )
         return value
 
     def create(self, validated_data):
-        career_opening_id = validated_data["career_opening_id"]
+        career_opening = validated_data["career_opening"]
         return CareerApplicant.objects.create(
-            career_opening_id=career_opening_id, **validated_data
+            career_opening=career_opening, **validated_data
         )
 
     def save(self, **kwargs):
-        career_opening_id = self.validated_data["career_opening_id"]
+        career_opening = self.validated_data["career_opening"]
         first_name = self.validated_data["first_name"]
         last_name = self.validated_data["last_name"]
         email = self.validated_data["email"]
@@ -345,7 +361,7 @@ class CareerApplicantSerializer(serializers.ModelSerializer):
 
         
         careerapplicant = CareerApplicant.objects.create(
-            career_opening_id=career_opening_id,
+            career_opening=career_opening,
             first_name=first_name,
             last_name=last_name,
             email=email,
@@ -353,7 +369,7 @@ class CareerApplicantSerializer(serializers.ModelSerializer):
             highest_qualification=highest_qualification,
             resume=resume,
         )
-        send_career_applicant_email(career_opening_id,first_name,last_name,email,mobile,highest_qualification)
+        send_career_applicant_email(career_opening,first_name,last_name,email,mobile,highest_qualification)
 
         return careerapplicant
 
@@ -1316,9 +1332,8 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
             "mobile_numbers",
             "job_applied_for",
         ]
-    print(settings.MEDIA_ROOT)
+
     def get_job_applied_for(self, obj):
-        # media_root = settings.MEDIA_ROOT
         return (
             obj.jobapplication_set.only('id').filter(student__job_ready=True)
             .filter(job__posting_approval=True)

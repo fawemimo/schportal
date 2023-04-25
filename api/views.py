@@ -69,8 +69,13 @@ class CareerSectionViewSet(ModelViewSet):
 
 class CareerApplicantViewSet(ModelViewSet):
     http_method_names = ["get", "post"]
-    serializer_class = CareerApplicantSerializer
+    # serializer_class = PostCareerApplicantSerializer
     queryset = CareerApplicant.objects.select_related("career_opening")
+    
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return PostCareerApplicantSerializer       
+        return CareerApplicantSerializer  
 
 
 class CareerCategoryViewSet(ModelViewSet):
@@ -719,20 +724,19 @@ class AlbumViewSet(ModelViewSet):
 
 
 class EmployerViewSet(ModelViewSet):
-    http_method_names = ["get", "post", "patch", "head", "options", "put"]    
+    http_method_names = ["get", "post", "patch", "head", "options", "put"]
 
     def get_permissions(self):
         try:
             response_data = {
-                    'message': 'Permission Denied',
-                    'errors': "You are not allowed to access this resources"
-                }
+                "message": "Permission Denied",
+                "errors": "You are not allowed to access this resources",
+            }
             if not self.request.user.user_type == "employer" or not self.request.user:
-                
                 raise PermissionDenied(response_data)
             return [IsEmployerType()]
         except Exception as e:
-            raise PermissionDenied(response_data) 
+            raise PermissionDenied(response_data)
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -842,9 +846,9 @@ class JobViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         super().create(request, *args, **kwargs)
         response_data = {
-                'message': 'Job created successfully.',
-                'data': "Your Profile is Pending Approval. Contact the Admin"
-            }
+            "message": "Job created successfully.",
+            "data": "Your Profile is Pending Approval. Contact the Admin",
+        }
         return Response(response_data)
 
 
@@ -887,15 +891,14 @@ class EmployerJobApplicantViewSet(ModelViewSet):
     def get_permissions(self):
         try:
             response_data = {
-                    'message': 'Permission Denied',
-                    'errors': "You are not allowed to access this resources"
-                }
+                "message": "Permission Denied",
+                "errors": "You are not allowed to access this resources",
+            }
             if not self.request.user.user_type == "employer" or not self.request.user:
-                
                 raise PermissionDenied(response_data)
             return [IsEmployerType()]
         except Exception as e:
-            raise PermissionDenied(response_data)  
+            raise PermissionDenied(response_data)
 
 
 class ApplicantsViewSet(ModelViewSet):
@@ -913,15 +916,14 @@ class ApplicantsViewSet(ModelViewSet):
     def get_permissions(self):
         try:
             response_data = {
-                    'message': 'Permission Denied',
-                    'errors': "You are not allowed to access this resources"
-                }
+                "message": "Permission Denied",
+                "errors": "You are not allowed to access this resources",
+            }
             if not self.request.user.user_type == "employer" or not self.request.user:
-                
                 raise PermissionDenied(response_data)
             return [IsEmployerType()]
         except Exception as e:
-            raise PermissionDenied(response_data) 
+            raise PermissionDenied(response_data)
 
 
 class StudentAppliedJobViewSet(ModelViewSet):
@@ -941,15 +943,14 @@ class StudentAppliedJobViewSet(ModelViewSet):
     def get_permissions(self):
         try:
             response_data = {
-                    'message': 'Permission Denied',
-                    'errors': "You are not allowed to access this resources"
-                }
+                "message": "Permission Denied",
+                "errors": "You are not allowed to access this resources",
+            }
             if not self.request.user.user_type == "student" or not self.request.user:
-                
                 raise PermissionDenied(response_data)
             return [IsStudentType()]
         except Exception as e:
-            raise PermissionDenied(response_data) 
+            raise PermissionDenied(response_data)
 
 
 class StudentApplicationForJobViewSet(ModelViewSet):
@@ -958,15 +959,14 @@ class StudentApplicationForJobViewSet(ModelViewSet):
     def get_permissions(self):
         try:
             response_data = {
-                    'message': 'Permission Denied',
-                    'errors': "You are not allowed to access this resources"
-                }
+                "message": "Permission Denied",
+                "errors": "You are not allowed to access this resources",
+            }
             if not self.request.user.user_type == "student" or not self.request.user:
-                
                 raise PermissionDenied(response_data)
             return [IsStudentType()]
         except Exception as e:
-            raise PermissionDenied(response_data) 
+            raise PermissionDenied(response_data)
 
     def get_queryset(self):
         return JobApplication.objects.filter(
