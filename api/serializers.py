@@ -130,7 +130,7 @@ class CorporateCourseSectionSerializer(serializers.ModelSerializer):
         model = CorporateCourseSection
         fields = "__all__"
 
-        
+
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
@@ -737,11 +737,12 @@ class CourseCardSerializer(serializers.ModelSerializer):
     fee_dollar = serializers.SerializerMethodField(source="schedule_set")
     discounted_fee_dollar = serializers.SerializerMethodField(source="schedule_set")
     program_type = serializers.SerializerMethodField(source="schedule_set")
-
+    coursecategory = serializers.StringRelatedField()
     class Meta:
         model = Course
         fields = [
             "id",
+            "coursecategory",
             "title",
             "card_title",
             "course_code",
