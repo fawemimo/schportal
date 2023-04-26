@@ -142,6 +142,9 @@ router.register("blogposts", views.BlogPostViewSet, basename="blogposts")
 courses_router = routers.NestedDefaultRouter(router, "courses", lookup="course")
 courses_router.register("schedules", views.ScheduleViewSet, basename="course-schedules")
 
+coursecategory_router = routers.NestedDefaultRouter(router, "coursecategories",lookup="coursecategories")
+coursecategory_router.register("courses", views.CourseViewSet, basename="category-courses")
+
 navlink_router = routers.NestedDefaultRouter(router, "navlinks", lookup="navlink")
 navlink_router.register("items", views.NavLinkItemViewSet, basename="navlink-items")
 
@@ -168,7 +171,7 @@ urlpatterns = [
     path("", include(courses_router.urls)),
     path("", include(navlink_router.urls)),
     path("", include(coursemanual_router.urls)),
-    # path("", include(billing_router.urls)),
+    path("", include(coursecategory_router.urls)),
     path("", include(applicants_router.urls)),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.jwt")),

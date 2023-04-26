@@ -29,8 +29,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 class CourseCategoryViewSet(ModelViewSet):
+    http_method_names = ["get"]
     serializer_class = CourseCategorySerializer
-    permission_classes = []
 
     def get_queryset(self):
         return CourseCategory.objects.prefetch_related("course_set")
