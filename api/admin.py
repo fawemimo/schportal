@@ -188,6 +188,11 @@ class CourseAdmin(admin.ModelAdmin):
         return Course.objects.order_by("ordering")
 
 
+@admin.register(CorporateCourseSection)
+class CorporateCourseSectionAdmin(admin.ModelAdmin):
+    list_display = ['id']
+
+    
 # @admin.register(Enrollment)
 # class EnrollmentAdmin(admin.ModelAdmin):
 #     list_display = ["id", "course","full_name","mobile_number"]

@@ -88,6 +88,13 @@ class Course(models.Model):
         return f"/{self.location_state}/{self.location_state_area}/{self.slug}/"
 
 
+class CorporateCourseSection(models.Model):
+    intro_text = models.TextField()
+
+    def __str__(self):
+        return str(self.id)
+
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     is_approved = models.BooleanField(

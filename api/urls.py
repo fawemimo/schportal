@@ -21,6 +21,7 @@ router.register(
     "coursecategories", views.CourseCategoryViewSet, basename="coursecategories"
 )
 router.register("courses", views.CourseViewSet, basename="courses")
+router.register("corporatecoursesections", views.CorporateCourseSectionViewSet, basename="corporatecoursesections")
 router.register("teachers", views.TeacherViewSet)
 router.register("students", views.StudentViewSet, basename="students")
 router.register("navlinks", views.NavLinkViewSet)

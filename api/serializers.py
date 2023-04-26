@@ -125,6 +125,12 @@ class CourseSerializer(serializers.ModelSerializer):
         lookup_field = "slug"
 
 
+class CorporateCourseSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CorporateCourseSection
+        fields = "__all__"
+
+        
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
@@ -1389,7 +1395,10 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
         return super().to_representation(instance)
 
     def get_company_logo(self, obj):
-        return obj.employer.company_logo.url
+        if obj.employer.company_logo:
+            return obj.employer.company_logo.url
+        else:
+            return None    
 
     def get_total_applicants(self, obj):
         return obj.jobapplication_set.count()

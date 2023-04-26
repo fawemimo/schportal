@@ -51,6 +51,13 @@ class CourseViewSet(ModelViewSet):
         return Course.objects.order_by("ordering").select_related("coursecategory")
 
 
+class CorporateCourseSectionViewSet(ModelViewSet):
+    http_method_names = ["get"]
+    serializer_class = CorporateCourseSectionSerializer
+    queryset = CorporateCourseSection.objects.all()
+
+    
+
 class AnnouncementViewSet(ModelViewSet):
     serializer_class = AnnouncementSerializer
 
