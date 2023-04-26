@@ -142,8 +142,8 @@ router.register("blogposts", views.BlogPostViewSet, basename="blogposts")
 courses_router = routers.NestedDefaultRouter(router, "courses", lookup="course")
 courses_router.register("schedules", views.ScheduleViewSet, basename="course-schedules")
 
-coursecategory_router = routers.NestedDefaultRouter(router, "coursecategories",lookup="coursecategories")
-coursecategory_router.register("courses", views.CourseViewSet, basename="category-courses")
+coursecategory_router = routers.NestedDefaultRouter(router, "coursecategories",lookup="coursecategory")
+coursecategory_router.register("courses", views.CourseClassViewSet, basename="coursecategory-courses")
 
 navlink_router = routers.NestedDefaultRouter(router, "navlinks", lookup="navlink")
 navlink_router.register("items", views.NavLinkItemViewSet, basename="navlink-items")

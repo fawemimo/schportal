@@ -57,6 +57,15 @@ class CorporateCourseSectionViewSet(ModelViewSet):
     queryset = CorporateCourseSection.objects.all()
 
     
+class CourseClassViewSet(ModelViewSet):
+    http_method_names = ["get"]
+    serializer_class = CourseClassSerializer
+    lookup_field = "slug"
+    lookup_value_regex = "[^/]+"
+
+    def get_queryset(self):
+        return Course.objects.filter(coursecategory_id=self.kwargs.get("coursecategory_pk")).order_by("ordering").filter(published=True).select_related('coursecategory')
+
 
 class AnnouncementViewSet(ModelViewSet):
     serializer_class = AnnouncementSerializer

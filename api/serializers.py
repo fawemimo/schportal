@@ -125,6 +125,15 @@ class CourseSerializer(serializers.ModelSerializer):
         lookup_field = "slug"
 
 
+class CourseClassSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Course
+        fields = "__all__"
+        lookup_field = "slug"
+
+
+
 class CorporateCourseSectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CorporateCourseSection
