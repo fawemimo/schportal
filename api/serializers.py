@@ -1456,7 +1456,7 @@ class JobApplicationSerializer(serializers.ModelSerializer):
             UniqueTogetherValidator(
                 queryset=JobApplication.objects.all(),
                 fields=["student_id", "job_id"],
-                message=("You already apply for this job"),
+                message=("You have already applied for this job"),
             )
         ]
 
