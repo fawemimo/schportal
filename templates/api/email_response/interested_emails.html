@@ -323,6 +323,40 @@ Enrollment - {{course}}
                   </td>
                 </tr>
                 {% endif %}
+                   {% if discounted_fee %}
+                  <!-- DISCOUNT FEE -->
+                  
+                <tr>
+                  <td
+                    style="
+                      padding: 0;
+                      padding-bottom: 20px;
+                      background-color: white;
+                    "
+                  >
+                    <table
+                      width="100%"
+                      style="border-spacing: 0"
+                      role="presentation"
+                    >
+                      <tr>
+                        <td style="padding-bottom: 10px">
+                          <p style="color: #404141">
+                            <span style="font-weight: 700">Discount:</span>
+                            <span> 
+                                  NGN{{discounted_fee | intcomma}} 
+                              </span>
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="height: 1px; background-color: #404141"></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                {% endif %}
+
               {% else %}     
 
                 {% if fee_dollar %}
@@ -347,6 +381,40 @@ Enrollment - {{course}}
                             <span style="font-weight: 700">Fee:</span>
                             <span> 
                                   ${{fee_dollar | intcomma}} 
+                              </span>
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="height: 1px; background-color: #404141"></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                {% endif %}   
+
+                 {% if discounted_fee_dollar %}
+                <!-- FEE DOLLAR-->
+                  
+                <tr>
+                  <td
+                    style="
+                      padding: 0;
+                      padding-bottom: 20px;
+                      background-color: white;
+                    "
+                  >
+                    <table
+                      width="100%"
+                      style="border-spacing: 0"
+                      role="presentation"
+                    >
+                      <tr>
+                        <td style="padding-bottom: 10px">
+                          <p style="color: #404141">
+                            <span style="font-weight: 700">Discount:</span>
+                            <span> 
+                                  ${{discounted_fee_dollar | intcomma}} 
                               </span>
                           </p>
                         </td>
