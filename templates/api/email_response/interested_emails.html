@@ -287,73 +287,79 @@ Enrollment - {{course}}
                     </table>
                   </td>
                 </tr>
-                {% if fee %}
-                <!-- FEE -->
-                
-              <tr>
-                <td
-                  style="
-                    padding: 0;
-                    padding-bottom: 20px;
-                    background-color: white;
-                  "
-                >
-                  <table
-                    width="100%"
-                    style="border-spacing: 0"
-                    role="presentation"
-                  >
-                    <tr>
-                      <td style="padding-bottom: 10px">
-                        <p style="color: #404141">
-                          <span style="font-weight: 700">Fee:</span>
-                          <span> 
-                                 NGN{{fee | intcomma}} 
-                            </span>
-                        </p>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="height: 1px; background-color: #404141"></td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              {% endif %}   
 
-              {% if fee_dollar %}
-              <!-- FEE DOLLAR-->
+                {% if program_type == 'Onsite' %}
                 
-              <tr>
-                <td
-                  style="
-                    padding: 0;
-                    padding-bottom: 20px;
-                    background-color: white;
-                  "
-                >
-                  <table
-                    width="100%"
-                    style="border-spacing: 0"
-                    role="presentation"
+                  {% if fee %}
+                  <!-- FEE -->
+                  
+                <tr>
+                  <td
+                    style="
+                      padding: 0;
+                      padding-bottom: 20px;
+                      background-color: white;
+                    "
                   >
-                    <tr>
-                      <td style="padding-bottom: 10px">
-                        <p style="color: #404141">
-                          <span style="font-weight: 700">Fee:</span>
-                          <span> 
-                                 ${{fee_dollar | intcomma}} 
-                            </span>
-                        </p>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="height: 1px; background-color: #404141"></td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              {% endif %}   
+                    <table
+                      width="100%"
+                      style="border-spacing: 0"
+                      role="presentation"
+                    >
+                      <tr>
+                        <td style="padding-bottom: 10px">
+                          <p style="color: #404141">
+                            <span style="font-weight: 700">Fee:</span>
+                            <span> 
+                                  NGN{{fee | intcomma}} 
+                              </span>
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="height: 1px; background-color: #404141"></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                {% endif %}
+              {% else %}     
+
+                {% if fee_dollar %}
+                <!-- FEE DOLLAR-->
+                  
+                <tr>
+                  <td
+                    style="
+                      padding: 0;
+                      padding-bottom: 20px;
+                      background-color: white;
+                    "
+                  >
+                    <table
+                      width="100%"
+                      style="border-spacing: 0"
+                      role="presentation"
+                    >
+                      <tr>
+                        <td style="padding-bottom: 10px">
+                          <p style="color: #404141">
+                            <span style="font-weight: 700">Fee:</span>
+                            <span> 
+                                  ${{fee_dollar | intcomma}} 
+                              </span>
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="height: 1px; background-color: #404141"></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                {% endif %}   
+
+              {% endif %}  
                <!-- Duration -->
                <tr>
                 <td
