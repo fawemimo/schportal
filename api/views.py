@@ -301,7 +301,7 @@ class SectionBannerViewSet(ModelViewSet):
 
 
 class TestimonialViewSet(ModelViewSet):
-    queryset = Testimonial.objects.filter(published=True).all()
+    queryset = Testimonial.objects.filter(published=True).all().order_by('?')
     serializer_class = TestimonialSerializer
     permission_classes = []
 
