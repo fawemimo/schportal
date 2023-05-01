@@ -120,19 +120,23 @@ class CareerSectionAdmin(admin.ModelAdmin):
 
 @admin.register(CareerOpening)
 class CareerOpeningAdmin(admin.ModelAdmin):
-    list_display = ['title', 'job_location', 'employment_type', 'career_category']
-    list_filter = ['job_location', 'employment_type']
+    list_display = ["title", "job_location", "employment_type", "career_category"]
+    list_filter = ["job_location", "employment_type"]
+    search_fields = ['title']
 
 
 @admin.register(CareerCategory)
 class CareerCategoryAdmin(admin.ModelAdmin):
-    list_display = ['title', 'date_created', 'date_updated']
+    list_display = ["title", "date_created", "date_updated"]
 
 
-@admin.register(CareerApplicant)   
+@admin.register(CareerApplicant)
 class CareerApplicantAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'email', 'mobile', 'career_opening']
-    list_filter = ['highest_qualification']
+    list_display = ["first_name", "last_name", "email", "mobile", "career_opening","resume"]
+    list_filter = ["highest_qualification"]
+    autocomplete_fields = ['career_opening']
+    readonly_fields = ['resume']
+
 
 @admin.register(AlbumSection)
 class AlbumSectionAdmin(admin.ModelAdmin):
@@ -190,13 +194,7 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(CorporateCourseSection)
 class CorporateCourseSectionAdmin(admin.ModelAdmin):
-    list_display = ['id']
-
-    
-# @admin.register(Enrollment)
-# class EnrollmentAdmin(admin.ModelAdmin):
-#     list_display = ["id", "course","full_name","mobile_number"]
-#     list_select_related = ["course"]
+    list_display = ["id"]
 
 
 @admin.register(Schedule)
@@ -204,6 +202,7 @@ class ScheduleAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "course",
+        "active",
         "teacher",
         "startdate",
         "fee",
@@ -212,8 +211,10 @@ class ScheduleAdmin(admin.ModelAdmin):
         "discounted_fee_dollar",
         "program_type",
     ]
-    list_editable = ["startdate", "program_type"]
+    list_filter = ['active', 'program_type']
+    list_editable = ["startdate", "program_type", "active"]
     list_select_related = ["course"]
+    autocomplete_fields = ["course"]
 
     def course(self, schedule: Schedule):
         return schedule.course.title
@@ -542,7 +543,7 @@ class BatchAdmin(admin.ModelAdmin):
     list_display = ["title", "course", "total_students", "start_date", "end_date"]
     search_fields = ["title", "students__user__first_name__istartswith"]
     list_select_related = ["teacher", "course"]
-    autocomplete_fields = ["students"]
+    autocomplete_fields = ["students", "course"]
     actions = ["export_to_csv"]
 
     @admin.display(description="Export as CSV")
@@ -577,7 +578,7 @@ class BatchAdmin(admin.ModelAdmin):
 class AssignmentAllocationAdmin(admin.ModelAdmin):
     list_display = ["batch", "assignment", "supervisor", "deadline"]
     list_display_link = ["assignment"]
-    autocomplete_fields = ["batch", "assignment"]
+    autocomplete_fields = ["batch", "assignment", "supervisor"]
     list_select_related = ["assignment", "batch", "supervisor"]
     paginator = CachingPaginator
 
@@ -711,13 +712,14 @@ class OurTeamAdmin(admin.ModelAdmin):
 
 # JobPortal region
 class BaseJobSelectionAdmin(admin.ModelAdmin):
-    list_display = ["id","title", "ordering", "date_created"]
+    list_display = ["id", "title", "ordering", "date_created"]
     list_editable = ["ordering"]
     search_fields = ["title"]
     date_hierarchy = "date_created"
     ordering = ["title"]
     ordering = ["-ordering"]
     list_per_page = 25
+
 
 @admin.register(JobType)
 class JobTypeAdmin(BaseJobSelectionAdmin):
@@ -731,7 +733,6 @@ class JobLocationAdmin(BaseJobSelectionAdmin):
 
 @admin.register(Employer)
 class EmployerAdmin(admin.ModelAdmin):
-
     @admin.action(description="Export as CSV")
     def export_to_csv(self, request, queryset):
         meta = self.model._meta
@@ -746,9 +747,8 @@ class EmployerAdmin(admin.ModelAdmin):
         return response
 
     @admin.action(description="Make Approval")
-    def make_approval(self, request,queryset):
+    def make_approval(self, request, queryset):
         try:
-            
             queryset.update(profile_approval=True)
 
             self.message_user(
@@ -761,15 +761,13 @@ class EmployerAdmin(admin.ModelAdmin):
                 % queryset,
                 messages.SUCCESS,
             )
-                  
+
         except Exception as e:
             print(e)
 
     @admin.action(description="Make Disapproval")
-    def disapprove(self, request,queryset):
+    def disapprove(self, request, queryset):
         try:
-
-            
             queryset.update(profile_approval=False)
 
             self.message_user(
@@ -782,20 +780,28 @@ class EmployerAdmin(admin.ModelAdmin):
                 % queryset,
                 messages.SUCCESS,
             )
-                  
+
         except Exception as e:
-            print(e)   
-            
-    list_display = ["id", "contact_person", "location", "company_name","profile_approval", "date_created","date_updated"]
+            print(e)
+
+    list_display = [
+        "id",
+        "contact_person",
+        "location",
+        "company_name",
+        "profile_approval",
+        "date_created",
+        "date_updated",
+    ]
     list_filter = ["profile_approval"]
     list_editable = ["profile_approval"]
-    list_display_links = ["id", "contact_person","company_name"]
+    list_display_links = ["id", "contact_person", "company_name"]
     date_hierarchy = "date_created"
     search_fields = ["contact_person", "company_name"]
     ordering = [
         "-date_updated",
     ]
-    actions = ["export_to_csv","make_approval","disapprove"]
+    actions = ["export_to_csv", "make_approval", "disapprove"]
     list_per_page = 25
 
 
@@ -829,12 +835,18 @@ class JobAdmin(admin.ModelAdmin):
         "posting_approval",
         "close_job",
     ]
-    list_editable = ["posting_approval","close_job"]
+    list_editable = ["posting_approval", "close_job"]
     list_filter = ["date_posted", "date_updated"]
     ordering = ["-date_posted"]
     date_hierarchy = "date_posted"
     list_select_related = ["employer"]
-    autocomplete_fields = ["job_category", "employer", "experience","job_type","job_location"]
+    autocomplete_fields = [
+        "job_category",
+        "employer",
+        "experience",
+        "job_type",
+        "job_location",
+    ]
     list_per_page = 25
     # preserve_filters = ['job_category']
 
@@ -980,6 +992,7 @@ class BlogPostAdmin(admin.ModelAdmin):
     search_fields = ["title", "content"]
     list_editable = ["status"]
     list_select_related = ["blog_category"]
+    autocomplete_fields = ["blog_category", "user"]
     prepopulated_fields = {"slug": ("title",)}
 
 

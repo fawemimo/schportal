@@ -39,14 +39,6 @@ class CourseCategoryViewSet(ModelViewSet):
 class CourseViewSet(ModelViewSet):
     http_method_names = ["get", "patch", "post", "delete"]
     serializer_class = CourseSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-    ]
-    search_fields = [
-        "title"
-    ]
-
     lookup_field = "slug"
     lookup_value_regex = "[^/]+"
 
@@ -274,13 +266,6 @@ class StudentUpdateViewSet(ModelViewSet):
 class ScheduleViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
     serializer_class = ScheduleSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-    ]
-    search_fields = [
-        "course__title"
-    ]
 
     def get_serializer_class(self):
         if self.request.method in ["POST", "PATCH"]:
