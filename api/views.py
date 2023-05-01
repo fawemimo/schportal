@@ -836,8 +836,6 @@ class JobViewSet(ModelViewSet):
     ]
     ordering_fields = ["date_posted", "date_updated"]
     pagination_class = BasePagination
-    lookup_field = "slug"
-    lookup_regex_values = "[^/]+"
 
     def get_permissions(self):
         if self.request.method in ["POST", "DELETE", "PATCH"]:

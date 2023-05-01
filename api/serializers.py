@@ -1327,7 +1327,6 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = "__all__"
-        lookup_field = "slug"
 
     def to_representation(self, instance):
         self.fields["job_category"] = JobCategorySerializer(many=True)
@@ -1354,7 +1353,7 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
             obj.jobapplication_set.only('id').filter(student__job_ready=True)
             .filter(job__posting_approval=True)
             .annotate(category = ArrayAgg('job__job_category__title', distinct=True),experience=ArrayAgg('job__experience__title',distinct=True))
-            .annotate(logo_absoulte_url = Concat(Value(settings.MEDIA_URL),'job__employer__company_logo',output_field=ImageField()))
+            .annotate(logo_absoulte_url = Concat(Value(settings.MEDIA_URL),'job__employer__company_logo',output_field=CharField()))
             .distinct()
             .values(
                 "job_id",
