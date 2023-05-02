@@ -56,7 +56,7 @@ class CorporateCourseSectionViewSet(ModelViewSet):
     serializer_class = CorporateCourseSectionSerializer
     queryset = CorporateCourseSection.objects.all()
 
-    
+
 class CourseClassViewSet(ModelViewSet):
     http_method_names = ["get"]
     serializer_class = CourseClassSerializer
@@ -64,7 +64,14 @@ class CourseClassViewSet(ModelViewSet):
     lookup_value_regex = "[^/]+"
 
     def get_queryset(self):
-        return Course.objects.filter(coursecategory_id=self.kwargs.get("coursecategory_pk")).order_by("ordering").filter(published=True).select_related('coursecategory')
+        return (
+            Course.objects.filter(
+                coursecategory_id=self.kwargs.get("coursecategory_pk")
+            )
+            .order_by("ordering")
+            .filter(published=True)
+            .select_related("coursecategory")
+        )
 
 
 class AnnouncementViewSet(ModelViewSet):
@@ -87,11 +94,11 @@ class CareerApplicantViewSet(ModelViewSet):
     http_method_names = ["get", "post"]
     # serializer_class = PostCareerApplicantSerializer
     queryset = CareerApplicant.objects.select_related("career_opening")
-    
+
     def get_serializer_class(self):
         if self.request.method == "POST":
-            return PostCareerApplicantSerializer       
-        return CareerApplicantSerializer  
+            return PostCareerApplicantSerializer
+        return CareerApplicantSerializer
 
 
 class CareerCategoryViewSet(ModelViewSet):
@@ -301,7 +308,7 @@ class SectionBannerViewSet(ModelViewSet):
 
 
 class TestimonialViewSet(ModelViewSet):
-    queryset = Testimonial.objects.filter(published=True).all().order_by('?')
+    queryset = Testimonial.objects.filter(published=True).all().order_by("?")
     serializer_class = TestimonialSerializer
     permission_classes = []
 
@@ -1105,6 +1112,16 @@ class BlogPostViewSet(ModelViewSet):
     @method_decorator(cache_page(60 * 2))
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
+
+
+class RelatedBlogPost(ModelViewSet):
+    http_method_names = ["get"]
+    serializer_class = RelatedBlogPostSerializer
+
+    def get_queryset(self):
+        return BlogCategory.objects.filter(id=self.kwargs.get("pk")).prefetch_related(
+            "blogpost_set"
+        )
 
 
 # END BLOG POST REGION

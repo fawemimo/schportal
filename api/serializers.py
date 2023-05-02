@@ -126,12 +126,10 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class CourseClassSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Course
         fields = "__all__"
         lookup_field = "slug"
-
 
 
 class CorporateCourseSectionSerializer(serializers.ModelSerializer):
@@ -314,7 +312,6 @@ class CareerSectionSerializer(serializers.ModelSerializer):
 
 
 class CareerApplicantSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = CareerApplicant
         fields = [
@@ -374,7 +371,6 @@ class PostCareerApplicantSerializer(serializers.ModelSerializer):
         highest_qualification = self.validated_data["highest_qualification"]
         resume = self.validated_data["resume"]
 
-        
         careerapplicant = CareerApplicant.objects.create(
             career_opening=career_opening,
             first_name=first_name,
@@ -384,7 +380,9 @@ class PostCareerApplicantSerializer(serializers.ModelSerializer):
             highest_qualification=highest_qualification,
             resume=resume,
         )
-        send_career_applicant_email(career_opening,first_name,last_name,email,mobile,highest_qualification)
+        send_career_applicant_email(
+            career_opening, first_name, last_name, email, mobile, highest_qualification
+        )
 
         return careerapplicant
 
@@ -747,6 +745,7 @@ class CourseCardSerializer(serializers.ModelSerializer):
     discounted_fee_dollar = serializers.SerializerMethodField(source="schedule_set")
     program_type = serializers.SerializerMethodField(source="schedule_set")
     coursecategory = serializers.StringRelatedField()
+
     class Meta:
         model = Course
         fields = [
@@ -1350,10 +1349,20 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
 
     def get_job_applied_for(self, obj):
         return (
-            obj.jobapplication_set.only('id').filter(student__job_ready=True)
+            obj.jobapplication_set.only("id")
+            .filter(student__job_ready=True)
             .filter(job__posting_approval=True)
-            .annotate(category = ArrayAgg('job__job_category__title', distinct=True),experience=ArrayAgg('job__experience__title',distinct=True))
-            .annotate(logo_absoulte_url = Concat(Value(settings.MEDIA_URL),'job__employer__company_logo',output_field=CharField()))
+            .annotate(
+                category=ArrayAgg("job__job_category__title", distinct=True),
+                experience=ArrayAgg("job__experience__title", distinct=True),
+            )
+            .annotate(
+                logo_absoulte_url=Concat(
+                    Value(settings.MEDIA_URL),
+                    "job__employer__company_logo",
+                    output_field=CharField(),
+                )
+            )
             .distinct()
             .values(
                 "job_id",
@@ -1368,7 +1377,6 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
                 "job__date_posted",
                 "date_applied",
             )
-            
         )
 
 
@@ -1395,6 +1403,7 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
             "date_posted",
             "date_updated",
             "posting_approval",
+            "close_job",
             "total_applicants",
         ]
 
@@ -1407,7 +1416,7 @@ class EmployerPostedJobSerializer(serializers.ModelSerializer):
         if obj.employer.company_logo:
             return obj.employer.company_logo.url
         else:
-            return None    
+            return None
 
     def get_total_applicants(self, obj):
         return obj.jobapplication_set.count()
@@ -1731,6 +1740,28 @@ class BlogPostSerializer(serializers.ModelSerializer):
 
     def get_author(self, obj):
         return f"{obj.user}"
+
+
+class RelatedBlogPostSerializer(serializers.ModelSerializer):
+    blogposts = serializers.SerializerMethodField()
+    catagory_title = serializers.CharField(max_length=250, source='title')
+    class Meta:
+        model = BlogCategory
+        fields = ["id", "catagory_title", "blogposts"]
+
+    def get_blogposts(self, obj):
+        return obj.blogpost_set.filter(blog_category_id=obj.id).values(
+            "id",
+            "user",
+            "title",
+            "content",
+            "image_1",
+            "image_2",
+            "image_3",
+            "slug",
+            "date_created",
+            "date_updated",
+        )
 
 
 # End Blog Region

@@ -135,6 +135,7 @@ router.register(
 
 # BLOG POST REGION
 router.register("blogposts", views.BlogPostViewSet, basename="blogposts")
+router.register("relatedposts", views.RelatedBlogPost, basename="relatedposts")
 # END BLOG POST REGION
 
 
@@ -144,6 +145,9 @@ courses_router.register("schedules", views.ScheduleViewSet, basename="course-sch
 
 coursecategory_router = routers.NestedDefaultRouter(router, "coursecategories",lookup="coursecategory")
 coursecategory_router.register("courses", views.CourseClassViewSet, basename="coursecategory-courses")
+
+# blog_related_router = routers.NestedDefaultRouter(router, "blogposts", lookup="blogcategory")
+# blog_related_router.register("relatedposts", views.RelatedBlogPost, basename="blogcategory-relatedposts")
 
 navlink_router = routers.NestedDefaultRouter(router, "navlinks", lookup="navlink")
 navlink_router.register("items", views.NavLinkItemViewSet, basename="navlink-items")
@@ -173,6 +177,7 @@ urlpatterns = [
     path("", include(coursemanual_router.urls)),
     path("", include(coursecategory_router.urls)),
     path("", include(applicants_router.urls)),
+    # path("", include(blog_related_router.urls)),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.jwt")),
     path(
