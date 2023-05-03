@@ -307,6 +307,7 @@ class SponsorAdmin(admin.ModelAdmin):
         "email",
         "number_of_student",
     ]
+    search_fields = ["name_of_sponsor"]
     list_filter = ["selection"]
     ordering = ["name_of_sponsor"]
 
@@ -922,7 +923,7 @@ class BillingAdmin(admin.ModelAdmin):
     readonly_fields = ["grand_total_paid"]
     list_select_related = ["student"]
     list_editable = ["student"]
-    autocomplete_fields = ["student"]
+    autocomplete_fields = ["student","course_name","sponsor"]
     search_fields = ["student"]
     list_per_page = 25
     paginator = CachingPaginator
@@ -950,7 +951,6 @@ class BillingDetailAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "billing",
-        "course_fee",
         "amount_paid",
         "outstanding_amount",
         "date_paid",
@@ -961,7 +961,7 @@ class BillingDetailAdmin(admin.ModelAdmin):
     autocomplete_fields = ["billing"]
     list_per_page = 25
     readonly_fields = ["outstanding_amount"]
-    actions = ["export_to_csv"]
+    # actions = ["export_to_csv"]
     # list_editable = ["billing", "amount_paid"]
 
 

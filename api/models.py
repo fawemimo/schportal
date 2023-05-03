@@ -1004,44 +1004,30 @@ class Billing(models.Model):
         except Exception as e:
             # print('Exception from save method',e)
             pass
-        super().save(*args, **kwargs)
+        super(Billing, self).save(*args, **kwargs)
 
 
 class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
-    course_fee = models.PositiveBigIntegerField(blank=True, null=True)
     amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
-    outstanding_amount = models.CharField(
-        default=0, max_length=50, blank=True, null=True
-    )
+    outstanding_amount = models.CharField(max_length=255,blank=True, null=True)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
 
-    def get_cal_for_outstanding(self):
-        grand_amount_paid = self.billing.billingdetail_set.filter(
-            billing_id=self.billing.id
-        ).aggregate(grand_amount_paid=Sum("amount_paid"))
-        grand_amount_paid = grand_amount_paid["grand_amount_paid"]
-
-        grand_course_fee = self.billing.course_fee
-
-        grand_course = grand_course_fee
-
-        outstanding = int(grand_course) - grand_amount_paid
-
-        return outstanding
-
     def save(self, *args, **kwargs):
         try:
-            self.outstanding_amount = self.get_cal_for_outstanding()
-
+            if self.outstanding_amount == None:
+                grand_amount_paid = self.billing.billingdetail_set.filter(
+                billing=self.billing
+                )
+                grand_amount_paid = (sum(y.amount_paid for y in grand_amount_paid))
+                grand_course_fee = self.billing.course_fee
+                self.outstanding_amount = int(grand_course_fee) - grand_amount_paid
+                super(BillingDetail, self).save(*args, **kwargs)
         except Exception as e:
             pass
-
-        super(BillingDetail, self).save(args, kwargs)
-
 
 class BillingExtraPayment(models.Model):
     billing = models.ForeignKey(
@@ -1050,7 +1036,7 @@ class BillingExtraPayment(models.Model):
     item_name = models.CharField(max_length=255)
     item_name_fee = models.PositiveIntegerField(blank=True, null=True)
     amount_paid = models.PositiveIntegerField()
-    outstanding_amount = models.CharField(default=0, max_length=50)
+    outstanding_amount = models.CharField(max_length=255, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
@@ -1070,19 +1056,23 @@ class BillingExtraPayment(models.Model):
             .filter(item_name=self.item_name)
             .aggregate(amount_paid=Sum("amount_paid"))
         )
+        sum_amount_paid = self.billing.billingextrapayment_set.filter(billing_id=self.billing.id).filter(item_name=self.item_name)
+            
+        y = (sum(x.amount_paid for x in sum_amount_paid))    
 
         item_fee = item_name_fee["item_name_fee"]
-        outstanding = item_fee - sum_amount_paid["amount_paid"]
+        outstanding = int(item_fee) - y
         return outstanding
 
     def save(self, *args, **kwargs):
         try:
-            self.outstanding_amount = self.get_cal_outstanding()
+            if self.outstanding_amount == None:
+                self.outstanding_amount = self.get_cal_outstanding()
 
         except Exception as e:
             print(e)
 
-        super().save(*args, **kwargs)
+        super(BillingExtraPayment, self).save(*args, **kwargs)
 
 
 # End Billing Information region
