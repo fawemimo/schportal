@@ -125,9 +125,6 @@ router.register('joblocations', views.JobLocationViewSet, basename="joblocations
 # Billing region
 
 router.register("billings", views.BillingPaymentViewSet, basename="billings")
-router.register(
-    "billingdetails", views.BillingDetailsViewSet, basename="studentbillings"
-)
 
 
 # End Billing region
@@ -146,9 +143,6 @@ courses_router.register("schedules", views.ScheduleViewSet, basename="course-sch
 coursecategory_router = routers.NestedDefaultRouter(router, "coursecategories",lookup="coursecategory")
 coursecategory_router.register("courses", views.CourseClassViewSet, basename="coursecategory-courses")
 
-# blog_related_router = routers.NestedDefaultRouter(router, "blogposts", lookup="blogcategory")
-# blog_related_router.register("relatedposts", views.RelatedBlogPost, basename="blogcategory-relatedposts")
-
 navlink_router = routers.NestedDefaultRouter(router, "navlinks", lookup="navlink")
 navlink_router.register("items", views.NavLinkItemViewSet, basename="navlink-items")
 
@@ -156,11 +150,6 @@ coursemanual_router = routers.NestedDefaultRouter(
     router, "coursemanuals", lookup="coursemanuals"
 )
 coursemanual_router.register("coursesview", views.CoursesViewSet, basename="course")
-
-# billing_router = routers.NestedDefaultRouter(router, "billings", lookup="billing")
-# billing_router.register(
-#     "details", views.BillingDetailsViewSet, basename="billing-details"
-# )
 
 
 applicants_router = routers.NestedDefaultRouter(

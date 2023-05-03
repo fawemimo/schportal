@@ -1514,69 +1514,8 @@ class JobApplicationSerializer(serializers.ModelSerializer):
 
 
 # Billing Region
-
-
-class PostBillingSerializer(serializers.ModelSerializer):
-    student_id = serializers.IntegerField()
-    course_id = serializers.IntegerField()
-
-    class Meta:
-        model = Billing
-        fields = [
-            "id",
-            "payment_completion_status",
-            "student_id",
-            "course_id",
-        ]
-
-    def create(self, validated_data):
-        student_id = self.context["student_id"]
-        course_id = self.context["course_id"]
-
-        return Billing.objects.create(
-            student_id=student_id, course_id=course_id, **validated_data
-        )
-
-    def validate_student_id(self, value):
-        if not Student.objects.filter(id=value).exists():
-            raise serializers.ValidationError("Student ID does not exist")
-        return value
-
-    def validate_course_id(self, value):
-        if not Course.objects.filter(id=value).exists():
-            raise serializers.ValidationError("Course ID does not exist")
-        return value
-
-    def save(self, **kwargs):
-        payment_completion_status = self.validated_data["payment_completion_status"]
-        course_id = self.validated_data["course_id"]
-        # total_amount_paid = self.validated_data["total_amount_paid"]
-        # total_amount = self.validated_data["total_amount"]
-        student_id = self.validated_data["student_id"]
-        # student = Student.objects.get(id=student_id)
-        try:
-            billing = Billing.objects.create(
-                student_id=student_id,
-                course_id=course_id,
-                # total_amount_paid=total_amount_paid,
-                # total_amount=total_amount,
-                # first_name=student.user.first_name,
-                # last_name=student.user.last_name,
-                # email=student.user.email,
-                payment_completion_status=payment_completion_status,
-            )
-            billing.save()
-
-            return billing
-        except ValueError as e:
-            return e
-
-
 class BillingSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
-    grand_total_paid = serializers.SerializerMethodField()
-    grand_outstanding = serializers.SerializerMethodField()
-    extra_payment = serializers.SerializerMethodField()
     billingdetails = serializers.SerializerMethodField()
 
     class Meta:
@@ -1588,125 +1527,13 @@ class BillingSerializer(serializers.ModelSerializer):
             "course_name",
             "start_date",
             "payment_completion_status",
-            "grand_total_paid",
-            "grand_outstanding",
             "billingdetails",
-            "extra_payment",
         ]
-
-    def get_extra_payment(self, obj):
-        return obj.billingextrapayment_set.filter(billing_id=obj.id).values(
-            "id",
-            "item_name",
-            "item_name_fee",
-            "amount_paid",
-            "date_created",
-            "date_updated",
-        )
 
     def get_billingdetails(self, obj):
         return obj.billingdetail_set.filter(billing_id=obj.id).values(
-            "id", "course_fee", "amount_paid", "date_paid"
+            "id", "amount_paid", "date_paid"
         )
-
-    def get_grand_total_paid(self, obj):
-        try:
-            extrapayment = obj.billingextrapayment_set.filter(
-                billing_id=obj.id
-            ).aggregate(amount_paid=Sum("amount_paid"))
-            billingdetails = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(
-                amount_paid=Sum("amount_paid")
-            )
-            sum_total = extrapayment["amount_paid"] + billingdetails["amount_paid"]
-
-            return sum_total
-        except Exception as e:
-            print(e)
-
-    def get_grand_outstanding(self, obj):
-        try:
-            billingdetails = obj.billingdetail_set.filter(billing_id=obj.id).aggregate(
-                amount_paid=Sum("amount_paid")
-            )
-            extra_payment = obj.billingextrapayment_set.filter(
-                billing_id=obj.id
-            ).aggregate(amount_paid=Sum("amount_paid"))
-            extra_item_fee = (
-                obj.billingextrapayment_set.filter(billing_id=obj.id)
-                .values("item_name_fee")
-                .first()
-            )
-            total_amount_paid_details = 0
-            total_amount_paid_extra = 0
-            course_fee = (
-                obj.billingdetail_set.filter(billing_id=obj.id)
-                .values("course_fee")
-                .first()
-            )
-            grand_total = extra_item_fee["item_name_fee"] + course_fee["course_fee"]
-            if billingdetails and extra_payment:
-                if (
-                    total_amount_paid_details != None
-                    and total_amount_paid_extra != None
-                ):
-                    total_amount_paid_details = billingdetails["amount_paid"]
-                    total_amount_paid_extra = extra_payment["amount_paid"]
-
-                    cal = grand_total - (
-                        total_amount_paid_details + total_amount_paid_extra
-                    )
-                    return cal
-                elif (
-                    total_amount_paid_details == None
-                    and total_amount_paid_extra == None
-                ):
-                    total_amount_paid_details = 0
-                    total_amount_paid_extra = 0
-                    cal = grand_total - (
-                        total_amount_paid_details + total_amount_paid_extra
-                    )
-
-                    return cal
-        except Exception as e:
-            print(e)
-
-
-class BillingDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BillingDetail
-        fields = ["id", "amount_paid", "date_paid"]
-
-
-class PostBillingDetailSerializer(serializers.ModelSerializer):
-    billing_id = serializers.IntegerField()
-
-    class Meta:
-        model = BillingDetail
-        fields = ["id", "billing_id", "amount_paid", "program_type"]
-
-    def validate_billing_id(self, value):
-        if not Billing.objects.filter(id=value):
-            raise serializers.ValidationError("Billing ID  is not found")
-        return value
-
-    def save(self, **kwargs):
-        billing_id = self.validated_data["billing_id"]
-        amount_paid = self.validated_data["amount_paid"]
-        program_type = self.validated_data["program_type"]
-
-        try:
-            # create the billing details wrt billing_id
-            billingdetails = BillingDetail.objects.create(
-                billing_id=billing_id,
-                amount_paid=amount_paid,
-                program_type=program_type,
-            )
-
-            billingdetails.save()
-            return billingdetails
-        except ValueError as e:
-            return e
-
 
 # End Billing Region
 

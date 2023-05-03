@@ -959,8 +959,8 @@ class Billing(models.Model):
     student = models.ForeignKey(
         Student, on_delete=models.PROTECT, null=True, blank=True
     )
-    grand_total_paid = models.PositiveBigIntegerField(blank=True, null=True)
-    # grand_outstanding = models.PositiveBigIntegerField(blank=True, null=True)
+    total_amount = models.PositiveBigIntegerField(blank=True, null=True)
+    total_amount_text = models.TextField(blank=True, null=True)
     payment_completion_status = models.CharField(
         default=PENDING,
         choices=PAYMENT_COMPLETION_STATUS,
@@ -974,125 +974,14 @@ class Billing(models.Model):
     def __str__(self):
         return f"{str(self.student.full_name)} - {str(self.student.student_idcard_id)}-{str(self.id)}"
 
-    def get_grand_total_paid(self):
-        try:
-            extrapayment = self.billingextrapayment_set.filter(
-                billing_id=self.id
-            ).aggregate(amount_paid=Sum("amount_paid"))
-            billingdetails = self.billingdetail_set.filter(
-                billing_id=self.id
-            ).aggregate(amount_paid=Sum("amount_paid"))
-            expayment = extrapayment["amount_paid"]
-            bd = billingdetails["amount_paid"]
-            if expayment is not None and bd is not None:
-                sum_total = bd + expayment
-                return sum_total
-            else:
-                sum_total = bd + 0
-                return sum_total
-
-        except Exception as e:
-            # print('Exception fron grand total',e)
-            pass
-
-    def save(self, *args, **kwargs):
-        try:
-            grand_total = 0
-            if self.get_grand_total_paid != 0:
-                grand_total = self.get_grand_total_paid()
-                self.grand_total_paid = grand_total
-            else:
-                self.get_grand_total_paid = grand_total
-
-        except Exception as e:
-            # print('Exception from save method',e)
-            pass
-        super(Billing, self).save(*args, **kwargs)
-
 
 class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
     amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
-    outstanding_amount = models.CharField(max_length=255, blank=True, null=True)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
-
-    def save(self, *args, **kwargs):
-        try:
-            if self.outstanding_amount == None:
-                grand_amount_paid = self.billing.billingdetail_set.filter(
-                    billing=self.billing
-                )
-                grand_amount_paid = sum(y.amount_paid for y in grand_amount_paid)
-                grand_course_fee = self.billing.course_fee
-                self.outstanding_amount = int(grand_course_fee) - grand_amount_paid
-                super(BillingDetail, self).save(*args, **kwargs)
-        except Exception as e:
-            pass
-
-
-class BillingExtraNameAndAmount(models.Model):
-    item_name = models.CharField(max_length=255)
-    item_name_fee = models.PositiveIntegerField(blank=True, null=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Item name: {self.item_name}, Item fee: {self.item_name_fee}"
-
-
-class BillingExtraPayment(models.Model):
-    billing = models.ForeignKey(
-        Billing, on_delete=models.CASCADE, null=True, blank=True
-    )
-    billing_extra_name_and_amount = models.ForeignKey(
-        BillingExtraNameAndAmount, on_delete=models.CASCADE, blank=True, null=True
-    )
-    amount_paid = models.PositiveIntegerField()
-    outstanding_amount = models.CharField(max_length=255, blank=True, null=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Billing:{str(self.billing.id)}, Item details:{self.billing_extra_name_and_amount}"
-
-    def save(self, *args, **kwargs):
-        try:
-            if self.outstanding_amount == None:
-                grand_amount_paid = self.billing_extra_name_and_amount.billingextrapayment_set.filter(
-                    billing_extra_name_and_amount_id=self.billing_extra_name_and_amount.id
-                )
-
-                grand_amount_paid = sum(x.amount_paid for x in grand_amount_paid)
-
-                item_name_fee = self.billing_extra_name_and_amount.item_name_fee
-                grand_item_name_fee = item_name_fee
-                self.outstanding_amount = int(grand_item_name_fee) - grand_amount_paid
-                super(BillingExtraPayment, self).save(*args, **kwargs)
-
-                # item_name_fee = (
-                #     self.billing.billingextrapayment_set.filter(billing_id=self.billing.id)
-                #     .values("item_name_fee")
-                #     .first()
-                # )
-
-                # sum_amount_paid = (
-                #     self.billing.billingextrapayment_set.filter(billing_id=self.billing.id)
-                #     .filter(item_name=self.item_name)
-                #     .aggregate(amount_paid=Sum("amount_paid"))
-                # )
-                # sum_amount_paid = self.billing.billingextrapayment_set.filter(billing_id=self.billing.id).filter(item_name=self.item_name)
-
-                # y = (sum(x.amount_paid for x in sum_amount_paid))
-
-                # item_fee = item_name_fee["item_name_fee"]
-                # self.outstanding_amount = int(item_fee) - y
-
-        except Exception as e:
-            print(e)
-
 
 # End Billing Information region
 

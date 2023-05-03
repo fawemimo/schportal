@@ -1023,17 +1023,12 @@ class StudentApplicationForJobViewSet(ModelViewSet):
 class BillingPaymentViewSet(ModelViewSet):
     http_method_names = ["post", "get"]
     permission_classes = [IsStudentType]
-
-    def get_serializer_class(self):
-        if self.request.method == "GET":
-            return BillingSerializer
-        elif self.request.method == "POST":
-            return PostBillingSerializer
+    serializer_class = BillingSerializer
 
     def get_queryset(self):
         return (
             Billing.objects.filter(student__user=self.request.user)
-            .prefetch_related("billingdetail_set", "billingextrapayment_set")
+            .prefetch_related("billingdetail_set")
             .select_related("student")
         )
 
@@ -1046,50 +1041,6 @@ class BillingPaymentViewSet(ModelViewSet):
     # @method_decorator(cache_page(1*60))
     # def dispatch(self, request, *args, **kwargs):
     #    return super().dispatch(request, *args, **kwargs)
-
-
-class BillingDetailsViewSet(ModelViewSet):
-    http_method_names = ["get", "post"]
-
-    serializer_class = BillingDetailSerializer
-    permission_classes = [IsStudentType]
-
-    def get_queryset(self):
-        return (
-            BillingDetail.objects.filter(billing__student__user=self.request.user)
-            .select_related("billing")
-            .order_by("-date_paid")
-            .filter(billing_id=self.kwargs.get("billing_pk"))
-        )
-
-    def get_serializer_class(self):
-        if self.request.method == "POST":
-            return PostBillingDetailSerializer
-        elif self.request.method == "GET":
-            return BillingDetailSerializer
-
-    def get_serializer_context(self):
-        return {"billing_id": self.kwargs.get("billing_pk")}
-
-    def create(self, request, *args, **kwargs):
-        serializer = PostBillingDetailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data)
-
-    # @method_decorator(cache_page(1*60))
-    # def dispatch(self, request, *args, **kwargs):
-    #    return super().dispatch(request, *args, **kwargs)
-    # True:individual
-    # False:list view
-    @action(
-        detail=True,
-        methods=["GET"],
-        permission_classes=[IsStudentType],
-    )
-    def receipts(self, request, billing_pk=None, pk=None):
-        return create_receipts(self, billing_pk, pk)
-
 
 # End Billing region
 
