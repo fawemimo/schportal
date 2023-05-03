@@ -137,8 +137,11 @@ class Student(models.Model):
     def __str__(self):
         return f"{self.full_name} - {self.student_idcard_id}"
 
+
 class StudentBackup(models.Model):
-    student = models.OneToOneField(Student, on_delete=models.SET_NULL, blank=True, null=True)
+    student = models.OneToOneField(
+        Student, on_delete=models.SET_NULL, blank=True, null=True
+    )
     is_approved = models.BooleanField(default=False)
     job_ready = models.BooleanField(default=False)
     just_for_jobs = models.BooleanField(default=False)
@@ -178,18 +181,18 @@ class StudentBackup(models.Model):
     def save(self, *args, **kwargs):
         student = Student.objects.get(id=self.student_id)
         if student.is_approved == True:
-            self.just_for_jobs=student.just_for_jobs
-            self.full_name=student.full_name
-            self.student_idcard_id=student.student_idcard_id
-            self.date_of_birth=student.date_of_birth
-            self.mobile_numbers=student.mobile_numbers 
-            self.profile_pic=student.profile_pic
-            self.contact_address=student.contact_address
-            self.next_of_kin_fullname=student.next_of_kin_fullname
-            self.next_of_kin_contact_address=student.next_of_kin_contact_address 
+            self.just_for_jobs = student.just_for_jobs
+            self.full_name = student.full_name
+            self.student_idcard_id = student.student_idcard_id
+            self.date_of_birth = student.date_of_birth
+            self.mobile_numbers = student.mobile_numbers
+            self.profile_pic = student.profile_pic
+            self.contact_address = student.contact_address
+            self.next_of_kin_fullname = student.next_of_kin_fullname
+            self.next_of_kin_contact_address = student.next_of_kin_contact_address
             self.next_of_kin_mobile_number = student.next_of_kin_mobile_number
             self.relationship_with_next_kin = student.relationship_with_next_kin
-            self.cv_upload =student.cv_upload
+            self.cv_upload = student.cv_upload
         super(StudentBackup, self).save(*args, **kwargs)
 
 
@@ -385,7 +388,9 @@ class CareerApplicant(models.Model):
     last_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)
     mobile = models.CharField(max_length=255)
-    highest_qualification = models.CharField(max_length=255, choices=QUALIFICATION_CHOICES, blank=True, null=True)
+    highest_qualification = models.CharField(
+        max_length=255, choices=QUALIFICATION_CHOICES, blank=True, null=True
+    )
     career_opening = models.ForeignKey(CareerOpening, on_delete=models.CASCADE)
     resume = models.FileField(
         upload_to="career/applicant/",
@@ -487,7 +492,6 @@ class Sponsor(models.Model):
 
 
 class Announcement(models.Model):
-    # cookie_id = models.UUIDField(default=uuid.uuid4, unique=True, blank=True,null=True)
     title = models.CharField(max_length=255)
     announcement = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
@@ -935,7 +939,6 @@ class JobApplication(models.Model):
         ordering = ["-date_applied"]
         unique_together = [("student", "job")]
 
-   
 
 # endportal region
 
@@ -1010,7 +1013,7 @@ class Billing(models.Model):
 class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
     amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
-    outstanding_amount = models.CharField(max_length=255,blank=True, null=True)
+    outstanding_amount = models.CharField(max_length=255, blank=True, null=True)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -1020,59 +1023,75 @@ class BillingDetail(models.Model):
         try:
             if self.outstanding_amount == None:
                 grand_amount_paid = self.billing.billingdetail_set.filter(
-                billing=self.billing
+                    billing=self.billing
                 )
-                grand_amount_paid = (sum(y.amount_paid for y in grand_amount_paid))
+                grand_amount_paid = sum(y.amount_paid for y in grand_amount_paid)
                 grand_course_fee = self.billing.course_fee
                 self.outstanding_amount = int(grand_course_fee) - grand_amount_paid
                 super(BillingDetail, self).save(*args, **kwargs)
         except Exception as e:
             pass
 
+
+class BillingExtraNameAndAmount(models.Model):
+    item_name = models.CharField(max_length=255)
+    item_name_fee = models.PositiveIntegerField(blank=True, null=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Item name: {self.item_name}, Item fee: {self.item_name_fee}"
+
+
 class BillingExtraPayment(models.Model):
     billing = models.ForeignKey(
         Billing, on_delete=models.CASCADE, null=True, blank=True
     )
-    item_name = models.CharField(max_length=255)
-    item_name_fee = models.PositiveIntegerField(blank=True, null=True)
+    billing_extra_name_and_amount = models.ForeignKey(
+        BillingExtraNameAndAmount, on_delete=models.CASCADE, blank=True, null=True
+    )
     amount_paid = models.PositiveIntegerField()
     outstanding_amount = models.CharField(max_length=255, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{str(self.billing.id)} - {self.item_name}"
-
-    def get_cal_outstanding(self):
-        item_name_fee = (
-            self.billing.billingextrapayment_set.filter(billing_id=self.billing.id)
-            .filter(item_name=self.item_name)
-            .values("item_name_fee")
-            .first()
-        )
-
-        sum_amount_paid = (
-            self.billing.billingextrapayment_set.filter(billing_id=self.billing.id)
-            .filter(item_name=self.item_name)
-            .aggregate(amount_paid=Sum("amount_paid"))
-        )
-        sum_amount_paid = self.billing.billingextrapayment_set.filter(billing_id=self.billing.id).filter(item_name=self.item_name)
-            
-        y = (sum(x.amount_paid for x in sum_amount_paid))    
-
-        item_fee = item_name_fee["item_name_fee"]
-        outstanding = int(item_fee) - y
-        return outstanding
+        return f"Billing:{str(self.billing.id)}, Item details:{self.billing_extra_name_and_amount}"
 
     def save(self, *args, **kwargs):
         try:
             if self.outstanding_amount == None:
-                self.outstanding_amount = self.get_cal_outstanding()
+                grand_amount_paid = self.billing_extra_name_and_amount.billingextrapayment_set.filter(
+                    billing_extra_name_and_amount_id=self.billing_extra_name_and_amount.id
+                )
+
+                grand_amount_paid = sum(x.amount_paid for x in grand_amount_paid)
+
+                item_name_fee = self.billing_extra_name_and_amount.item_name_fee
+                grand_item_name_fee = item_name_fee
+                self.outstanding_amount = int(grand_item_name_fee) - grand_amount_paid
+                super(BillingExtraPayment, self).save(*args, **kwargs)
+
+                # item_name_fee = (
+                #     self.billing.billingextrapayment_set.filter(billing_id=self.billing.id)
+                #     .values("item_name_fee")
+                #     .first()
+                # )
+
+                # sum_amount_paid = (
+                #     self.billing.billingextrapayment_set.filter(billing_id=self.billing.id)
+                #     .filter(item_name=self.item_name)
+                #     .aggregate(amount_paid=Sum("amount_paid"))
+                # )
+                # sum_amount_paid = self.billing.billingextrapayment_set.filter(billing_id=self.billing.id).filter(item_name=self.item_name)
+
+                # y = (sum(x.amount_paid for x in sum_amount_paid))
+
+                # item_fee = item_name_fee["item_name_fee"]
+                # self.outstanding_amount = int(item_fee) - y
 
         except Exception as e:
             print(e)
-
-        super(BillingExtraPayment, self).save(*args, **kwargs)
 
 
 # End Billing Information region

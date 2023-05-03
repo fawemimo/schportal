@@ -79,8 +79,10 @@ class AnnouncementViewSet(ModelViewSet):
 
     def get_queryset(self):
         now = datetime.now()
-        return Announcement.objects.filter(is_published=True).exclude(
-            expiration_date__date__lte=now, expiration_date__time__lte=now
+        return (
+            Announcement.objects.filter(is_published=True)
+            .exclude(expiration_date__date__lte=now, expiration_date__time__lte=now)
+            .order_by("-date_created")[:1]
         )
 
 
