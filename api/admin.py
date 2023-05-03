@@ -961,8 +961,8 @@ class BillingDetailAdmin(admin.ModelAdmin):
     autocomplete_fields = ["billing"]
     list_per_page = 25
     readonly_fields = ["outstanding_amount"]
-    # actions = ["export_to_csv"]
-    # list_editable = ["billing", "amount_paid"]
+    actions = ["export_to_csv"]
+    list_editable = ["billing", "amount_paid"]
 
 
 # End Billing
