@@ -1532,7 +1532,7 @@ class BillingSerializer(serializers.ModelSerializer):
 
     def get_billingdetails(self, obj):
         return obj.billingdetail_set.filter(billing_id=obj.id).values(
-            "id", "amount_paid", "date_paid"
+            "id", "extra_payment","amount_paid", "date_paid"
         )
 
 # End Billing Region
