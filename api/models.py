@@ -960,7 +960,7 @@ class Billing(models.Model):
         Student, on_delete=models.PROTECT, null=True, blank=True
     )
     total_amount = models.PositiveBigIntegerField(blank=True, null=True)
-    total_amount_text = models.TextField(blank=True, null=True)
+    total_amount_text = tinymce_models.HTMLField(blank=True, null=True)
     payment_completion_status = models.CharField(
         default=PENDING,
         choices=PAYMENT_COMPLETION_STATUS,
