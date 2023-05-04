@@ -1534,7 +1534,7 @@ class BillingSerializer(serializers.ModelSerializer):
 
     def get_billingdetails(self, obj):
         return obj.billingdetail_set.filter(billing_id=obj.id).values(
-            "id", "extra_payment", "amount_paid", "payment_descriptions", "date_paid"
+            "id", "amount_paid", "payment_descriptions", "date_paid"
         )
 
 

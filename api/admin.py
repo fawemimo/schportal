@@ -922,18 +922,17 @@ class BillingDetailAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "billing",
-        "extra_payment",
         "amount_paid",
         "payment_descriptions",
         "date_paid",
     ]
-    list_filter = ["date_paid","extra_payment"]
+    list_filter = ["date_paid"]
     search_fields = ["billing"]
     list_select_related = ["billing"]
     autocomplete_fields = ["billing"]
     list_per_page = 25
     actions = ["export_to_csv"]
-    list_editable = ["billing", "amount_paid","extra_payment"]
+    list_editable = ["billing", "amount_paid","payment_descriptions"]
 
 
 # End Billing

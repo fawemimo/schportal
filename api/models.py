@@ -976,7 +976,6 @@ class Billing(models.Model):
 
 
 class BillingDetail(models.Model):
-    extra_payment = models.BooleanField(default=False)
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
     amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
     payment_descriptions = models.CharField(max_length=250,blank=True, null=True)
