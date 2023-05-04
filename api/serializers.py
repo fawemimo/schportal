@@ -1526,6 +1526,8 @@ class BillingSerializer(serializers.ModelSerializer):
             "course_fee",
             "course_name",
             "start_date",
+            "total_amount",
+            "total_amount_text",
             "payment_completion_status",
             "billingdetails",
         ]
