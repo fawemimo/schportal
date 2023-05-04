@@ -1534,8 +1534,9 @@ class BillingSerializer(serializers.ModelSerializer):
 
     def get_billingdetails(self, obj):
         return obj.billingdetail_set.filter(billing_id=obj.id).values(
-            "id", "extra_payment","amount_paid", "date_paid"
+            "id", "extra_payment", "amount_paid", "payment_descriptions", "date_paid"
         )
+
 
 # End Billing Region
 
@@ -1573,7 +1574,8 @@ class BlogPostSerializer(serializers.ModelSerializer):
 
 class RelatedBlogPostSerializer(serializers.ModelSerializer):
     blogposts = serializers.SerializerMethodField()
-    catagory_title = serializers.CharField(max_length=250, source='title')
+    catagory_title = serializers.CharField(max_length=250, source="title")
+
     class Meta:
         model = BlogCategory
         fields = ["id", "catagory_title", "blogposts"]

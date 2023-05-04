@@ -924,6 +924,7 @@ class BillingDetailAdmin(admin.ModelAdmin):
         "billing",
         "extra_payment",
         "amount_paid",
+        "payment_descriptions",
         "date_paid",
     ]
     list_filter = ["date_paid","extra_payment"]
