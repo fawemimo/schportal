@@ -922,6 +922,7 @@ class BillingDetailAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "billing",
+        "extra_payment",
         "amount_paid",
         "date_paid",
     ]
