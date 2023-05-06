@@ -1516,6 +1516,7 @@ class JobApplicationSerializer(serializers.ModelSerializer):
 # Billing Region
 class BillingSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
+    course_name = serializers.StringRelatedField()
     billingdetails = serializers.SerializerMethodField()
 
     class Meta:
@@ -1530,7 +1531,7 @@ class BillingSerializer(serializers.ModelSerializer):
             "total_amount_text",
             "payment_completion_status",
             "billingdetails",
-        ]
+        ]    
 
     def get_billingdetails(self, obj):
         return obj.billingdetail_set.filter(billing_id=obj.id).values(
