@@ -122,7 +122,7 @@ class CareerSectionAdmin(admin.ModelAdmin):
 class CareerOpeningAdmin(admin.ModelAdmin):
     list_display = ["title", "job_location", "employment_type", "career_category"]
     list_filter = ["job_location", "employment_type"]
-    search_fields = ['title']
+    search_fields = ["title"]
 
 
 @admin.register(CareerCategory)
@@ -132,10 +132,17 @@ class CareerCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(CareerApplicant)
 class CareerApplicantAdmin(admin.ModelAdmin):
-    list_display = ["first_name", "last_name", "email", "mobile", "career_opening","resume"]
+    list_display = [
+        "first_name",
+        "last_name",
+        "email",
+        "mobile",
+        "career_opening",
+        "resume",
+    ]
     list_filter = ["highest_qualification"]
-    autocomplete_fields = ['career_opening']
-    readonly_fields = ['resume']
+    autocomplete_fields = ["career_opening"]
+    readonly_fields = ["resume"]
 
 
 @admin.register(AlbumSection)
@@ -211,7 +218,7 @@ class ScheduleAdmin(admin.ModelAdmin):
         "discounted_fee_dollar",
         "program_type",
     ]
-    list_filter = ['active', 'program_type']
+    list_filter = ["active", "program_type"]
     list_editable = ["startdate", "program_type", "active"]
     list_select_related = ["course"]
     autocomplete_fields = ["course"]
@@ -291,8 +298,13 @@ class InquiryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Enrollment)
-class InterestsAdmin(admin.ModelAdmin):
+class EnrollmentAdmin(admin.ModelAdmin):
     list_display = ["course_title", "full_name", "mobile", "email"]
+    search_fields = ["full_name", "=course__title"]
+    search_help_text = "Full name and course title"
+    list_select_related = ["course", "schedule"]
+    list_filter = ["date_submitted"]
+    date_hierarchy = "date_submitted"
 
     def course_title(self, obj):
         return obj.course.title
@@ -867,6 +879,7 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
 # Billing region
 
+
 @admin.register(Billing)
 class BillingAdmin(admin.ModelAdmin):
     @admin.display(description="Export as CSV")
@@ -894,8 +907,9 @@ class BillingAdmin(admin.ModelAdmin):
     list_filter = ["payment_completion_status"]
     list_select_related = ["student"]
     list_editable = ["student"]
-    autocomplete_fields = ["student","course_name","sponsor"]
-    search_fields = ["student"]
+    autocomplete_fields = ["student", "course_name", "sponsor"]
+    search_fields = ["student__full_name", "course_name__title"]
+    search_help_text = "Student fullname and course name"
     list_per_page = 25
     paginator = CachingPaginator
     actions = ["export_to_csv"]
@@ -927,12 +941,13 @@ class BillingDetailAdmin(admin.ModelAdmin):
         "date_paid",
     ]
     list_filter = ["date_paid"]
-    search_fields = ["billing"]
+    search_fields = ["billing__student__full_name","=billing__student__student_idcard_id"]
+    search_help_text = "student full name, exactly student idcard"
     list_select_related = ["billing"]
     autocomplete_fields = ["billing"]
     list_per_page = 25
     actions = ["export_to_csv"]
-    list_editable = ["billing", "amount_paid","payment_descriptions"]
+    list_editable = ["billing", "amount_paid", "payment_descriptions"]
 
 
 # End Billing
