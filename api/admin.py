@@ -553,11 +553,13 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(Batch)
 class BatchAdmin(admin.ModelAdmin):
-    list_display = ["title", "course", "total_students", "start_date", "end_date"]
-    search_fields = ["title", "students__user__first_name__istartswith"]
-    list_select_related = ["teacher", "course"]
-    autocomplete_fields = ["students", "course"]
     actions = ["export_to_csv"]
+    autocomplete_fields = ["students", "course"]
+    list_display = ["title", "course","program_type", "total_students", "start_date", "end_date"]
+    list_filter = ['program_type','start_date']
+    list_select_related = ["teacher", "course"]
+    search_fields = ["title", "students__full_name","course__title"]
+    search_help_text = 'Search for batch title, course title and students name'
 
     @admin.display(description="Export as CSV")
     def export_to_csv(self, request, queryset):
@@ -899,12 +901,13 @@ class BillingAdmin(admin.ModelAdmin):
         "id",
         "student",
         "course_name",
+        "program_type",
         "course_fee",
         "total_amount",
         "total_amount_text",
         "payment_completion_status",
     ]
-    list_filter = ["payment_completion_status"]
+    list_filter = ["payment_completion_status","program_type"]
     list_select_related = ["student"]
     list_editable = ["student"]
     autocomplete_fields = ["student", "course_name", "sponsor"]

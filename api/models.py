@@ -954,6 +954,7 @@ class Billing(models.Model):
     course_name = models.ForeignKey(
         Course, blank=True, null=True, on_delete=models.PROTECT
     )
+    program_type = models.CharField(max_length=50, choices=PROGRAM_TYPE_CHOICES,blank=True, null=True)
     course_fee = models.PositiveBigIntegerField(blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     student = models.ForeignKey(
