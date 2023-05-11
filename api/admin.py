@@ -300,7 +300,7 @@ class InquiryAdmin(admin.ModelAdmin):
 @admin.register(Enrollment)
 class EnrollmentAdmin(admin.ModelAdmin):
     list_display = ["course_title", "full_name", "mobile", "email"]
-    search_fields = ["full_name", "=course__title"]
+    search_fields = ["full_name", "course__title"]
     search_help_text = "Full name and course title"
     list_select_related = ["course", "schedule"]
     list_filter = ["date_submitted"]
