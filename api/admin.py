@@ -845,6 +845,8 @@ class JobAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "employer",
+        "job_type",
+        "job_location",
         "job_title",
         "slug",
         "posting_approval",
@@ -854,7 +856,7 @@ class JobAdmin(admin.ModelAdmin):
     list_filter = ["date_posted", "date_updated"]
     ordering = ["-date_posted"]
     date_hierarchy = "date_posted"
-    list_select_related = ["employer"]
+    list_select_related = ["employer","job_type","job_location"]
     autocomplete_fields = [
         "job_category",
         "employer",
@@ -863,8 +865,9 @@ class JobAdmin(admin.ModelAdmin):
         "job_location",
     ]
     list_per_page = 25
-    # preserve_filters = ['job_category']
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("employer","job_type","job_location")
 
 @admin.register(JobApplication)
 class JobApplicationAdmin(admin.ModelAdmin):

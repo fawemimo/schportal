@@ -828,7 +828,9 @@ class JobViewSet(ModelViewSet):
     queryset = (
         Job.objects.filter(posting_approval=True)
         .exclude(close_job=True)
-        .select_related("employer")
+        .select_related("employer","job_type","job_location")
+        .prefetch_related("job_category","experience")
+
     )
     serializer_class = JobSerializer
     filter_backends = [
@@ -907,9 +909,11 @@ class EmployerJobApplicantViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend]
 
     def get_queryset(self):
-        return Job.objects.filter(employer__user=self.request.user).select_related(
-            "employer"
-        )
+        return (Job.objects
+                            .filter(employer__user=self.request.user)
+                            .prefetch_related("job_category","experience")
+                            .select_related("employer","job_type","job_location")
+                )
 
     def get_permissions(self):
         try:
