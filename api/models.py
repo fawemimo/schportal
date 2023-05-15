@@ -34,6 +34,9 @@ class CourseCategory(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    def get_absolute_url(self):
+        return f"/{self.title}/"
+
 
 class Course(models.Model):
     coursecategory = models.ForeignKey(CourseCategory, on_delete=models.DO_NOTHING)
@@ -371,6 +374,9 @@ class CareerCategory(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return f'/{self.title}/'
+
 
 class CareerOpening(models.Model):
     title = models.CharField(max_length=255)
@@ -381,6 +387,9 @@ class CareerOpening(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return f'/{self.title}/'
 
 
 class CareerApplicant(models.Model):
@@ -408,6 +417,9 @@ class CareerApplicant(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+    def get_absolute_url(self):
+        return f'/{self.career_opening.title}/'
 
 
 class AlbumSection(models.Model):
@@ -860,6 +872,9 @@ class JobCategory(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return f'/{self.title}/'
+
     class Meta:
         ordering = ["ordering"]
 
@@ -872,6 +887,8 @@ class JobExperience(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return f'/{self.title}/'
     class Meta:
         ordering = ["-ordering"]
 
@@ -884,6 +901,9 @@ class BaseJobSelection(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return f'/{self.title}/'
+        
     class Meta:
         ordering = ["-ordering"]
 
@@ -923,7 +943,9 @@ class Job(models.Model):
         ran = random.choice(num)
         self.slug = f"{(slugify(self.job_title))}-{ran}"
         super(Job, self).save(*args, **kwargs)
-
+    
+    def get_absolute_url(self):
+        return f'/{self.slug}/'
     class Meta:
         ordering = ["-date_posted"]
 
@@ -1024,6 +1046,9 @@ class BlogPost(BlogBaseModel):
     @property
     def short_content(self):
         return f"{self.content[:200]}...."
+
+    def get_absolute_url(self):
+        return f"/{self.slug}/"
 
 
 # END BLOG MODEL REGION

@@ -17,6 +17,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "django.contrib.sitemaps",  # django sitemap
+    "django.contrib.sites", # sitemap
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -33,6 +35,8 @@ INSTALLED_APPS = [
     "djoser",
     "tinymce"
 ]
+
+SITE_ID = 1
 
 if DEBUG:
     INSTALLED_APPS += ["debug_toolbar"]
