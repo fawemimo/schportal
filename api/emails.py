@@ -24,19 +24,19 @@ def send_inquiries_email(fullname, email, mobile, message):
 
 def send_interested_email(course_id, full_name, email, mobile, schedule_id):
     course = Course.objects.get(id=course_id)
-    schedule = Schedule.objects.get(id=schedule_id)   
+    schedule = Schedule.objects.get(id=schedule_id)
 
     try:
         message = BaseEmailMessage(
             template_name="api/email_response/interested_emails.html",
             context={
                 "course": course.title,
-                "program_type":schedule.program_type,
+                "program_type": schedule.program_type,
                 "startdate": schedule.startdate,
-                "fee":schedule.fee,
-                "discounted_fee":schedule.discounted_fee,
-                "fee_dollar":schedule.fee_dollar,
-                "discounted_fee_dollar":schedule.discounted_fee_dollar,
+                "fee": schedule.fee,
+                "discounted_fee": schedule.discounted_fee,
+                "fee_dollar": schedule.fee_dollar,
+                "discounted_fee_dollar": schedule.discounted_fee_dollar,
                 "duration": schedule.duration,
                 "course_id": course_id,
                 "full_name": full_name,
@@ -135,7 +135,6 @@ def send_financial_aid_email(
     guarantor_residential_contact_address,
     guarantor_mobile,
 ):
-
     try:
         message = BaseEmailMessage(
             template_name="api/email_response/financial_aid.html",
@@ -161,7 +160,13 @@ def send_financial_aid_email(
 
 
 def send_sponsorship_email(
-    name_of_sponsor, selection, number_of_student, email, phone_number, remarks,organization_name
+    name_of_sponsor,
+    selection,
+    number_of_student,
+    email,
+    phone_number,
+    remarks,
+    organization_name,
 ):
     try:
         message = BaseEmailMessage(
@@ -169,7 +174,7 @@ def send_sponsorship_email(
             context={
                 "name_of_sponsor": name_of_sponsor,
                 "selection": selection,
-                "organization_name":organization_name,
+                "organization_name": organization_name,
                 "email": email,
                 "phone_number": phone_number,
                 "number_of_student": number_of_student,
@@ -183,8 +188,7 @@ def send_sponsorship_email(
         return e
 
 
-def send_employer_sign_up_email(email,contact_person):
-
+def send_employer_sign_up_email(email, contact_person):
     try:
         message = BaseEmailMessage(
             template_name="api/email_response/employer_sign_up.html",
@@ -200,18 +204,28 @@ def send_employer_sign_up_email(email,contact_person):
         print(e)
 
 
-def send_career_applicant_email(career_opening,first_name,last_name,email,mobile,highest_qualification):
-
+def send_career_applicant_email(
+    career_opening,
+    first_name,
+    last_name,
+    email,
+    mobile,
+    highest_qualification,
+    course_study,
+    degree,
+):
     try:
         message = BaseEmailMessage(
             template_name="api/email_response/career_opening.html",
             context={
                 "career_opening": career_opening,
                 "email": email,
-                "first_name":first_name,
-                "last_name":last_name,
-                "mobile":mobile,
-                "highest_qualification":highest_qualification
+                "first_name": first_name,
+                "last_name": last_name,
+                "mobile": mobile,
+                "course_study": course_study,
+                "degree": degree,
+                "highest_qualification": highest_qualification,
             },
         )
 

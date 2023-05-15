@@ -140,9 +140,13 @@ class CareerApplicantAdmin(admin.ModelAdmin):
         "career_opening",
         "resume",
     ]
-    list_filter = ["highest_qualification"]
+    list_filter = ["highest_qualification", "degree"]
     autocomplete_fields = ["career_opening"]
     readonly_fields = ["resume"]
+    list_select_related = ['career_opening']
+
+    def get_queryset(self, request):
+        return CareerApplicant.objects.select_related("career_opening")
 
 
 @admin.register(AlbumSection)
@@ -555,11 +559,18 @@ class ProjectAdmin(admin.ModelAdmin):
 class BatchAdmin(admin.ModelAdmin):
     actions = ["export_to_csv"]
     autocomplete_fields = ["students", "course"]
-    list_display = ["title", "course","program_type", "total_students", "start_date", "end_date"]
-    list_filter = ['program_type','start_date']
+    list_display = [
+        "title",
+        "course",
+        "program_type",
+        "total_students",
+        "start_date",
+        "end_date",
+    ]
+    list_filter = ["program_type", "start_date"]
     list_select_related = ["teacher", "course"]
-    search_fields = ["title", "students__full_name","course__title"]
-    search_help_text = 'Search for batch title, course title and students name'
+    search_fields = ["title", "students__full_name", "course__title"]
+    search_help_text = "Search for batch title, course title and students name"
 
     @admin.display(description="Export as CSV")
     def export_to_csv(self, request, queryset):
@@ -856,7 +867,7 @@ class JobAdmin(admin.ModelAdmin):
     list_filter = ["date_posted", "date_updated"]
     ordering = ["-date_posted"]
     date_hierarchy = "date_posted"
-    list_select_related = ["employer","job_type","job_location"]
+    list_select_related = ["employer", "job_type", "job_location"]
     autocomplete_fields = [
         "job_category",
         "employer",
@@ -867,7 +878,12 @@ class JobAdmin(admin.ModelAdmin):
     list_per_page = 25
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("employer","job_type","job_location")
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("employer", "job_type", "job_location")
+        )
+
 
 @admin.register(JobApplication)
 class JobApplicationAdmin(admin.ModelAdmin):
@@ -910,7 +926,7 @@ class BillingAdmin(admin.ModelAdmin):
         "total_amount_text",
         "payment_completion_status",
     ]
-    list_filter = ["payment_completion_status","program_type"]
+    list_filter = ["payment_completion_status", "program_type"]
     list_select_related = ["student"]
     list_editable = ["student"]
     autocomplete_fields = ["student", "course_name", "sponsor"]
@@ -947,7 +963,10 @@ class BillingDetailAdmin(admin.ModelAdmin):
         "date_paid",
     ]
     list_filter = ["date_paid"]
-    search_fields = ["billing__student__full_name","=billing__student__student_idcard_id"]
+    search_fields = [
+        "billing__student__full_name",
+        "=billing__student__student_idcard_id",
+    ]
     search_help_text = "student full name, exactly student idcard"
     list_select_related = ["billing"]
     autocomplete_fields = ["billing"]

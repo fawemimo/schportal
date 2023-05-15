@@ -94,7 +94,6 @@ class CareerSectionViewSet(ModelViewSet):
 
 class CareerApplicantViewSet(ModelViewSet):
     http_method_names = ["get", "post"]
-    # serializer_class = PostCareerApplicantSerializer
     queryset = CareerApplicant.objects.select_related("career_opening")
 
     def get_serializer_class(self):

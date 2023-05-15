@@ -80,3 +80,10 @@ QUALIFICATION_CHOICES = (
     ("OND/NCE", "OND/NCE"),
     ("SSCE", "SSCE"),
 )
+
+
+DEGREE_CHOICES = (
+    ("First Class", "First Class"),
+    ("Second Class Upper", "Second Class Upper"),
+    ("Second Class Lower", "Second Class Lower"),
+)

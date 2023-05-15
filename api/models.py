@@ -388,9 +388,11 @@ class CareerApplicant(models.Model):
     last_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)
     mobile = models.CharField(max_length=255)
+    course_study = models.CharField(max_length=255, blank=True, null=True)
     highest_qualification = models.CharField(
         max_length=255, choices=QUALIFICATION_CHOICES, blank=True, null=True
     )
+    degree = models.CharField(max_length=50, choices=DEGREE_CHOICES, blank=True, null=True)
     career_opening = models.ForeignKey(CareerOpening, on_delete=models.CASCADE)
     resume = models.FileField(
         upload_to="career/applicant/",
