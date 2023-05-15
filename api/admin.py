@@ -143,10 +143,11 @@ class CareerApplicantAdmin(admin.ModelAdmin):
     list_filter = ["highest_qualification", "degree"]
     autocomplete_fields = ["career_opening"]
     readonly_fields = ["resume"]
-    list_select_related = ['career_opening']
+    paginator = CachingPaginator
+    list_select_related = ["career_opening"]
 
     def get_queryset(self, request):
-        return CareerApplicant.objects.select_related("career_opening")
+        return super().get_queryset(request).select_related("career_opening")
 
 
 @admin.register(AlbumSection)
@@ -195,12 +196,10 @@ class CourseAdmin(admin.ModelAdmin):
     list_select_related = ["coursecategory"]
     prepopulated_fields = {"slug": ("title",)}
     search_fields = ["title"]
-
-    def course_categoryo(self, course):
-        return course.coursecategory.title
+    paginator = CachingPaginator  
 
     def get_queryset(self, request):
-        return Course.objects.order_by("ordering")
+        return super().get_queryset(request).order_by("ordering").select_related("coursecategory")
 
 
 @admin.register(CorporateCourseSection)
@@ -233,6 +232,9 @@ class ScheduleAdmin(admin.ModelAdmin):
     def teacher(self, teacher: Teacher):
         return f"{teacher.user}"
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('course')
+        
 
 @admin.register(NavLink)
 class NavlinkAdmin(admin.ModelAdmin):
@@ -299,7 +301,8 @@ class ShortQuizAdmin(admin.ModelAdmin):
 @admin.register(Inquiry)
 class InquiryAdmin(admin.ModelAdmin):
     list_display = ["id", "fullname", "mobile", "email"]
-
+    paginator = CachingPaginator
+    
 
 @admin.register(Enrollment)
 class EnrollmentAdmin(admin.ModelAdmin):

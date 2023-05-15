@@ -354,7 +354,9 @@ class NavLinkItemViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
 
     def get_queryset(self):
-        return NavLinkItem.objects.filter(navlink_id=self.kwargs["navlink_pk"]).all()
+        return NavLinkItem.objects.filter(
+            navlink_id=self.kwargs["navlink_pk"]
+        ).select_related("navlink")
 
     def get_serializer_class(self):
         if self.request.method in ["POST", "PATCH"]:
@@ -772,7 +774,9 @@ class EmployerViewSet(ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.user_type == "employer":
-            return Employer.objects.filter(user_id=self.request.user.id)
+            return Employer.objects.filter(user_id=self.request.user.id).select_related(
+                "user"
+            )
 
     def get_serializer_context(self):
         return {"user_id": self.request.user.id}
@@ -827,9 +831,8 @@ class JobViewSet(ModelViewSet):
     queryset = (
         Job.objects.filter(posting_approval=True)
         .exclude(close_job=True)
-        .select_related("employer","job_type","job_location")
-        .prefetch_related("job_category","experience")
-
+        .select_related("employer", "job_type", "job_location")
+        .prefetch_related("job_category", "experience")
     )
     serializer_class = JobSerializer
     filter_backends = [
@@ -908,11 +911,11 @@ class EmployerJobApplicantViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend]
 
     def get_queryset(self):
-        return (Job.objects
-                            .filter(employer__user=self.request.user)
-                            .prefetch_related("job_category","experience")
-                            .select_related("employer","job_type","job_location")
-                )
+        return (
+            Job.objects.filter(employer__user=self.request.user)
+            .prefetch_related("job_category", "experience")
+            .select_related("employer", "job_type", "job_location")
+        )
 
     def get_permissions(self):
         try:
@@ -956,7 +959,6 @@ class StudentAppliedJobViewSet(ModelViewSet):
     http_method_names = ["get"]
 
     serializer_class = StudentJobApplicationSerializer
-    # permission_classes = [IsStudentType]
     pagination_class = BasePagination
 
     def get_queryset(self):
@@ -1045,6 +1047,7 @@ class BillingPaymentViewSet(ModelViewSet):
     # def dispatch(self, request, *args, **kwargs):
     #    return super().dispatch(request, *args, **kwargs)
 
+
 # End Billing region
 
 # BLOG POST REGION
@@ -1052,7 +1055,6 @@ class BillingPaymentViewSet(ModelViewSet):
 
 class BlogPostViewSet(ModelViewSet):
     http_method_names = ["get"]
-    queryset = BlogPost.objects.filter(status="published")
     serializer_class = BlogPostSerializer
     filter_backends = [
         DjangoFilterBackend,
@@ -1064,6 +1066,11 @@ class BlogPostViewSet(ModelViewSet):
     pagination_class = BasePagination
     lookup_field = "slug"
     lookup_regex_values = "[^/]+"
+
+    def get_queryset(self):
+        return BlogPost.objects.filter(status="published").select_related(
+            "user", "blog_category"
+        )
 
     @method_decorator(cache_page(60 * 2))
     def dispatch(self, request, *args, **kwargs):
