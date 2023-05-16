@@ -1,17 +1,17 @@
 import random
 
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import *
+from django.db.models.functions import Concat
 from django.utils.text import slugify
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models.functions import Concat
-from django.db.models import *
+
 from .emails import *
 from .exceptions import *
 from .models import *

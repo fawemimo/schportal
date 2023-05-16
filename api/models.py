@@ -82,6 +82,8 @@ class Course(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
+        self.location_state = self.location_state.lower()
+        self.location_state_area = self.location_state_area.lower()
         super(Course, self).save(args, kwargs)
 
     def __str__(self):
@@ -345,6 +347,9 @@ class AboutUsSection(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def get_absolute_url(self):
+        return f'/about/'
+
 
 class StudentLoanSection(models.Model):
     is_published = models.BooleanField(default=False)
@@ -387,9 +392,6 @@ class CareerOpening(models.Model):
 
     def __str__(self):
         return self.title
-
-    def get_absolute_url(self):
-        return f'/{self.title}/'
 
 
 class CareerApplicant(models.Model):
@@ -438,6 +440,8 @@ class AlumiConnectSection(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def get_absolute_url(self):
+        return f'/alumni/'
 
 # For any section that just requires a content dump
 # like the footer etc
@@ -532,6 +536,9 @@ class ScholarshipSection(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    def get_absolute_url(self):
+        return f'/scholarship/'
 
 
 class Album(models.Model):
@@ -691,6 +698,9 @@ class Resource(models.Model):
     def __str__(self):
         return f"{self.resource_type.name}"
 
+    def get_absolute_url(self):
+        return f'/resources/{self.resource_type.slug}/'
+
 
 class StudentAttendance(models.Model):
     student = models.ForeignKey(Student, on_delete=models.PROTECT)
@@ -748,6 +758,9 @@ class InternationalModel(models.Model):
         self.country_name = self.country_name.lower()
         super(InternationalModel, self).save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return f'/international/'
+
 
 class FinancialAid(models.Model):
     aid_type = models.CharField(max_length=50, choices=AID_TYPE_CHOICES)
@@ -786,6 +799,8 @@ class CommunityConnect(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return f'/events/'
 
 class AlumiConnect(models.Model):
     first_name = models.CharField(max_length=255)
@@ -804,6 +819,9 @@ class TermsOfService(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return f'/terms/'
 
 
 class VirtualVsOther(models.Model):
@@ -945,7 +963,8 @@ class Job(models.Model):
         super(Job, self).save(*args, **kwargs)
     
     def get_absolute_url(self):
-        return f'/{self.slug}/'
+        return f'{JOB_BASE_URL}/{self.slug}/{self.id}/'
+
     class Meta:
         ordering = ["-date_posted"]
 
@@ -1048,7 +1067,7 @@ class BlogPost(BlogBaseModel):
         return f"{self.content[:200]}...."
 
     def get_absolute_url(self):
-        return f"/{self.slug}/"
+        return f"/blog/{self.slug}/"
 
 
 # END BLOG MODEL REGION

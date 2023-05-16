@@ -5,11 +5,6 @@ USER_TYPE_CHOICES = (
     ("employer", "Employer"),
 )
 
-# Schedule
-PROGRAM_TYPE_CHOICES = (
-    ("Physical/Onsite Class", "Physical/Onsite Class"),
-    ("Virtual/Online Class", "Virtual/Online Class"),
-)
 
 # Student Attendance
 ABSENT = "Absent"
@@ -87,3 +82,7 @@ DEGREE_CHOICES = (
     ("Second Class Upper", "Second Class Upper"),
     ("Second Class Lower", "Second Class Lower"),
 )
+
+
+# sitemaps
+JOB_BASE_URL = '/jobs'

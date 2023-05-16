@@ -1,22 +1,36 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
 from django.contrib.sitemaps.views import sitemap
+from django.urls import include, path
+
 from .sitemaps import *
 
 sitemaps = {
-    'coursecategory':CourseCategorySitemap,
-    'course':CourseSitemap,
-    'blog':BlogPostSitemap,
-    'job':JobSitemap,
-    'jobcategory': JobCategorySitemap,
-    'jobexperience':JobExperienceSitemap,
-    'jobtype':JobTypeSitemap,
-    'jobloaction': JobLocationSitemap,
-    'careerapplicant': CareerApplicantSitemap,
+    
+    'about':AboutSitemap,
+    'allCourses':AllCourseSitemap,
+    'alljobs':AllJobsSitemap,
+    'resourcesHomepage': AllResourceSitemap,
+    'alumni': AlumiConnectSectionSitemap,
+    'blog': AllBlogPostSitemap,
+    'blog/slug':BlogPostSitemap,
+    'careers': CareerSectionSitemap,
     'careeropening': CareerOpeningSitemap,
-    'careercategory': CareerCategorySitemap
+    'currentOpenings': AllCareerOpeningSitemap,
+    'courses/location/area/slug':CourseSitemap,
+    'coursedetails':CourseDetailSitemap,
+    'employer/postedjobs':EmployerPostedJobSitemap,
+    'events':CommunityConnectSitemap,
+    'international': InternationalModelSitemap,
+    'kids-coding': KidsCodingCourseSitemap,
+    'jobslug/:id':JobSitemap,
+    'physical-class': PhysicalClassCourseSitemap,
+    'resources/slug': ResourceSitemap,
+    'scholarship':ScholarshipSectionSitemap,
+    'students-loan': StudentLoanSectionSitemap,
+    'terms':TermSitemap,
+    'virtual-class':VirtualClassCourseSitemap,
 }
 
 
