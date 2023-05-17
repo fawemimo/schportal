@@ -5,18 +5,6 @@ from api.models import *
 from . import settings
 
 
-class CourseSitemap(Sitemap):
-    def items(self):
-        return (
-            Course.objects.order_by("ordering")
-            .select_related("coursecategory")
-            .filter(published=True)
-        )
-
-    def get_domain(self, site=None):
-        site = settings.DEFAULT_DOMAIN
-        return site
-
 
 class AllCourseSitemap(Sitemap):
     def items(self):
@@ -37,9 +25,6 @@ class CourseDetailSitemap(Sitemap):
             .select_related("coursecategory")
             .filter(published=True)
         )
-
-    def location(self, item):
-        return f"/courses/{item.location_state}/{item.location_state_area}/{item.slug}/"
 
     def get_domain(self, site=None):
         site = settings.DEFAULT_DOMAIN

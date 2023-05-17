@@ -90,7 +90,7 @@ class Course(models.Model):
         return f"{self.title}"
 
     def get_absolute_url(self):
-        return f"/{self.location_state}/{self.location_state_area}/{self.slug}/"
+        return f"/courses/{self.location_state}/{self.location_state_area}/{self.slug}/"
 
 
 class CorporateCourseSection(models.Model):
@@ -348,7 +348,7 @@ class AboutUsSection(models.Model):
         return str(self.id)
 
     def get_absolute_url(self):
-        return f'/about/'
+        return f"/about/"
 
 
 class StudentLoanSection(models.Model):
@@ -380,7 +380,7 @@ class CareerCategory(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return f'/{self.title}/'
+        return f"/{self.title}/"
 
 
 class CareerOpening(models.Model):
@@ -403,7 +403,9 @@ class CareerApplicant(models.Model):
     highest_qualification = models.CharField(
         max_length=255, choices=QUALIFICATION_CHOICES, blank=True, null=True
     )
-    degree = models.CharField(max_length=50, choices=DEGREE_CHOICES, blank=True, null=True)
+    degree = models.CharField(
+        max_length=50, choices=DEGREE_CHOICES, blank=True, null=True
+    )
     career_opening = models.ForeignKey(CareerOpening, on_delete=models.CASCADE)
     resume = models.FileField(
         upload_to="career/applicant/",
@@ -421,7 +423,7 @@ class CareerApplicant(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     def get_absolute_url(self):
-        return f'/{self.career_opening.title}/'
+        return f"/{self.career_opening.title}/"
 
 
 class AlbumSection(models.Model):
@@ -441,7 +443,8 @@ class AlumiConnectSection(models.Model):
         return str(self.id)
 
     def get_absolute_url(self):
-        return f'/alumni/'
+        return f"/alumni/"
+
 
 # For any section that just requires a content dump
 # like the footer etc
@@ -538,7 +541,7 @@ class ScholarshipSection(models.Model):
         return str(self.id)
 
     def get_absolute_url(self):
-        return f'/scholarship/'
+        return f"/scholarship/"
 
 
 class Album(models.Model):
@@ -699,7 +702,7 @@ class Resource(models.Model):
         return f"{self.resource_type.name}"
 
     def get_absolute_url(self):
-        return f'/resources/{self.resource_type.slug}/'
+        return f"/resources/{self.resource_type.slug}/"
 
 
 class StudentAttendance(models.Model):
@@ -759,7 +762,7 @@ class InternationalModel(models.Model):
         super(InternationalModel, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return f'/international/'
+        return f"/international/"
 
 
 class FinancialAid(models.Model):
@@ -800,7 +803,8 @@ class CommunityConnect(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return f'/events/'
+        return f"/events/"
+
 
 class AlumiConnect(models.Model):
     first_name = models.CharField(max_length=255)
@@ -821,7 +825,7 @@ class TermsOfService(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return f'/terms/'
+        return f"/terms/"
 
 
 class VirtualVsOther(models.Model):
@@ -891,7 +895,7 @@ class JobCategory(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return f'/{self.title}/'
+        return f"/{self.title}/"
 
     class Meta:
         ordering = ["ordering"]
@@ -906,7 +910,8 @@ class JobExperience(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return f'/{self.title}/'
+        return f"/{self.title}/"
+
     class Meta:
         ordering = ["-ordering"]
 
@@ -920,8 +925,8 @@ class BaseJobSelection(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return f'/{self.title}/'
-        
+        return f"/{self.title}/"
+
     class Meta:
         ordering = ["-ordering"]
 
@@ -961,9 +966,9 @@ class Job(models.Model):
         ran = random.choice(num)
         self.slug = f"{(slugify(self.job_title))}-{ran}"
         super(Job, self).save(*args, **kwargs)
-    
+
     def get_absolute_url(self):
-        return f'{JOB_BASE_URL}/{self.slug}/{self.id}/'
+        return f"{JOB_BASE_URL}/{self.slug}/{self.id}/"
 
     class Meta:
         ordering = ["-date_posted"]
@@ -997,7 +1002,9 @@ class Billing(models.Model):
     course_name = models.ForeignKey(
         Course, blank=True, null=True, on_delete=models.PROTECT
     )
-    program_type = models.CharField(max_length=50, choices=PROGRAM_TYPE_CHOICES,blank=True, null=True)
+    program_type = models.CharField(
+        max_length=50, choices=PROGRAM_TYPE_CHOICES, blank=True, null=True
+    )
     course_fee = models.PositiveBigIntegerField(blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     student = models.ForeignKey(
@@ -1022,11 +1029,12 @@ class Billing(models.Model):
 class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
     amount_paid = models.PositiveBigIntegerField(blank=True, null=True)
-    payment_descriptions = models.CharField(max_length=250,blank=True, null=True)
+    payment_descriptions = models.CharField(max_length=250, blank=True, null=True)
     date_paid = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
+
 
 # End Billing Information region
 
