@@ -13,7 +13,7 @@ class CourseSitemap(Sitemap):
 class AllCourseSitemap(Sitemap):
 
     def items(self):
-        return Course.objects.all()
+        return Course.objects.all()[:1]
 
     def location(self, item):
         return f'/courses/'
@@ -68,7 +68,7 @@ class BlogPostSitemap(Sitemap):
 class AllBlogPostSitemap(Sitemap):
 
     def items(self):
-        return BlogPost.objects.all()
+        return BlogPost.objects.all()[:1]
 
     def location(self, item)    :
         return f'/blog/'
@@ -79,7 +79,7 @@ class AllJobsSitemap(Sitemap):
         return (Job.objects.filter(posting_approval=True)
         .exclude(close_job=True)
         .select_related("employer", "job_type", "job_location")
-        .prefetch_related("job_category", "experience")
+        .prefetch_related("job_category", "experience")[:1]
     )
 
     def location(self, item):
@@ -109,7 +109,7 @@ class CareerOpeningSitemap(Sitemap):
 class AllCareerOpeningSitemap(Sitemap):
 
     def items(self):
-        return CareerOpening.objects.all()
+        return CareerOpening.objects.all()[:1]
 
     def location(self, item):
         return f'/careers-openings/'
