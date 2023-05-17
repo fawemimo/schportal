@@ -31,7 +31,7 @@ class CourseDetailSitemap(Sitemap):
 class PhysicalClassCourseSitemap(Sitemap):
     def items(self):
         course = Course.objects.order_by("ordering").select_related("coursecategory").filter(published=True)
-        schedule = Schedule.objects.filter(course_id__in=course).filter(program_type='Onsite')
+        schedule = Schedule.objects.filter(course_id__in=course).filter(program_type='Onsite')[:1]
         return schedule
 
     def location(self, item):
@@ -41,7 +41,7 @@ class PhysicalClassCourseSitemap(Sitemap):
 class VirtualClassCourseSitemap(Sitemap):
     def items(self):
         course = Course.objects.order_by("ordering").select_related("coursecategory").filter(published=True)
-        schedule = Schedule.objects.filter(course_id__in=course).filter(program_type='Virtual')
+        schedule = Schedule.objects.filter(course_id__in=course).filter(program_type='Virtual')[:1]
         return schedule
 
     def location(self, item):
@@ -84,7 +84,6 @@ class AllJobsSitemap(Sitemap):
 
     def location(self, item):
         return (f'{JOB_BASE_URL}/')
-
         
 
 class JobSitemap(Sitemap):
@@ -128,7 +127,7 @@ class EmployerPostedJobSitemap(Sitemap):
     def items(self):
         return (Job.objects
         .select_related("employer", "job_type", "job_location")
-        .prefetch_related("job_category", "experience")
+        .prefetch_related("job_category", "experience")[:1]
     )
 
     def location(self, item):
@@ -156,7 +155,7 @@ class TermSitemap(Sitemap):
 class CommunityConnectSitemap(Sitemap):
 
     def items(self):
-        return CommunityConnect.objects.all()
+        return CommunityConnect.objects.all()[:1]
 
 
 class AlumiConnectSectionSitemap(Sitemap):
@@ -174,7 +173,7 @@ class ScholarshipSectionSitemap(Sitemap):
 class ResourceSitemap(Sitemap):
 
     def items(self):
-        return Resource.objects.filter(published=True)
+        return Resource.objects.filter(published=True)[:1]
 
 
 
