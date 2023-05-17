@@ -17,13 +17,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.sitemaps", 
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sitemaps",  
     "django.contrib.humanize",
     "django_cleanup.apps.CleanupConfig",
     "rest_framework",
@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     "tinymce"
 ]
 
-SITE_ID = 1
+# SITE_ID = 1
 
 if DEBUG:
     INSTALLED_APPS += ["debug_toolbar"]
@@ -190,6 +190,8 @@ EMAIL_USE_SSL = True
 # TinyMce Config
 TINYMCE_SPELLCHECKER = True
 
+# DOMAIN
+DEFAULT_DOMAIN = config('DEFAULT_DOMAIN')
 
 # SQUAD CONFIG
 if DEBUG:
