@@ -154,17 +154,7 @@ class StudentViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         date_of_birth = request.data.get("date_of_birth", None)
-        mobile_numbers = request.data.get("mobile_numbers", None)
-        residential_address = request.data.get("residential_address", None)
-        contact_address = request.data.get("contact_address", None)
-        next_of_kin_fullname = request.data.get("next_of_kin_fullname", None)
-        next_of_kin_contact_address = request.data.get(
-            "next_of_kin_contact_address", None
-        )
-        next_of_kin_mobile_number = request.data.get("next_of_kin_mobile_number", None)
-        relationship_with_next_kin = request.data.get(
-            "relationship_with_next_kin", None
-        )
+        mobile_numbers = request.data.get("mobile_numbers", None)        
         cv_upload = request.data.get("cv_upload", None)
         profile_pic = request.data.get("profile_pic", None)
 
@@ -179,27 +169,7 @@ class StudentViewSet(ModelViewSet):
 
         if mobile_numbers:
             setattr(instance, "mobile_numbers", mobile_numbers)
-
-        if residential_address:
-            setattr(instance, "residential_address", residential_address)
-
-        if contact_address:
-            setattr(instance, "contact_address", contact_address)
-
-        if next_of_kin_contact_address:
-            setattr(
-                instance, "next_of_kin_contact_address", next_of_kin_contact_address
-            )
-
-        if next_of_kin_mobile_number:
-            setattr(instance, "next_of_kin_mobile_number", next_of_kin_mobile_number)
-
-        if relationship_with_next_kin:
-            setattr(instance, "relationship_with_next_kin", relationship_with_next_kin)
-
-        if next_of_kin_fullname:
-            setattr(instance, "next_of_kin_fullname", next_of_kin_fullname)
-
+        
         instance.save()
         serializer = UpdateStudentSerializer(instance)
         return Response(serializer.data)

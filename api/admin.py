@@ -455,26 +455,6 @@ class StudentAdmin(admin.ModelAdmin):
             },
         ),
         ("Job Credentials", {"fields": ("cv_upload",)}),
-        (
-            "Contact Address",
-            {
-                "fields": (
-                    "contact_address",
-                    "residential_address",
-                )
-            },
-        ),
-        (
-            "Family Related",
-            {
-                "fields": (
-                    "next_of_kin_fullname",
-                    "next_of_kin_contact_address",
-                    "relationship_with_next_kin",
-                    "next_of_kin_mobile_number",
-                )
-            },
-        ),
     )
 
     @admin.display(description="Export as CSV")

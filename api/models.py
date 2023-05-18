@@ -148,14 +148,6 @@ class Student(models.Model):
         blank=True,
         null=True,
     )
-    residential_address = models.CharField(max_length=250, blank=True, null=True)
-    contact_address = models.CharField(max_length=250, blank=True, null=True)
-    next_of_kin_fullname = models.CharField(max_length=150, blank=True, null=True)
-    next_of_kin_contact_address = models.CharField(
-        max_length=250, blank=True, null=True
-    )
-    next_of_kin_mobile_number = models.CharField(max_length=250, blank=True, null=True)
-    relationship_with_next_kin = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{str(self.id)}:{self.full_name}"
@@ -180,7 +172,7 @@ class Student_Matriculation(models.Model):
 
     def __str__(self):
         return self.student.full_name
-        
+
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
