@@ -147,6 +147,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     email = serializers.SerializerMethodField()
     loanpartner = serializers.StringRelatedField()
+
     class Meta:
         model = Student
         fields = [
@@ -388,10 +389,17 @@ class PostCareerApplicantSerializer(serializers.ModelSerializer):
             highest_qualification=highest_qualification,
             resume=resume,
             course_study=course_study,
-            degree=degree
+            degree=degree,
         )
         send_career_applicant_email(
-            career_opening, first_name, last_name, email, mobile, highest_qualification,course_study,degree
+            career_opening,
+            first_name,
+            last_name,
+            email,
+            mobile,
+            highest_qualification,
+            course_study,
+            degree,
         )
 
         return careerapplicant
@@ -1544,7 +1552,7 @@ class BillingSerializer(serializers.ModelSerializer):
             "got_loan",
             "loanpartner",
             "billingdetails",
-        ]    
+        ]
 
     def get_billingdetails(self, obj):
         return obj.billingdetail_set.filter(billing_id=obj.id).values(
@@ -1627,10 +1635,50 @@ class PostEmployerSerializer(serializers.ModelSerializer):
         extra_kwargs = {"company_url": {"required": False, "allow_null": True}}
 
 
-# class SEOSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model= SEO
-#         fields = "__all__"
+class SEOSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SEO
+        fields = "__all__"
+
+
+class LoanPartnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LoanPartner
+        fields = [
+            "id",
+            "company_name",
+            "contact_person",
+            "address",
+            "mobile",
+            "email",
+            "descriptions",
+        ]
+
+    def create(self, validated_data):
+        loanpartner = Loanpartner(**validated_data)
+        loanpartner.save()
+        return loanpartner
+
+    def save(self, **kwargs):
+        company_name = self.validated_data['company_name']
+        contact_person = self.validated_data['contact_person']
+        address = self.validated_data['address']
+        mobile = self.validated_data['mobile']
+        email = self.validated_data['email']
+        descriptions = self.validated_data['descriptions']
+
+        loanpartner = LoanPartner.objects.create(
+            company_name=company_name,
+            contact_person=contact_person,
+            address=address,
+            mobile=mobile,
+            email=email,
+            descriptions=descriptions
+        )
+
+        send_loan_partner_email(email,contact_person,company_name,address,mobile,descriptions)
+
+        return loanpartner
 
 
 class UserCreateSerializer(serializers.ModelSerializer):

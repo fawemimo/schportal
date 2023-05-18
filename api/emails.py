@@ -233,3 +233,22 @@ def send_career_applicant_email(
 
     except Exception as e:
         print(e)
+
+
+def send_loan_partner_email(email, contact_person, company_name, address, mobile,descriptions):
+    try:
+        message = BaseEmailMessage(
+            template_name="api/email_response/loan_partner.html",
+            context={
+                "email": email,
+                "contact_person": contact_person,
+                "company_name": company_name,
+                "address": address,
+                "mobile": mobile,
+                "descriptions":descriptions
+            },
+        )
+        message.send([email, settings.EMAIL_HOST_USER])
+
+    except Exception as e:
+        print(e)

@@ -98,6 +98,8 @@ router.register(
     basename="scholarshipsections",
 )
 router.register("albums", views.AlbumViewSet, basename="albums")
+router.register("seos", views.SEOViewSet, basename="seos")
+router.register("loanpartners", views.LoanPartnerViewSet, basename="loanpartners")
 
 # JOB PORTAL REGION
 router.register("employers", views.EmployerViewSet, basename="employerprofile")

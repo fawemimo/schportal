@@ -746,6 +746,18 @@ class AlbumViewSet(ModelViewSet):
     pagination_class = BasePagination
 
 
+class SEOViewSet(ModelViewSet):
+    http_method_names = ['get']
+    queryset = SEO.objects.all()
+    serializer_class = SEOSerializer
+
+
+class LoanPartnerViewSet(ModelViewSet):
+    http_method_names = ['get','post']
+    queryset = LoanPartner.objects.all()
+    serializer_class = LoanPartnerSerializer
+
+
 # JobPortal region
 
 
