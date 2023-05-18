@@ -26,25 +26,25 @@ class User(AbstractUser):
 
 # region core models - mainsite
 
-# class SEO(models.Model):
-#     page_name = models.CharField(max_length=255)
-#     meta_content = models.TextField()
+class SEO(models.Model):
+    page_name = models.CharField(max_length=255)
+    meta_content = models.TextField()
 
-#     def __str__(self):
-#         return self.page_name
+    def __str__(self):
+        return self.page_name
 
 
-# class LoanPartner(models.Model):
-#     company_name = models.CharField(max_length=255)
-#     contact_person = models.CharField(max_length=255)
-#     address = models.CharField(max_length=255)
-#     mobile = models.CharField(max_length=255)
-#     email = models.EmailField(max_length=255)
-#     descriptions = models.TextField(blank=True, null=True)
-#     date_posted = models.DateTimeField(auto_now_add=True)
+class LoanPartner(models.Model):
+    company_name = models.CharField(max_length=255)
+    contact_person = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    mobile = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)
+    descriptions = models.TextField(blank=True, null=True)
+    date_posted = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return self.company_name
+    def __str__(self):
+        return self.company_name
 
 
 class CourseCategory(models.Model):

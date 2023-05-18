@@ -45,15 +45,6 @@ class CachingPaginator(Paginator):
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    # def get_urls(self):
-    #     urls = super().get_urls()
-    #     new_urls = [path("uploads", self.uploads, name="uploads")]
-    #     return new_urls + urls
-
-    # def uploads(self, request):
-    #     form = CsvImportAdminForm()
-    #     data = {"form": form}
-    #     return render(self.request, "admin/upload.html", data)
 
     list_display = ["id", "first_name", "last_name", "username", "email"]
     list_display_links = ["id", "username", "email"]
@@ -77,6 +68,16 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
 
+@admin.register(SEO)
+class SEOAdmin(admin.ModelAdmin):
+    list_display = ['id','page_name']
+
+
+@admin.register(LoanPartner)
+class LoanPartnerAdmin(admin.ModelAdmin):
+    list_display = ['id','company_name', 'contact_person','mobile','date_posted']
+    list_filter = ['date_posted']
+    
 
 @admin.register(TopBar)
 class TopbarAdmin(admin.ModelAdmin):
