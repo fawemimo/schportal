@@ -154,7 +154,7 @@ class StudentViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         date_of_birth = request.data.get("date_of_birth", None)
-        mobile_numbers = request.data.get("mobile_numbers", None)        
+        mobile_numbers = request.data.get("mobile_numbers", None)
         cv_upload = request.data.get("cv_upload", None)
         profile_pic = request.data.get("profile_pic", None)
 
@@ -169,7 +169,7 @@ class StudentViewSet(ModelViewSet):
 
         if mobile_numbers:
             setattr(instance, "mobile_numbers", mobile_numbers)
-        
+
         instance.save()
         serializer = UpdateStudentSerializer(instance)
         return Response(serializer.data)
@@ -717,13 +717,13 @@ class AlbumViewSet(ModelViewSet):
 
 
 class SEOViewSet(ModelViewSet):
-    http_method_names = ['get']
+    http_method_names = ["get"]
     queryset = SEO.objects.all()
     serializer_class = SEOSerializer
 
 
 class LoanPartnerViewSet(ModelViewSet):
-    http_method_names = ['get','post']
+    http_method_names = ["get", "post"]
     queryset = LoanPartner.objects.all()
     serializer_class = LoanPartnerSerializer
 
