@@ -157,9 +157,6 @@ class Student_Matriculation(models.Model):
     student = models.ForeignKey(Student, on_delete=models.PROTECT)
     matric_number = models.CharField(max_length=50, unique=True)
     expel = models.BooleanField(default=False)
-    job_ready = models.BooleanField(
-        default=False, help_text="to control student for job applications"
-    )
     matric_date = models.DateField()
     graduation_date = models.DateField()
     date_created = models.DateTimeField(auto_now_add=True)
