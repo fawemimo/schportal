@@ -13,6 +13,7 @@ from api.choices import *
 from api.validate import validate_file_size
 
 
+
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=255, blank=True, null=True)
@@ -24,6 +25,26 @@ class User(AbstractUser):
 
 
 # region core models - mainsite
+
+# class SEO(models.Model):
+#     page_name = models.CharField(max_length=255)
+#     meta_content = models.TextField()
+
+#     def __str__(self):
+#         return self.page_name
+
+
+# class LoanPartner(models.Model):
+#     company_name = models.CharField(max_length=255)
+#     contact_person = models.CharField(max_length=255)
+#     address = models.CharField(max_length=255)
+#     mobile = models.CharField(max_length=255)
+#     email = models.EmailField(max_length=255)
+#     descriptions = models.TextField(blank=True, null=True)
+#     date_posted = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return self.company_name
 
 
 class CourseCategory(models.Model):
@@ -76,6 +97,7 @@ class Course(models.Model):
 
     seo_pagetitle = models.CharField(max_length=200, null=True, blank=True)
     seo_metabulk = models.TextField(null=True, blank=True)
+    seo_meta_content = models.TextField(null=True, blank=True)
 
     def snippet(self):
         return self.description[:120] + " ..."
@@ -286,7 +308,7 @@ class Testimonial(models.Model):
     student_name = models.CharField(max_length=250)
     student_pic = models.ImageField(upload_to="testimonial_pic/")
     batch = models.CharField(max_length=255)
-    course_taken = models.CharField(max_length=150)
+    course_taken = models.ForeignKey(Course, on_delete=models.DO_NOTHING, blank=True, null=True)
     published = models.BooleanField(default=False)
     body = models.TextField()
 
@@ -957,6 +979,7 @@ class Job(models.Model):
     close_job = models.BooleanField(default=False)
     date_posted = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+    seo_meta_content = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.employer}:- {self.job_title}"
