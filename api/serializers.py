@@ -146,6 +146,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 class StudentSerializer(serializers.ModelSerializer):
     email = serializers.SerializerMethodField()
+    student_matric_details = serializers.SerializerMethodField()
 
     class Meta:
         model = Student
@@ -157,10 +158,14 @@ class StudentSerializer(serializers.ModelSerializer):
             "mobile_numbers",
             "profile_pic",
             "cv_upload",
+            "student_matric_details"
         ]
 
     def get_email(self, obj):
         return obj.user.email
+
+    def get_student_matric_details(self, obj):
+        return obj.student_matriculation_set.filter(student_id=obj.id).values( 'matric_number', 'expel', 'matric_date', 'graduation_date', 'residential_address', 'contact_address', 'next_of_kin_fullname', 'next_of_kin_contact_address', 'next_of_kin_mobile_number', 'relationship_with_next_kin', 'date_created')
 
 
 class UpdateStudentSerializer(serializers.ModelSerializer):
@@ -275,6 +280,7 @@ class StudentLoanSectionSerializer(serializers.ModelSerializer):
 
 
 class TestimonialSerializer(serializers.ModelSerializer):
+    course_taken = serializers.StringRelatedField()
     class Meta:
         model = Testimonial
         fields = "__all__"

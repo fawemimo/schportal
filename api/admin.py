@@ -491,6 +491,11 @@ class StudentAdmin(admin.ModelAdmin):
     class Media:
         css = {"all": ["api/css/styles.css"]}
 
+@admin.register(Student_Matriculation)
+class Student_Matriculation(admin.ModelAdmin):
+    list_display = ['id','student','matric_number','expel','graduation_date']
+    list_editable = ['expel','graduation_date']
+
 
 @admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
