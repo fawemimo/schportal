@@ -153,7 +153,6 @@ class StudentSerializer(serializers.ModelSerializer):
             "id",
             "email",
             "full_name",
-            "student_idcard_id",
             "date_of_birth",
             "mobile_numbers",
             "profile_pic",
@@ -661,7 +660,6 @@ class EnrollStudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = (
-            "student_idcard_id",
             "mobile_numbers",
             "profile_pic",
         )

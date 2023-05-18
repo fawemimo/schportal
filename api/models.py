@@ -13,7 +13,6 @@ from api.choices import *
 from api.validate import validate_file_size
 
 
-
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=255, blank=True, null=True)
@@ -25,6 +24,7 @@ class User(AbstractUser):
 
 
 # region core models - mainsite
+
 
 class SEO(models.Model):
     page_name = models.CharField(max_length=255)
@@ -131,9 +131,6 @@ class Student(models.Model):
     )
     just_for_jobs = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, blank=True, null=True)
-    student_idcard_id = models.CharField(
-        max_length=50, null=True, blank=True, unique=True
-    )
     date_of_birth = models.CharField(max_length=50, blank=True, null=True)
     mobile_numbers = models.CharField(max_length=250, blank=True, null=True)
     profile_pic = models.ImageField(
@@ -161,7 +158,28 @@ class Student(models.Model):
     relationship_with_next_kin = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.full_name} - {self.student_idcard_id}"
+        return f"{str(self.id)}:{self.full_name}"
+
+
+class Student_Matriculation(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.PROTECT)
+    matric_number = models.CharField(max_length=50, unique=True)
+    expel = models.BooleanField(default=False)
+    job_ready = models.BooleanField(
+        default=False, help_text="to control student for job applications"
+    )
+    matric_date = models.DateField()
+    graduation_date = models.DateField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    residential_address = models.CharField(max_length=250)
+    contact_address = models.CharField(max_length=250)
+    next_of_kin_fullname = models.CharField(max_length=150)
+    next_of_kin_contact_address = models.CharField(max_length=250)
+    next_of_kin_mobile_number = models.CharField(max_length=250)
+    relationship_with_next_kin = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.student.full_name
 
 
 class StudentBackup(models.Model):
@@ -209,7 +227,7 @@ class StudentBackup(models.Model):
         if student.is_approved == True:
             self.just_for_jobs = student.just_for_jobs
             self.full_name = student.full_name
-            self.student_idcard_id = student.student_idcard_id
+            self.student_idcard_id = "12"
             self.date_of_birth = student.date_of_birth
             self.mobile_numbers = student.mobile_numbers
             self.profile_pic = student.profile_pic
@@ -307,7 +325,9 @@ class Testimonial(models.Model):
     student_name = models.CharField(max_length=250)
     student_pic = models.ImageField(upload_to="testimonial_pic/")
     batch = models.CharField(max_length=255)
-    course_taken = models.ForeignKey(Course, on_delete=models.DO_NOTHING, blank=True, null=True)
+    course_taken = models.ForeignKey(
+        Course, on_delete=models.DO_NOTHING, blank=True, null=True
+    )
     published = models.BooleanField(default=False)
     body = models.TextField()
 
@@ -1019,7 +1039,9 @@ class JobApplication(models.Model):
 class Billing(models.Model):
     got_scholarship = models.BooleanField(default=False)
     got_loan = models.BooleanField(default=False)
-    loanpartner = models.ForeignKey(LoanPartner, on_delete=models.CASCADE, blank=True, null=True)
+    loanpartner = models.ForeignKey(
+        LoanPartner, on_delete=models.CASCADE, blank=True, null=True
+    )
     sponsor = models.ForeignKey(
         Sponsor, on_delete=models.DO_NOTHING, blank=True, null=True
     )
@@ -1047,7 +1069,7 @@ class Billing(models.Model):
     date_update = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     def __str__(self):
-        return f"{str(self.student.full_name)} - {str(self.student.student_idcard_id)}-{str(self.id)}"
+        return f"{str(self.student.full_name)}-{str(self.id)}"
 
 
 class BillingDetail(models.Model):

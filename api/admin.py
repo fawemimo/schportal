@@ -433,7 +433,7 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ["id", "full_name", "profile_pix", "student_idcard_id", "batch_name"]
+    list_display = ["id", "full_name", "profile_pix",  "batch_name"]
     list_display_link = ["id","full_name"]  
     search_fields = ["user__first_name", "user__last_name__istartswith"]
     list_per_page = 25
@@ -447,8 +447,7 @@ class StudentAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "user",
-                    "full_name",
-                    "student_idcard_id",
+                    "full_name",                    
                     "date_of_birth",
                     "mobile_numbers",
                     "profile_pic",
@@ -515,7 +514,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(StudentBackup)
 class BackupStudentAdmin(admin.ModelAdmin):
-    list_display = ["id", "full_name", "profile_pix", "student_idcard_id"]
+    list_display = ["id", "full_name", "profile_pix"]
     search_fields = ["full_name"]
     list_per_page = 25
     paginator = CachingPaginator
@@ -966,9 +965,8 @@ class BillingDetailAdmin(admin.ModelAdmin):
     list_filter = ["date_paid"]
     search_fields = [
         "billing__student__full_name",
-        "=billing__student__student_idcard_id",
     ]
-    search_help_text = "student full name, exactly student idcard"
+    search_help_text = "student full name"
     list_select_related = ["billing"]
     autocomplete_fields = ["billing"]
     list_per_page = 25
