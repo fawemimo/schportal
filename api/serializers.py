@@ -146,7 +146,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 class StudentSerializer(serializers.ModelSerializer):
     email = serializers.SerializerMethodField()
-
+    loanpartner = serializers.StringRelatedField()
     class Meta:
         model = Student
         fields = [
@@ -158,6 +158,8 @@ class StudentSerializer(serializers.ModelSerializer):
             "mobile_numbers",
             "profile_pic",
             "cv_upload",
+            "got_loan",
+            "loanpartner",
             "residential_address",
             "contact_address",
             "next_of_kin_fullname",
@@ -1526,6 +1528,7 @@ class BillingSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
     course_name = serializers.StringRelatedField()
     billingdetails = serializers.SerializerMethodField()
+    loanpartner = serializers.StringRelatedField()
 
     class Meta:
         model = Billing
@@ -1538,6 +1541,8 @@ class BillingSerializer(serializers.ModelSerializer):
             "total_amount",
             "total_amount_text",
             "payment_completion_status",
+            "got_loan",
+            "loanpartner",
             "billingdetails",
         ]    
 
@@ -1620,6 +1625,12 @@ class PostEmployerSerializer(serializers.ModelSerializer):
             "date_updated",
         ]
         extra_kwargs = {"company_url": {"required": False, "allow_null": True}}
+
+
+# class SEOSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model= SEO
+#         fields = "__all__"
 
 
 class UserCreateSerializer(serializers.ModelSerializer):

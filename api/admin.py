@@ -77,7 +77,7 @@ class SEOAdmin(admin.ModelAdmin):
 class LoanPartnerAdmin(admin.ModelAdmin):
     list_display = ['id','company_name', 'contact_person','mobile','date_posted']
     list_filter = ['date_posted']
-    
+
 
 @admin.register(TopBar)
 class TopbarAdmin(admin.ModelAdmin):
@@ -434,10 +434,7 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = ["id", "full_name", "profile_pix", "student_idcard_id", "batch_name"]
-    list_display_link = [
-        "id",
-        "full_name",
-    ]
+    list_display_link = ["id","full_name"]  
     search_fields = ["user__first_name", "user__last_name__istartswith"]
     list_per_page = 25
     paginator = CachingPaginator
@@ -454,7 +451,9 @@ class StudentAdmin(admin.ModelAdmin):
                     "student_idcard_id",
                     "date_of_birth",
                     "mobile_numbers",
+                    "got_loan",
                     "profile_pic",
+                    "loanpartner",
                 )
             },
         ),

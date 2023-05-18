@@ -124,6 +124,8 @@ class CorporateCourseSection(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+    got_loan = models.BooleanField(default=False)
+    loanpartner = models.ForeignKey(LoanPartner, on_delete=models.CASCADE, blank=True, null=True)
     is_approved = models.BooleanField(
         default=False, help_text="it is used for creating the backup"
     )
@@ -1019,6 +1021,8 @@ class JobApplication(models.Model):
 
 class Billing(models.Model):
     got_scholarship = models.BooleanField(default=False)
+    got_loan = models.BooleanField(default=False)
+    loanpartner = models.ForeignKey(LoanPartner, on_delete=models.CASCADE, blank=True, null=True)
     sponsor = models.ForeignKey(
         Sponsor, on_delete=models.DO_NOTHING, blank=True, null=True
     )
