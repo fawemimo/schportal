@@ -451,9 +451,7 @@ class StudentAdmin(admin.ModelAdmin):
                     "student_idcard_id",
                     "date_of_birth",
                     "mobile_numbers",
-                    "got_loan",
                     "profile_pic",
-                    "loanpartner",
                 )
             },
         ),

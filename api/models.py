@@ -97,7 +97,6 @@ class Course(models.Model):
 
     seo_pagetitle = models.CharField(max_length=200, null=True, blank=True)
     seo_metabulk = models.TextField(null=True, blank=True)
-    seo_meta_content = models.TextField(null=True, blank=True)
 
     def snippet(self):
         return self.description[:120] + " ..."
@@ -124,8 +123,6 @@ class CorporateCourseSection(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    got_loan = models.BooleanField(default=False)
-    loanpartner = models.ForeignKey(LoanPartner, on_delete=models.CASCADE, blank=True, null=True)
     is_approved = models.BooleanField(
         default=False, help_text="it is used for creating the backup"
     )

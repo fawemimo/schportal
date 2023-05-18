@@ -146,7 +146,6 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 class StudentSerializer(serializers.ModelSerializer):
     email = serializers.SerializerMethodField()
-    loanpartner = serializers.StringRelatedField()
 
     class Meta:
         model = Student
@@ -159,8 +158,6 @@ class StudentSerializer(serializers.ModelSerializer):
             "mobile_numbers",
             "profile_pic",
             "cv_upload",
-            "got_loan",
-            "loanpartner",
             "residential_address",
             "contact_address",
             "next_of_kin_fullname",
