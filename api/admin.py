@@ -512,38 +512,6 @@ class StudentAdmin(admin.ModelAdmin):
         css = {"all": ["api/css/styles.css"]}
 
 
-@admin.register(StudentBackup)
-class BackupStudentAdmin(admin.ModelAdmin):
-    list_display = ["id", "full_name", "profile_pix"]
-    search_fields = ["full_name"]
-    list_per_page = 25
-    paginator = CachingPaginator
-    actions = ["export_to_csv"]
-
-    @admin.display(description="Export as CSV")
-    def export_to_csv(self, request, queryset):
-        meta = self.model._meta
-        fieldnames = [field.name for field in meta.fields]
-        response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = "attachment; filename={}.csv".format(meta)
-
-        writer = csv.writer(response)
-        writer.writerow(fieldnames)
-        for x in queryset:
-            row = writer.writerow([getattr(x, field) for field in fieldnames])
-        return response
-
-    def profile_pix(self, instance):
-        if instance.profile_pic.name != "":
-            return format_html(
-                f'<img src="{instance.profile_pic.url}" class="thumbnail"/>'
-            )
-        return "No Profile Pics Added"
-
-    class Media:
-        css = {"all": ["api/css/styles.css"]}
-
-
 @admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
     list_display = ["name", "assignment_file", "date_posted"]

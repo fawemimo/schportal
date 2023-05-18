@@ -180,65 +180,7 @@ class Student_Matriculation(models.Model):
 
     def __str__(self):
         return self.student.full_name
-
-
-class StudentBackup(models.Model):
-    student = models.OneToOneField(
-        Student, on_delete=models.SET_NULL, blank=True, null=True
-    )
-    is_approved = models.BooleanField(default=False)
-    job_ready = models.BooleanField(default=False)
-    just_for_jobs = models.BooleanField(default=False)
-    full_name = models.CharField(max_length=255, blank=True, null=True)
-    student_idcard_id = models.CharField(max_length=50, null=True, blank=True)
-    date_of_birth = models.CharField(max_length=50, blank=True, null=True)
-    mobile_numbers = models.CharField(max_length=250, blank=True, null=True)
-    profile_pic = models.ImageField(
-        upload_to="students_profilepix/",
-        validators=[
-            validate_file_size,
-            FileExtensionValidator(allowed_extensions=["jpg", "png", "jpeg"]),
-        ],
-        blank=True,
-        null=True,
-    )
-    cv_upload = models.FileField(
-        upload_to="JobPortal/cv_upload",
-        validators=[
-            FileExtensionValidator(allowed_extensions=("pdf", "jpg", "jpeg", "png"))
-        ],
-        blank=True,
-        null=True,
-    )
-    residential_address = models.CharField(max_length=250, blank=True, null=True)
-    contact_address = models.CharField(max_length=250, blank=True, null=True)
-    next_of_kin_fullname = models.CharField(max_length=150, blank=True, null=True)
-    next_of_kin_contact_address = models.CharField(
-        max_length=250, blank=True, null=True
-    )
-    next_of_kin_mobile_number = models.CharField(max_length=250, blank=True, null=True)
-    relationship_with_next_kin = models.CharField(max_length=255, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.full_name} - {self.student_idcard_id}"
-
-    def save(self, *args, **kwargs):
-        student = Student.objects.get(id=self.student_id)
-        if student.is_approved == True:
-            self.just_for_jobs = student.just_for_jobs
-            self.full_name = student.full_name
-            self.student_idcard_id = "12"
-            self.date_of_birth = student.date_of_birth
-            self.mobile_numbers = student.mobile_numbers
-            self.profile_pic = student.profile_pic
-            self.contact_address = student.contact_address
-            self.next_of_kin_fullname = student.next_of_kin_fullname
-            self.next_of_kin_contact_address = student.next_of_kin_contact_address
-            self.next_of_kin_mobile_number = student.next_of_kin_mobile_number
-            self.relationship_with_next_kin = student.relationship_with_next_kin
-            self.cv_upload = student.cv_upload
-        super(StudentBackup, self).save(*args, **kwargs)
-
+        
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
