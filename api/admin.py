@@ -441,7 +441,7 @@ class StudentAdmin(admin.ModelAdmin):
     list_select_related = ["user"]
     actions = ["export_to_csv"]
     fieldsets = (
-        ("Privileges", {"fields": ("is_approved", "job_ready", "just_for_jobs")}),
+        ("Privileges", {"fields": ("job_ready", "just_for_jobs")}),
         (
             "Student Information",
             {
