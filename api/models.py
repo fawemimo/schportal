@@ -123,10 +123,7 @@ class CorporateCourseSection(models.Model):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    is_approved = models.BooleanField(
-        default=False, help_text="it is used for creating the backup"
-    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)   
     job_ready = models.BooleanField(
         default=False, help_text="to control student for job applications"
     )
