@@ -27,11 +27,12 @@ class User(AbstractUser):
 
 
 class SEO(models.Model):
+    page_title = models.CharField(max_length=255, blank=True, null=True)
     page_name = models.CharField(max_length=255)
     meta_content = models.TextField()
 
     def __str__(self):
-        return self.page_name
+        return self.page_title
 
 
 class LoanPartner(models.Model):
