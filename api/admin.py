@@ -70,7 +70,7 @@ class UserAdmin(BaseUserAdmin):
 
 @admin.register(SEO)
 class SEOAdmin(admin.ModelAdmin):
-    list_display = ['id','page_name']
+    list_display = ['id','page_title','page_name']
 
 
 @admin.register(LoanPartner)

@@ -32,7 +32,7 @@ class SEO(models.Model):
     meta_content = models.TextField()
 
     def __str__(self):
-        return self.page_title
+        return self.page_name
 
 
 class LoanPartner(models.Model):
