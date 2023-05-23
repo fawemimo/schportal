@@ -121,9 +121,10 @@ class CareerSectionAdmin(admin.ModelAdmin):
 
 @admin.register(CareerOpening)
 class CareerOpeningAdmin(admin.ModelAdmin):
-    list_display = ["title", "job_location", "employment_type", "career_category"]
-    list_filter = ["job_location", "employment_type"]
+    list_display = ["title", "job_location", "employment_type", "career_category","is_published"]
+    list_filter = ["is_published"]
     search_fields = ["title"]
+    list_editable = ["is_published"]
 
 
 @admin.register(CareerCategory)

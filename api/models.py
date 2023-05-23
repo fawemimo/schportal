@@ -354,6 +354,7 @@ class CareerCategory(models.Model):
 
 
 class CareerOpening(models.Model):
+    is_published = models.BooleanField(default=False)
     title = models.CharField(max_length=255)
     description = models.TextField()
     job_location = models.ForeignKey("JobLocation", on_delete=models.CASCADE)
