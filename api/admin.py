@@ -497,6 +497,8 @@ class Student_MatriculationAdmin(admin.ModelAdmin):
     list_display = ['id','student','matric_number','expel','graduation_date']
     list_editable = ['expel','graduation_date']
     autocomplete_fields = ['student']
+    list_filter = ['expel']
+    list_per_page = 25
 
 
 @admin.register(Assignment)
