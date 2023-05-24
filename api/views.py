@@ -13,8 +13,6 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.models import *
-from api.pdf import *
-
 from .emails import *
 from .exceptions import *
 from .filters import *

@@ -1,8 +1,6 @@
 from django.urls import include, path
 from rest_framework_nested import routers
 
-from api import pdf
-
 from . import views
 
 router = routers.DefaultRouter()
