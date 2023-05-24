@@ -158,14 +158,31 @@ class StudentSerializer(serializers.ModelSerializer):
             "mobile_numbers",
             "profile_pic",
             "cv_upload",
-            "student_matric_details"
+            "student_matric_details",
         ]
 
     def get_email(self, obj):
         return obj.user.email
 
     def get_student_matric_details(self, obj):
-        return obj.student_matriculation_set.filter(student_id=obj.id).values( 'id','matric_number', 'expel', 'matric_date', 'graduation_date', 'residential_address', 'contact_address', 'next_of_kin_fullname', 'next_of_kin_contact_address', 'next_of_kin_mobile_number', 'relationship_with_next_kin', 'date_created').latest('id')
+        return (
+            obj.student_matriculation_set.filter(student_id=obj.id)
+            .values(
+                "id",
+                "matric_number",
+                "expel",
+                "matric_date",
+                "graduation_date",
+                "residential_address",
+                "contact_address",
+                "next_of_kin_fullname",
+                "next_of_kin_contact_address",
+                "next_of_kin_mobile_number",
+                "relationship_with_next_kin",
+                "date_created",
+            )
+            .latest("id")
+        )
 
 
 class UpdateStudentSerializer(serializers.ModelSerializer):
@@ -281,6 +298,7 @@ class StudentLoanSectionSerializer(serializers.ModelSerializer):
 
 class TestimonialSerializer(serializers.ModelSerializer):
     course_taken = serializers.StringRelatedField()
+
     class Meta:
         model = Testimonial
         fields = "__all__"
@@ -403,12 +421,16 @@ class CareerCategorySerializer(serializers.ModelSerializer):
         fields = ["id", "title", "description", "career_opening"]
 
     def get_career_opening(self, obj):
-        return obj.careeropening_set.filter(career_category_id=obj.id).values(
-            "id",
-            "title",
-            "description",
-            "job_location__title",
-            "employment_type__title",
+        return (
+            obj.careeropening_set.filter(career_category_id=obj.id)
+            .values(
+                "id",
+                "title",
+                "description",
+                "job_location__title",
+                "employment_type__title",
+            )
+            .filter(is_published=True)
         )
 
 
@@ -1649,12 +1671,12 @@ class LoanPartnerSerializer(serializers.ModelSerializer):
         return loanpartner
 
     def save(self, **kwargs):
-        company_name = self.validated_data['company_name']
-        contact_person = self.validated_data['contact_person']
-        address = self.validated_data['address']
-        mobile = self.validated_data['mobile']
-        email = self.validated_data['email']
-        descriptions = self.validated_data['descriptions']
+        company_name = self.validated_data["company_name"]
+        contact_person = self.validated_data["contact_person"]
+        address = self.validated_data["address"]
+        mobile = self.validated_data["mobile"]
+        email = self.validated_data["email"]
+        descriptions = self.validated_data["descriptions"]
 
         loanpartner = LoanPartner.objects.create(
             company_name=company_name,
@@ -1662,10 +1684,12 @@ class LoanPartnerSerializer(serializers.ModelSerializer):
             address=address,
             mobile=mobile,
             email=email,
-            descriptions=descriptions
+            descriptions=descriptions,
         )
 
-        send_loan_partner_email(email,contact_person,company_name,address,mobile,descriptions)
+        send_loan_partner_email(
+            email, contact_person, company_name, address, mobile, descriptions
+        )
 
         return loanpartner
 
