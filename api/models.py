@@ -154,9 +154,9 @@ class Student(models.Model):
 class Student_Matriculation(models.Model):
     student = models.ForeignKey(Student, on_delete=models.PROTECT)
     matric_number = models.CharField(max_length=50, unique=True)
-    expel = models.BooleanField(default=False)
+    expel = models.BooleanField(default=False,verbose_name='Expelled')
     matric_date = models.DateField()
-    graduation_date = models.DateField()
+    graduation_date = models.DateField(blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     residential_address = models.CharField(max_length=250)
     contact_address = models.CharField(max_length=250)

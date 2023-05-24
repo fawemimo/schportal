@@ -493,9 +493,10 @@ class StudentAdmin(admin.ModelAdmin):
         css = {"all": ["api/css/styles.css"]}
 
 @admin.register(Student_Matriculation)
-class Student_Matriculation(admin.ModelAdmin):
+class Student_MatriculationAdmin(admin.ModelAdmin):
     list_display = ['id','student','matric_number','expel','graduation_date']
     list_editable = ['expel','graduation_date']
+    autocomplete_fields = ['student']
 
 
 @admin.register(Assignment)
