@@ -165,7 +165,7 @@ class StudentSerializer(serializers.ModelSerializer):
         return obj.user.email
 
     def get_student_matric_details(self, obj):
-        return obj.student_matriculation_set.filter(student_id=obj.id).values( 'matric_number', 'expel', 'matric_date', 'graduation_date', 'residential_address', 'contact_address', 'next_of_kin_fullname', 'next_of_kin_contact_address', 'next_of_kin_mobile_number', 'relationship_with_next_kin', 'date_created')
+        return obj.student_matriculation_set.filter(student_id=obj.id).values( 'id','matric_number', 'expel', 'matric_date', 'graduation_date', 'residential_address', 'contact_address', 'next_of_kin_fullname', 'next_of_kin_contact_address', 'next_of_kin_mobile_number', 'relationship_with_next_kin', 'date_created').latest('id')
 
 
 class UpdateStudentSerializer(serializers.ModelSerializer):
