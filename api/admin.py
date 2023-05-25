@@ -875,6 +875,7 @@ class BillingAdmin(admin.ModelAdmin):
 
     list_display = [
         "id",
+        "receipt_no",
         "student",
         "course_name",
         "program_type",
@@ -887,8 +888,8 @@ class BillingAdmin(admin.ModelAdmin):
     list_select_related = ["student"]
     list_editable = ["student"]
     autocomplete_fields = ["student", "course_name", "sponsor"]
-    search_fields = ["student__full_name", "course_name__title"]
-    search_help_text = "Student fullname and course name"
+    search_fields = ["student__full_name", "course_name__title","receipt_no"]
+    search_help_text = "Student fullname, course name and receipt number"
     list_per_page = 25
     paginator = CachingPaginator
     actions = ["export_to_csv"]

@@ -11,7 +11,7 @@ from tinymce import models as tinymce_models
 
 from api.choices import *
 from api.validate import validate_file_size
-
+from api.utils import *
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -995,12 +995,20 @@ class Billing(models.Model):
         blank=True,
         null=True,
     )
+    receipt_no = models.CharField(max_length=255,unique=True, editable=False,blank=True,null=True)
     date_posted = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     date_update = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     def __str__(self):
         return f"{str(self.student.full_name)}-{str(self.id)}"
 
+    def save(self, *args, **kwargs):
+        batch_id = self.student.batch_set.values('id')
+        batch_id = [x['id'] for x in batch_id]
+        if not self.pk:
+            self.receipt_no = generate_receipt_num(batch_id[0])
+        super(Billing, self).save(*args, **kwargs)
+        
 
 class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)

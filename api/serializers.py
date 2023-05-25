@@ -1554,6 +1554,7 @@ class BillingSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "student",
+            "program_type",
             "course_fee",
             "course_name",
             "start_date",
@@ -1562,6 +1563,7 @@ class BillingSerializer(serializers.ModelSerializer):
             "payment_completion_status",
             "got_loan",
             "loanpartner",
+            "receipt_no",
             "billingdetails",
         ]
 
