@@ -7,6 +7,7 @@ from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.db.models import Sum
 from django.utils.text import slugify
+from django.core.exceptions import ValidationError
 from tinymce import models as tinymce_models
 
 from api.choices import *
@@ -1003,11 +1004,14 @@ class Billing(models.Model):
         return f"{str(self.student.full_name)}-{str(self.id)}"
 
     def save(self, *args, **kwargs):
-        batch_id = self.student.batch_set.values('id')
-        batch_id = [x['id'] for x in batch_id]
-        if not self.pk:
-            self.receipt_no = generate_receipt_num(batch_id[0])
-        super(Billing, self).save(*args, **kwargs)
+        try: 
+            batch_id = self.student.batch_set.values('id')
+            if not self.pk:
+                batch_id = [x['id'] for x in batch_id]
+                self.receipt_no = generate_receipt_num(batch_id[0])
+            super(Billing, self).save(*args, **kwargs)
+        except Exception as e:
+            print(e)
         
 
 class BillingDetail(models.Model):

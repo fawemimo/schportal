@@ -26,7 +26,6 @@ def create_teacher_profile(sender, created, instance, *args, **kwargs):
                     user=instance,
                     full_name=f"{f_name} {l_name}",
                     mobile_numbers=mobile_numbers,
-                    is_approved= False,
                     job_ready=False,
                     just_for_jobs=False
                 )
