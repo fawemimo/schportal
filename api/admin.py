@@ -45,7 +45,6 @@ class CachingPaginator(Paginator):
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-
     list_display = ["id", "first_name", "last_name", "username", "email"]
     list_display_links = ["id", "username", "email"]
     list_filter = ["user_type", "is_staff", "is_superuser", "is_active"]
@@ -68,15 +67,16 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
 
+
 @admin.register(SEO)
 class SEOAdmin(admin.ModelAdmin):
-    list_display = ['id','page_title','page_name']
+    list_display = ["id", "page_title", "page_name"]
 
 
 @admin.register(LoanPartner)
 class LoanPartnerAdmin(admin.ModelAdmin):
-    list_display = ['id','company_name', 'contact_person','mobile','date_posted']
-    list_filter = ['date_posted']
+    list_display = ["id", "company_name", "contact_person", "mobile", "date_posted"]
+    list_filter = ["date_posted"]
 
 
 @admin.register(TopBar)
@@ -121,7 +121,13 @@ class CareerSectionAdmin(admin.ModelAdmin):
 
 @admin.register(CareerOpening)
 class CareerOpeningAdmin(admin.ModelAdmin):
-    list_display = ["title", "job_location", "employment_type", "career_category","is_published"]
+    list_display = [
+        "title",
+        "job_location",
+        "employment_type",
+        "career_category",
+        "is_published",
+    ]
     list_filter = ["is_published"]
     search_fields = ["title"]
     list_editable = ["is_published"]
@@ -198,10 +204,15 @@ class CourseAdmin(admin.ModelAdmin):
     list_select_related = ["coursecategory"]
     prepopulated_fields = {"slug": ("title",)}
     search_fields = ["title"]
-    paginator = CachingPaginator  
+    paginator = CachingPaginator
 
     def get_queryset(self, request):
-        return super().get_queryset(request).order_by("ordering").select_related("coursecategory")
+        return (
+            super()
+            .get_queryset(request)
+            .order_by("ordering")
+            .select_related("coursecategory")
+        )
 
 
 @admin.register(CorporateCourseSection)
@@ -235,8 +246,8 @@ class ScheduleAdmin(admin.ModelAdmin):
         return f"{teacher.user}"
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('course')
-        
+        return super().get_queryset(request).select_related("course")
+
 
 @admin.register(NavLink)
 class NavlinkAdmin(admin.ModelAdmin):
@@ -304,7 +315,7 @@ class ShortQuizAdmin(admin.ModelAdmin):
 class InquiryAdmin(admin.ModelAdmin):
     list_display = ["id", "fullname", "mobile", "email"]
     paginator = CachingPaginator
-    
+
 
 @admin.register(Enrollment)
 class EnrollmentAdmin(admin.ModelAdmin):
@@ -434,8 +445,8 @@ class StudentAttendanceAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ["id", "full_name", "profile_pix",  "batch_name"]
-    list_display_link = ["id","full_name"]  
+    list_display = ["id", "full_name", "profile_pix", "batch_name"]
+    list_display_link = ["id", "full_name"]
     search_fields = ["user__first_name", "user__last_name__istartswith"]
     list_per_page = 25
     paginator = CachingPaginator
@@ -448,7 +459,7 @@ class StudentAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "user",
-                    "full_name",                    
+                    "full_name",
                     "date_of_birth",
                     "mobile_numbers",
                     "profile_pic",
@@ -492,12 +503,13 @@ class StudentAdmin(admin.ModelAdmin):
     class Media:
         css = {"all": ["api/css/styles.css"]}
 
+
 @admin.register(Student_Matriculation)
 class Student_MatriculationAdmin(admin.ModelAdmin):
-    list_display = ['id','student','matric_number','expel','graduation_date']
-    list_editable = ['expel','graduation_date']
-    autocomplete_fields = ['student']
-    list_filter = ['expel']
+    list_display = ["id", "student", "matric_number", "expel", "graduation_date"]
+    list_editable = ["expel", "graduation_date"]
+    autocomplete_fields = ["student"]
+    list_filter = ["expel"]
     list_per_page = 25
 
 
@@ -591,8 +603,10 @@ class ProjectAllocationAdmin(admin.ModelAdmin):
 
 @admin.register(CourseManual)
 class CourseManualAdmin(admin.ModelAdmin):
-    list_display = ["title", "manual", "date_posted", "date_updated"]
-    search_fields = ["title"]
+    autocomplete_fields = ["course"]
+    list_display = ["title", "manual","date_posted", "date_updated"]
+    search_fields = ["title", "course__title"]
+    search_help_text = "Search for course manual title and course"
     list_filter = ["date_posted", "date_updated"]
     list_per_page = 25
 
@@ -888,7 +902,7 @@ class BillingAdmin(admin.ModelAdmin):
     list_select_related = ["student"]
     list_editable = ["student"]
     autocomplete_fields = ["student", "course_name", "sponsor"]
-    search_fields = ["student__full_name", "course_name__title","receipt_no"]
+    search_fields = ["student__full_name", "course_name__title", "receipt_no"]
     search_help_text = "Student fullname, course name and receipt number"
     list_per_page = 25
     paginator = CachingPaginator
