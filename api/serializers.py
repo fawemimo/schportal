@@ -1174,6 +1174,7 @@ class EmployerSerializer(serializers.ModelSerializer):
             "contact_person_mobile",
             "location",
             "company_name",
+            "industry",
             "company_url",
             "tagline",
             "company_logo",
@@ -1199,6 +1200,7 @@ class UpdateEmployerSerializer(serializers.ModelSerializer):
             "location",
             "contact_person",
             "company_name",
+            "industry",
             "company_logo",
             "kyc_document",
             "contact_person_mobile",
@@ -1396,6 +1398,7 @@ class StudentJobApplicationSerializer(serializers.ModelSerializer):
             .values(
                 "job_id",
                 "job__employer__company_name",
+                "job__employer__industry",
                 "job__employer__company_logo",
                 "logo_absoulte_url",
                 "category",

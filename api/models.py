@@ -831,6 +831,7 @@ class Employer(models.Model):
     contact_person_mobile = models.CharField(max_length=50, blank=True, null=True)
     location = models.CharField(max_length=255, null=True, blank=True)
     company_name = models.CharField(max_length=255, blank=True, null=True)
+    industry = models.CharField(max_length=255, blank=True, null=True)
     company_url = models.CharField(blank=True, null=True, max_length=255)
     tagline = models.TextField(blank=True, null=True)
     company_logo = models.ImageField(
