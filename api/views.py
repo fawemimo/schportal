@@ -768,6 +768,7 @@ class EmployerViewSet(ModelViewSet):
         contact_person = request.data.get("contact_person", None)
         contact_address = request.data.get("contact_address", None)
         company_name = request.data.get("company_name", None)
+        industry = request.data.get("industry", None)
         company_logo = request.data.get("company_logo", None)
         kyc_document = request.data.get("kyc_document", None)
         contact_person_mobile = request.data.get("contact_person_mobile", None)
@@ -799,6 +800,9 @@ class EmployerViewSet(ModelViewSet):
 
         if company_name:
             setattr(instance, "company_name", company_name)
+        
+        if industry:
+            setattr(instance, "industry", industry)
 
         instance.save()
         serializer = UpdateEmployerSerializer(instance)

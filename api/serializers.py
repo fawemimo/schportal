@@ -1644,6 +1644,7 @@ class PostEmployerSerializer(serializers.ModelSerializer):
             "contact_person",
             "contact_person_mobile",
             "company_name",
+            "industry",
             "company_url",
             "date_created",
             "date_updated",
@@ -1760,6 +1761,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         contact_person = employer_data.pop("contact_person")
         contact_person_mobile = employer_data.pop("contact_person_mobile")
         company_name = employer_data.pop("company_name")
+        industry = employer_data.pop("industry")
         company_url = employer_data.pop("company_url")
         user_type = validated_data["user_type"]
         email = validated_data["email"]
@@ -1781,6 +1783,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             contact_person=contact_person,
             contact_person_mobile=contact_person_mobile,
             company_name=company_name,
+            industry=industry,
             company_url=company_url,
         )
         send_employer_sign_up_email(email, contact_person)
