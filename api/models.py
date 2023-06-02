@@ -241,6 +241,8 @@ class MainBanner(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        ordering = ['ordering']
 
 class SectionBanner(models.Model):
     title = models.CharField(max_length=150)
