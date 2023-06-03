@@ -1,12 +1,6 @@
+{% block subject %} Career Choice Advisory - Anchorsoft Academy {% endblock
+subject %} {% block html_body %}
 
-{% block subject %}
-  Career Choice Advisory - Anchorsoft Academy
-{% endblock subject %}
-  
-
-{% block html_body %}
-  
-  
 <style type="text/css">
   table {
     border-spacing: 0;
@@ -174,26 +168,25 @@
             <table width="100%" style="border-spacing: 0" role="presentation">
               <tr>
                 <td style="text-align: start; padding-bottom: 15px">
-                  <p style="font-size: 20px; color: #244d68; font-weight: 800">
+                  <p style="font-size: 20px; color: #244d68">
                     Hello {{fullname}},
                   </p>
                 </td>
               </tr>
               <tr>
                 <td style="text-align: start; padding-bottom: 25px">
-                  <p style="font-size: 17px; color: #244d68; font-weight: 500">
+                  <p style="font-size: 17px; color: #244d68">
                     We wanted to let you know that we have received your quiz
                     submission on
-                    <span style="font-weight: 700"> {{today_date}}.</span> We
-                    appreciate your interest in our school and are committed to
-                    helping you find the course that best suits your needs and
-                    goals.
+                    <span> {{today_date}}.</span> We appreciate your interest in
+                    our school and are committed to helping you find the course
+                    that best suits your needs and goals.
                   </p>
                 </td>
               </tr>
               <tr>
                 <td style="text-align: start; padding-bottom: 25px">
-                  <p style="font-size: 17px; color: #244d68; font-weight: 500">
+                  <p style="font-size: 17px; color: #244d68">
                     We will review your quiz answers and get back to you as soon
                     as possible with your recommended course. If you have any
                     questions or concerns, please do not hesitate to reach out
@@ -399,7 +392,7 @@
               <span>.</span>
               {% endif %}
 
-                <!-- SECONDARY SCHOOL STUDIED-->
+              <!-- SECONDARY SCHOOL STUDIED-->
               {% if secondary_studied %}
 
               <tr>
@@ -418,9 +411,7 @@
                     <tr>
                       <td style="padding-bottom: 10px">
                         <p style="color: #404141">
-                          <span style="font-weight: 700"
-                            >Department:</span
-                          >
+                          <span style="font-weight: 700">Department:</span>
                           <span>{{secondary_studied}}</span>
                         </p>
                       </td>
@@ -502,7 +493,7 @@
 
               <tr>
                 <td style="text-align: start; padding-bottom: 25px">
-                  <p style="font-size: 17px; color: #244d68; font-weight: 500">
+                  <p style="font-size: 17px; color: #244d68">
                     Thank you for choosing Anchorsoft Academy.
                   </p>
                 </td>
@@ -586,5 +577,5 @@
     </div>
   </center>
 
-
-{% endblock html_body %}
+  {% endblock html_body %}
+</body>
