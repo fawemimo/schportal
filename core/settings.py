@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.sitemaps",  
+    "django.contrib.sitemaps",
     "django.contrib.humanize",
     "django_cleanup.apps.CleanupConfig",
     "rest_framework",
@@ -191,11 +191,7 @@ EMAIL_USE_SSL = True
 TINYMCE_SPELLCHECKER = True
 
 # DOMAIN
-if DEBUG:
-    DEFAULT_DOMAIN = config('DEFAULT_DOMAIN')
-else:
-    DEFAULT_DOMAIN = config('DEFAULT_DOMAIN_LIVE')
-    
+DEFAULT_DOMAIN = config('DEFAULT_DOMAIN')
 
 # SQUAD CONFIG
 if DEBUG:
