@@ -1,9 +1,5 @@
-{% load humanize %}
-{% block subject %} 
-Enrollment - {{course}} 
-{% endblock subject %}
-
-{% block html_body %}
+{% load humanize %} {% block subject %} Enrollment - {{course}} {% endblock
+subject %} {% block html_body %}
 <style type="text/css">
   table {
     border-spacing: 0;
@@ -177,32 +173,24 @@ Enrollment - {{course}}
             <table width="100%" style="border-spacing: 0" role="presentation">
               <tr>
                 <td style="text-align: start; padding-bottom: 15px">
-                  <p style="font-size: 20px; color: #244d68; font-weight: 800">
+                  <p style="font-size: 20px; color: #244d68">
                     Hello {{ full_name }},
                   </p>
                 </td>
               </tr>
-        
 
               <!-- THANK YOU FOR CHOOSING  ANCHORSOFT-->
               <tr>
                 <td style="text-align: start; padding-bottom: 25px">
-                  <p
-                    style="
-                      font-size: 17px;
-                      color: #244d68;
-                      font-weight: 500;
-                      margin-top: -50px;
-                    "
-                  >
-                    Thank you for enrolling for {{course}}. We would get in touch with you for further
-                    information
+                  <p style="font-size: 17px; color: #244d68; margin-top: -50px">
+                    Thank you for enrolling for {{course}}. We would get in
+                    touch with you for further information
                   </p>
                 </td>
               </tr>
 
-               <!-- name -->
-               <tr>
+              <!-- name -->
+              <tr>
                 <td
                   style="
                     padding: 0;
@@ -259,177 +247,158 @@ Enrollment - {{course}}
                 </td>
               </tr>
 
-                <!-- PROGRAM TYPE-->
-                <tr>
-                  <td
-                    style="
-                      padding: 0;
-                      padding-bottom: 20px;
-                      background-color: white;
-                    "
+              <!-- PROGRAM TYPE-->
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
                   >
-                    <table
-                      width="100%"
-                      style="border-spacing: 0"
-                      role="presentation"
-                    >
-                      <tr>
-                        <td style="padding-bottom: 10px">
-                          <p style="color: #404141">
-                            <span style="font-weight: 700">Program Type:</span>
-                            <span>{{ program_type }}</span>
-                          </p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="height: 1px; background-color: #404141"></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Program Type:</span>
+                          <span>{{ program_type }}</span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
 
-                {% if program_type == 'Onsite' %}
-                
-                  {% if fee %}
-                  <!-- FEE -->
-                  
-                <tr>
-                  <td
-                    style="
-                      padding: 0;
-                      padding-bottom: 20px;
-                      background-color: white;
-                    "
+              {% if program_type == 'Onsite' %} {% if fee %}
+              <!-- FEE -->
+
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
                   >
-                    <table
-                      width="100%"
-                      style="border-spacing: 0"
-                      role="presentation"
-                    >
-                      <tr>
-                        <td style="padding-bottom: 10px">
-                          <p style="color: #404141">
-                            <span style="font-weight: 700">Fee:</span>
-                            <span> 
-                                  NGN{{fee | intcomma}} 
-                              </span>
-                          </p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="height: 1px; background-color: #404141"></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                {% endif %}
-                   {% if discounted_fee %}
-                  <!-- DISCOUNT FEE -->
-                  
-                <tr>
-                  <td
-                    style="
-                      padding: 0;
-                      padding-bottom: 20px;
-                      background-color: white;
-                    "
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Fee:</span>
+                          <span> NGN{{fee | intcomma}} </span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              {% endif %} {% if discounted_fee %}
+              <!-- DISCOUNT FEE -->
+
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
                   >
-                    <table
-                      width="100%"
-                      style="border-spacing: 0"
-                      role="presentation"
-                    >
-                      <tr>
-                        <td style="padding-bottom: 10px">
-                          <p style="color: #404141">
-                            <span style="font-weight: 700">Discount:</span>
-                            <span> 
-                                  NGN{{discounted_fee | intcomma}} 
-                              </span>
-                          </p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="height: 1px; background-color: #404141"></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                {% endif %}
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Discount:</span>
+                          <span> NGN{{discounted_fee | intcomma}} </span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              {% endif %} {% else %} {% if fee_dollar %}
+              <!-- FEE DOLLAR-->
 
-              {% else %}     
-
-                {% if fee_dollar %}
-                <!-- FEE DOLLAR-->
-                  
-                <tr>
-                  <td
-                    style="
-                      padding: 0;
-                      padding-bottom: 20px;
-                      background-color: white;
-                    "
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
                   >
-                    <table
-                      width="100%"
-                      style="border-spacing: 0"
-                      role="presentation"
-                    >
-                      <tr>
-                        <td style="padding-bottom: 10px">
-                          <p style="color: #404141">
-                            <span style="font-weight: 700">Fee:</span>
-                            <span> 
-                                  ${{fee_dollar | intcomma}} 
-                              </span>
-                          </p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="height: 1px; background-color: #404141"></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                {% endif %}   
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Fee:</span>
+                          <span> ${{fee_dollar | intcomma}} </span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              {% endif %} {% if discounted_fee_dollar %}
+              <!-- FEE DOLLAR-->
 
-                 {% if discounted_fee_dollar %}
-                <!-- FEE DOLLAR-->
-                  
-                <tr>
-                  <td
-                    style="
-                      padding: 0;
-                      padding-bottom: 20px;
-                      background-color: white;
-                    "
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
                   >
-                    <table
-                      width="100%"
-                      style="border-spacing: 0"
-                      role="presentation"
-                    >
-                      <tr>
-                        <td style="padding-bottom: 10px">
-                          <p style="color: #404141">
-                            <span style="font-weight: 700">Discount:</span>
-                            <span> 
-                                  ${{discounted_fee_dollar | intcomma}} 
-                              </span>
-                          </p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="height: 1px; background-color: #404141"></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                {% endif %}   
-
-              {% endif %}  
-               <!-- Duration -->
-               <tr>
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Discount:</span>
+                          <span> ${{discounted_fee_dollar | intcomma}} </span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              {% endif %} {% endif %}
+              <!-- Duration -->
+              <tr>
                 <td
                   style="
                     padding: 0;
@@ -456,8 +425,8 @@ Enrollment - {{course}}
                   </table>
                 </td>
               </tr>
-              
-                <!-- EMAIL -->
+
+              <!-- EMAIL -->
               <tr>
                 <td
                   style="
@@ -514,39 +483,39 @@ Enrollment - {{course}}
                   </table>
                 </td>
               </tr>
-                <!-- START DATE -->
-                <tr>
-                  <td
-                    style="
-                      padding: 0;
-                      padding-bottom: 20px;
-                      background-color: white;
-                    "
+              <!-- START DATE -->
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
                   >
-                    <table
-                      width="100%"
-                      style="border-spacing: 0"
-                      role="presentation"
-                    >
-                      <tr>
-                        <td style="padding-bottom: 10px">
-                          <p style="color: #404141">
-                            <span style="font-weight: 700">Start Date:</span>
-                            <span>{{ startdate }}</span>
-                          </p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="height: 1px; background-color: #404141"></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Start Date:</span>
+                          <span>{{ startdate }}</span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
 
               <!-- THANK YOU FOR CHOOSING  ANCHORSOFT-->
               <tr>
                 <td style="text-align: start; padding-bottom: 25px">
-                  <p style="font-size: 17px; color: #244d68; font-weight: 500">
+                  <p style="font-size: 17px; color: #244d68">
                     Thank you for choosing Anchorsoft Academy.
                   </p>
                 </td>
