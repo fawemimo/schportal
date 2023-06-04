@@ -239,6 +239,8 @@ class ScheduleAdmin(admin.ModelAdmin):
     list_editable = ["startdate", "program_type", "active"]
     list_select_related = ["course"]
     autocomplete_fields = ["course"]
+    search_fields = ["course__title", "teacher__user__first_name", "teacher__user__first_name","teacher__user__username"]
+    search_help_text = "Search for courses and teacher"
 
     def course(self, schedule: Schedule):
         return schedule.course.title
