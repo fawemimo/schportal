@@ -7,6 +7,10 @@ from . import settings
 
 
 class AllCourseSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return Course.objects.all()[:1]
 
@@ -19,6 +23,10 @@ class AllCourseSitemap(Sitemap):
 
 
 class CourseDetailSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return (
             Course.objects.order_by("ordering")
@@ -32,6 +40,10 @@ class CourseDetailSitemap(Sitemap):
 
 
 class PhysicalClassCourseSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         course = (
             Course.objects.order_by("ordering")
@@ -52,6 +64,10 @@ class PhysicalClassCourseSitemap(Sitemap):
 
 
 class VirtualClassCourseSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         course = (
             Course.objects.order_by("ordering")
@@ -72,6 +88,9 @@ class VirtualClassCourseSitemap(Sitemap):
 
 
 class KidsCodingCourseSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
     def items(self):
         return (
             Course.objects.filter(kids_coding=True)
@@ -89,6 +108,10 @@ class KidsCodingCourseSitemap(Sitemap):
 
 
 class BlogPostSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return BlogPost.objects.all()
 
@@ -98,6 +121,9 @@ class BlogPostSitemap(Sitemap):
 
 
 class AllBlogPostSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
     def items(self):
         return BlogPost.objects.all()[:1]
 
@@ -110,6 +136,10 @@ class AllBlogPostSitemap(Sitemap):
 
 
 class AllJobsSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return (
             Job.objects.filter(posting_approval=True)
@@ -127,6 +157,10 @@ class AllJobsSitemap(Sitemap):
 
 
 class JobSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return (
             Job.objects.filter(posting_approval=True)
@@ -141,6 +175,9 @@ class JobSitemap(Sitemap):
 
 
 class CareerOpeningSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
     def items(self):
         return CareerOpening.objects.all()
 
@@ -153,6 +190,9 @@ class CareerOpeningSitemap(Sitemap):
 
 
 class AllCareerOpeningSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
     def items(self):
         return CareerOpening.objects.all()[:1]
 
@@ -165,6 +205,9 @@ class AllCareerOpeningSitemap(Sitemap):
 
 
 class CareerSectionSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
     def items(self):
         return CareerSection.objects.all()
 
@@ -177,6 +220,9 @@ class CareerSectionSitemap(Sitemap):
 
 
 class EmployerPostedJobSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
     def items(self):
         return Job.objects.select_related(
             "employer", "job_type", "job_location"
@@ -191,6 +237,11 @@ class EmployerPostedJobSitemap(Sitemap):
 
 
 class AboutSitemap(Sitemap):
+    
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return AboutUsSection.objects.all()
 
@@ -200,6 +251,10 @@ class AboutSitemap(Sitemap):
 
 
 class InternationalModelSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return InternationalModel.objects.all()
 
@@ -209,6 +264,10 @@ class InternationalModelSitemap(Sitemap):
 
 
 class TermSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return TermsOfService.objects.all()
 
@@ -218,6 +277,10 @@ class TermSitemap(Sitemap):
 
 
 class CommunityConnectSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return CommunityConnect.objects.all()[:1]
 
@@ -227,6 +290,10 @@ class CommunityConnectSitemap(Sitemap):
 
 
 class AlumiConnectSectionSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return AlumiConnectSection.objects.filter(is_published=True)
 
@@ -236,6 +303,10 @@ class AlumiConnectSectionSitemap(Sitemap):
 
 
 class ScholarshipSectionSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return ScholarshipSection.objects.all()
 
@@ -245,6 +316,10 @@ class ScholarshipSectionSitemap(Sitemap):
 
 
 class ResourceSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return Resource.objects.filter(published=True)
 
@@ -254,6 +329,10 @@ class ResourceSitemap(Sitemap):
 
 
 class AllResourceSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+
     def items(self):
         return Resource.objects.filter(published=True)[:1]
 
@@ -266,6 +345,10 @@ class AllResourceSitemap(Sitemap):
 
 
 class StudentLoanSectionSitemap(Sitemap):
+    protocol = 'http' if settings.DEBUG else 'https'
+    changefreq = "weekly"
+    priority = 0.5
+    
     def items(self):
         return StudentLoanSection.objects.filter(is_published=True)
 
