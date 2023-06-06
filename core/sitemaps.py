@@ -194,7 +194,7 @@ class AllCareerOpeningSitemap(Sitemap):
     changefreq = "weekly"
     priority = 0.5
     def items(self):
-        return CareerOpening.objects.all().filter(is_published=True)[:1]
+        return CareerOpening.objects.all().filter(is_published=True)
 
     def location(self, item):
         return f"/careers-openings/"
