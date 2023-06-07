@@ -45,7 +45,7 @@ class CachingPaginator(Paginator):
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ["id", "first_name", "last_name", "username", "email"]
+    list_display = ["id", "first_name", "last_name", "username", "email","user_type"]
     list_display_links = ["id", "username", "email"]
     list_filter = ["user_type", "is_staff", "is_superuser", "is_active"]
     ordering = ["-id"]
