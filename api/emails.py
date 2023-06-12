@@ -252,3 +252,22 @@ def send_loan_partner_email(email, contact_person, company_name, address, mobile
 
     except Exception as e:
         print(e)
+
+def send_course_waiting_list(course_id,first_name,last_name,email,mobile):
+    course = Course.objects.get(id=course_id)
+    try:
+        message = BaseEmailMessage(
+            template_name="api/email_response/course_waiting_list.html",
+            context={
+                "email": email,
+                "first_name": first_name,
+                "last_name": last_name,
+                "email": email,
+                "mobile": mobile,
+                "course":course.title
+            },
+        )
+        message.send([email, settings.EMAIL_HOST_USER])
+
+    except Exception as e:
+        print(e)

@@ -207,6 +207,16 @@ class Schedule(models.Model):
         return f"{self.teacher} - {self.course}: {self.program_type}"
 
 
+class CourseWaitingList(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE) 
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)  
+    mobile = models.CharField(max_length=255)
+    
+    def __str__(self):
+        return f'{first_name} {last_name}'
+
 class Batch(models.Model):
     program_type = models.CharField(
         max_length=50, blank=True, null=True, choices=PROGRAM_TYPE_CHOICES

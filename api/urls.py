@@ -31,7 +31,7 @@ router.register("careerapplicants", views.CareerApplicantViewSet, basename="care
 router.register("careercategoryopenings", views.CareerCategoryViewSet, basename="careercategoryopenings")
 router.register("albumsections", views.AlbumSectionViewSet)
 router.register("alumiconnectsections", views.AlumiConnectSectionViewSet)
-
+router.register("coursewaitinglists", views.CourseWaitingListViewSet)
 
 # new viewset implemented
 router.register("assignments", views.AssignmentViewSet, basename="assignment")

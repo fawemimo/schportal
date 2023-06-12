@@ -252,6 +252,11 @@ class ScheduleAdmin(admin.ModelAdmin):
         return super().get_queryset(request).select_related("course")
 
 
+@admin.register(CourseWaitingList)
+class CourseWaitingListAdmin(admin.ModelAdmin):
+    list_display = ['course','first_name','last_name','email','mobile']
+
+
 @admin.register(NavLink)
 class NavlinkAdmin(admin.ModelAdmin):
     list_display = ["id", "title"]

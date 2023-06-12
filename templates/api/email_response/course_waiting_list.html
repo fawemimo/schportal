@@ -1,0 +1,406 @@
+{% block subject %} Course Waiting List - Anchorsoft Academy 
+{% endblock subject %} 
+{% block html_body %}
+
+<style type="text/css">
+  table {
+    border-spacing: 0;
+  }
+  td {
+    padding: 0;
+  }
+  p {
+    font-size: 17px;
+    margin: 0;
+  }
+  img {
+    border: 0;
+  }
+  a {
+    text-decoration: none;
+    color: white;
+  }
+
+  @media screen and (max-width: 599.98px) {
+    .header-td {
+      flex-direction: column !important;
+      height: 130px !important;
+      padding-bottom: 30px !important;
+    }
+
+    .logo {
+      padding-top: 30px;
+    }
+
+    .header-td-align {
+      text-align: start !important;
+      padding-top: 25px !important;
+    }
+  }
+  @media screen and (max-width: 399.98px) {
+    .header-td {
+      flex-direction: column !important;
+      height: 130px !important;
+      padding-bottom: 30px !important;
+    }
+
+    .logo {
+      padding-top: 30px;
+    }
+
+    .header-td-align {
+      text-align: start !important;
+      padding-top: 25px !important;
+    }
+  }
+</style>
+
+<body style="margin: 0; padding: 0; min-width: 100%; background-color: #f0ffff">
+  <center
+    style="
+      width: 100%;
+      table-layout: fixed;
+      background-color: #f0ffff;
+      padding-bottom: 40px;
+    "
+  >
+    <div style="max-width: 600px; background-color: #244d68">
+      <table
+        align="center"
+        style="
+          border-spacing: 0;
+          font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif !important;
+          background-color: #244d68;
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          max-width: 600px;
+        "
+        role="presentation"
+      >
+        <tr>
+          <td
+            class="header-td"
+            style="
+              padding: 0 20px;
+              display: flex;
+              height: 100px;
+              background-color: #244d68;
+            "
+          >
+            <table
+              class="logo"
+              width="100%"
+              style="border-spacing: 0"
+              role="presentation"
+            >
+              <tr>
+                <td style="padding: 0">
+                  <a href="">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/emailLogo.png"
+                      alt=""
+                    />
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <table width="100%" style="border-spacing: 0" role="presentation">
+              <tr>
+                <td class="header-td-align" style="text-align: right">
+                  <a href="" style="margin-right: 5px">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/footerFOLI.svg"
+                      alt=""
+                    />
+                  </a>
+                  <a href="" style="margin-right: 5px">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/footerIN.svg"
+                      alt=""
+                    />
+                  </a>
+                  <a href="" style="margin-right: 5px">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/footerGRAM.svg"
+                      alt=""
+                    />
+                  </a>
+                  <a href="" style="margin-right: 5px">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/footerFB.svg"
+                      alt=""
+                    />
+                  </a>
+                  <a href="">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/footerTUBE.svg"
+                      alt=""
+                    />
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 20px 0; background-color: #244d68">
+            <table width="100%" style="border-spacing: 0" role="presentation">
+              <tr>
+                <td style="text-align: center">
+                  <p style="font-size: 20px; color: white; font-weight: 800">
+                    ANCHORSOFT ACADEMY SHORT QUIZ
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td
+            style="
+              padding-top: 20px;
+              padding-bottom: 20px;
+              padding-left: 20px;
+              padding-right: 20px;
+              background-color: white;
+            "
+          >
+            <table width="100%" style="border-spacing: 0" role="presentation">
+              <tr>
+                <td style="text-align: start; padding-bottom: 15px">
+                  <p style="font-size: 20px; color: #244d68">
+                    Hello {{first_name }},
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align: start; padding-bottom: 25px">
+                  <p style="font-size: 17px; color: #244d68">
+                    We wanted to let you know that we have received 
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align: start; padding-bottom: 25px">
+                  <p style="font-size: 17px; color: #244d68">display
+                  </p>
+                </td>
+              </tr>
+
+              <!-- name -->
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
+                  >
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Name:</span>
+                          <span>{{ first_name }} {{last_name}}</span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- EMAIL -->
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
+                  >
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Email:</span>
+                          <span>{{ email }}</span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <!-- MOBILE -->
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
+                  >
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700">Phone Number:</span>
+                          <span
+                            ><a
+                              href="tel:{{mobile}}"
+                              style="
+                                text-decoration: none;
+                                color: #244d68;
+                                cursor: pointer;
+                              "
+                              >{{mobile}}</a
+                            ></span
+                          >
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <!-- course -->
+
+              <tr>
+                <td
+                  style="
+                    padding: 0;
+                    padding-bottom: 20px;
+                    background-color: white;
+                  "
+                >
+                  <table
+                    width="100%"
+                    style="border-spacing: 0"
+                    role="presentation"
+                  >
+                    <tr>
+                      <td style="padding-bottom: 10px">
+                        <p style="color: #404141">
+                          <span style="font-weight: 700"
+                            >course</span
+                          >
+                          <span>{{ course }}</span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="height: 1px; background-color: #404141"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="text-align: start; padding-bottom: 25px">
+                  <p style="font-size: 17px; color: #244d68">
+                    Thank you for choosing Anchorsoft Academy.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 20px 0; background-color: #244d68">
+            <table width="100%" style="border-spacing: 0" role="presentation">
+              <tr>
+                <td
+                  style="
+                    text-align: center;
+                    padding-bottom: 25px;
+                    background-color: #244d68;
+                  "
+                >
+                  <a href="">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/emailLogo.png"
+                      alt=""
+                    />
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td
+                  style="
+                    text-align: center;
+                    padding: 0 70px;
+                    padding-bottom: 25px;
+                    background-color: #244d68;
+                  "
+                >
+                  <p style="color: white">
+                    First floor, 2B Yinusa Adeniji street, opposite St. James
+                    church, Unity road, Off Toyin street, Ikeja, Lagos, Nigeria.
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align: center; background-color: #244d68">
+                  <a href="" style="margin-right: 5px">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/footerFOLI.svg"
+                      alt=""
+                    />
+                  </a>
+                  <a href="" style="margin-right: 5px">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/footerIN.svg"
+                      alt=""
+                    />
+                  </a>
+                  <a href="" style="margin-right: 5px">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/footerGRAM.svg"
+                      alt=""
+                    />
+                  </a>
+                  <a href="" style="margin-right: 5px">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/footerFB.svg"
+                      alt=""
+                    />
+                  </a>
+                  <a href="">
+                    <img
+                      src="https://anchorsoftacademy.com/static/mainsite/images/footerTUBE.svg"
+                      alt=""
+                    />
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </center>
+
+  {% endblock html_body %}
+</body>

@@ -248,6 +248,44 @@ class ScheduleSerializer(serializers.ModelSerializer):
         return obj.discounted_fee_dollar
 
 
+
+class CourseWaitingListSerializer(serializers.ModelSerializer):
+    course_id = serializers.IntegerField()
+
+    class Meta:
+        model = CourseWaitingList
+        fields = ['id','course_id','first_name','last_name','email','mobile']
+    
+    def validate_course_id(self, value):
+        if not Course.objects.filter(id=value).exists():
+            raise serializers.ValidationError(
+                "Course with the given ID does not exist."
+            )
+        return value
+
+    def create(self, validated_data):
+        course_id = validated_data['course_id']
+        return CourseWaitingList(course_id=course_id, **validated_data)
+
+    def save(self, **kwargs):
+        course_id = self.validated_data['course_id']    
+        first_name = self.validated_data['first_name']
+        last_name = self.validated_data['last_name']
+        email = self.validated_data['email']
+        mobile = self.validated_data['mobile']
+        
+        coursewaitinglist = CourseWaitingList.objects.create(
+            course_id=course_id,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            mobile=mobile
+        )
+        
+        send_course_waiting_list(course_id,first_name,last_name,email,mobile)
+
+        return coursewaitinglist
+
 class AddScheduleSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
     teacher_id = serializers.IntegerField()

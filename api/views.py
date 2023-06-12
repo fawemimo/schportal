@@ -258,6 +258,12 @@ class ScheduleViewSet(ModelViewSet):
     permission_classes = []
 
 
+class CourseWaitingListViewSet(ModelViewSet):
+    http_method_names = ["get", "post"]
+    serializer_class = CourseWaitingListSerializer
+    queryset = CourseWaitingList.objects.select_related('course')
+
+
 class TopBarViewSet(ModelViewSet):
     queryset = TopBar.objects.all()
     serializer_class = TopBarSerializer
