@@ -317,7 +317,15 @@
 						  <td style=" padding-bottom: 10px">
 							<p style="color: #404141">
 							  <span style="font-weight: 700">Phone Number:</span>
-							  <span>{{ mobile }}</span>
+							  <span><a
+                              href="tel:{{mobile}}"
+                              style="
+                                text-decoration: none;
+                                color: #244d68;
+                                cursor: pointer;
+                              "
+                              >{{mobile}}</a
+                            ></span>
 							</p>
 						  </td>
 						</tr>
