@@ -213,6 +213,8 @@ def send_career_applicant_email(
     highest_qualification,
     course_study,
     degree,
+    current_salary,
+    salary_expectation
 ):
     try:
         message = BaseEmailMessage(
@@ -226,6 +228,8 @@ def send_career_applicant_email(
                 "course_study": course_study,
                 "degree": degree,
                 "highest_qualification": highest_qualification,
+                "current_salary": current_salary,
+                "salary_expectation": salary_expectation
             },
         )
 

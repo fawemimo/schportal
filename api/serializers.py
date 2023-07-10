@@ -373,6 +373,8 @@ class CareerApplicantSerializer(serializers.ModelSerializer):
             "highest_qualification",
             "degree",
             "career_opening",
+            "current_salary",
+            "salary_expectation",
             "resume",
         ]
 
@@ -392,6 +394,8 @@ class PostCareerApplicantSerializer(serializers.ModelSerializer):
             "highest_qualification",
             "degree",
             "career_opening",
+            "current_salary",
+            "salary_expectation",
             "resume",
         ]
 
@@ -425,6 +429,8 @@ class PostCareerApplicantSerializer(serializers.ModelSerializer):
         resume = self.validated_data["resume"]
         course_study = self.validated_data["course_study"]
         degree = self.validated_data["degree"]
+        current_salary = self.validated_data["current_salary"]
+        salary_expectation = self.validated_data["salary_expectation"]
 
         careerapplicant = CareerApplicant.objects.create(
             career_opening=career_opening,
@@ -436,6 +442,8 @@ class PostCareerApplicantSerializer(serializers.ModelSerializer):
             resume=resume,
             course_study=course_study,
             degree=degree,
+            salary_expectation=salary_expectation,
+            current_salary=current_salary
         )
         send_career_applicant_email(
             career_opening,
@@ -446,6 +454,8 @@ class PostCareerApplicantSerializer(serializers.ModelSerializer):
             highest_qualification,
             course_study,
             degree,
+            current_salary,
+            salary_expectation
         )
 
         return careerapplicant

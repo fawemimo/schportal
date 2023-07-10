@@ -391,6 +391,8 @@ class CareerApplicant(models.Model):
         max_length=50, choices=DEGREE_CHOICES, blank=True, null=True
     )
     career_opening = models.ForeignKey(CareerOpening, on_delete=models.CASCADE)
+    current_salary = models.CharField(max_length=255, blank=True, null=True)
+    salary_expectation = models.CharField(max_length=255, blank=True, null=True)
     resume = models.FileField(
         upload_to="career/applicant/",
         validators=[
