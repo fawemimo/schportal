@@ -227,6 +227,7 @@ class ScheduleAdmin(admin.ModelAdmin):
         "id",
         "course",
         "active",
+        "registration_status",
         "teacher",
         "startdate",
         "fee",
@@ -235,7 +236,8 @@ class ScheduleAdmin(admin.ModelAdmin):
         "discounted_fee_dollar",
         "program_type",
     ]
-    list_filter = ["active", "program_type"]
+    list_display_links = ["id","course"]
+    list_filter = ["active", "program_type", "registration_status"]
     list_editable = ["startdate", "program_type", "active"]
     list_select_related = ["course"]
     autocomplete_fields = ["course"]
