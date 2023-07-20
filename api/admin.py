@@ -238,7 +238,7 @@ class ScheduleAdmin(admin.ModelAdmin):
     ]
     list_display_links = ["id","course"]
     list_filter = ["active", "program_type", "registration_status"]
-    list_editable = ["startdate", "program_type", "active"]
+    list_editable = ["startdate", "program_type", "active","registration_status"]
     list_select_related = ["course"]
     autocomplete_fields = ["course"]
     search_fields = ["course__title", "teacher__user__first_name", "teacher__user__first_name","teacher__user__username"]
