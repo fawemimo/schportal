@@ -3,16 +3,17 @@ import uuid
 from datetime import datetime
 
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.db.models import Sum
 from django.utils.text import slugify
-from django.core.exceptions import ValidationError
 from tinymce import models as tinymce_models
 
 from api.choices import *
-from api.validate import validate_file_size
 from api.utils import *
+from api.validate import validate_file_size
+
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -124,7 +125,7 @@ class CorporateCourseSection(models.Model):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)   
+    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     job_ready = models.BooleanField(
         default=False, help_text="to control student for job applications"
     )
@@ -155,7 +156,7 @@ class Student(models.Model):
 class Student_Matriculation(models.Model):
     student = models.ForeignKey(Student, on_delete=models.PROTECT)
     matric_number = models.CharField(max_length=50, unique=True)
-    expel = models.BooleanField(default=False,verbose_name='Expelled')
+    expel = models.BooleanField(default=False, verbose_name="Expelled")
     matric_date = models.DateField()
     graduation_date = models.DateField(blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -208,14 +209,15 @@ class Schedule(models.Model):
 
 
 class CourseWaitingList(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE) 
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255)  
+    email = models.EmailField(max_length=255)
     mobile = models.CharField(max_length=255)
-    
+
     def __str__(self):
-        return f'{first_name} {last_name}'
+        return f"{first_name} {last_name}"
+
 
 class Batch(models.Model):
     program_type = models.CharField(
@@ -252,7 +254,8 @@ class MainBanner(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['ordering']
+        ordering = ["ordering"]
+
 
 class SectionBanner(models.Model):
     title = models.CharField(max_length=150)
@@ -1011,7 +1014,9 @@ class Billing(models.Model):
         blank=True,
         null=True,
     )
-    receipt_no = models.CharField(max_length=255,unique=True, editable=False,blank=True,null=True)
+    receipt_no = models.CharField(
+        max_length=255, unique=True, editable=False, blank=True, null=True
+    )
     date_posted = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     date_update = models.DateTimeField(auto_now=True, blank=True, null=True)
 
@@ -1019,15 +1024,15 @@ class Billing(models.Model):
         return f"{str(self.student.full_name)}-{str(self.id)}"
 
     def save(self, *args, **kwargs):
-        try: 
-            batch_id = self.student.batch_set.values('id')
+        try:
+            batch_id = self.student.batch_set.values("id")
             if not self.pk:
-                batch_id = [x['id'] for x in batch_id]
+                batch_id = [x["id"] for x in batch_id]
                 self.receipt_no = generate_receipt_num(batch_id[0])
             super(Billing, self).save(*args, **kwargs)
         except Exception as e:
             print(e)
-        
+
 
 class BillingDetail(models.Model):
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
@@ -1082,3 +1087,53 @@ class BlogPost(BlogBaseModel):
 
 
 # END BLOG MODEL REGION
+
+
+# FORUM API MODELS
+
+
+class Topic(models.Model):
+    title = models.CharField(max_length=255)
+    date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Question(models.Model):
+    id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    batch = models.ForeignKey(Batch, on_delete=models.CASCADE,blank=True,null=True)
+    topics = models.ManyToManyField(Topic)
+    title = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField()
+    likes = models.PositiveIntegerField(null=True, blank=True)
+    dislikes = models.PositiveIntegerField(null=True, blank=True)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    date_changed = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.id}"
+
+    def save(self, *args, **kwargs):
+        num = range(100, 1000)
+        ran = random.choice(num)
+        self.slug = f"{(slugify(self.title))}-{ran}"
+        super(Question, self).save(*args, **kwargs)
+
+
+class QuestionComment(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    comment = models.TextField(blank=True, null=True)
+    is_correct = models.BooleanField(default=False)
+    likes = models.PositiveIntegerField(null=True, blank=True)
+    dislikes = models.PositiveIntegerField(null=True, blank=True)
+    date_commented = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.student}"
+
+
+# END FORUM API MODELS

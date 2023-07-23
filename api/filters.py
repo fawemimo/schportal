@@ -5,6 +5,19 @@ from django_filters.rest_framework import FilterSet
 from .models import *
 
 
+class QuestionFilter(FilterSet):
+    topics = filtering.CharFilter(method='filter_by_topics')
+
+    class Meta:
+        model = Question
+        fields = ['topics']
+
+    @classmethod
+    def filter_by_topics(cls, queryset, name, value):
+        names = value.strip().split(",")
+        return queryset.filter(topics__title__in=names).select_related('student','batch').distinct()
+
+
 class JobFilter(FilterSet):
     experience = filtering.CharFilter(method="filter_by_experience")
     job_type = filtering.CharFilter(method="filter_by_job_type")

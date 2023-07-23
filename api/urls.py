@@ -19,7 +19,11 @@ router.register(
     "coursecategories", views.CourseCategoryViewSet, basename="coursecategories"
 )
 router.register("courses", views.CourseViewSet, basename="courses")
-router.register("corporatecoursesections", views.CorporateCourseSectionViewSet, basename="corporatecoursesections")
+router.register(
+    "corporatecoursesections",
+    views.CorporateCourseSectionViewSet,
+    basename="corporatecoursesections",
+)
 router.register("teachers", views.TeacherViewSet)
 router.register("students", views.StudentViewSet, basename="students")
 router.register("navlinks", views.NavLinkViewSet)
@@ -27,8 +31,14 @@ router.register("shortquizes", views.ShortQuizViewSet)
 router.register("inquiries", views.InquiryViewSet)
 router.register("profilepics", views.StudentUpdateViewSet, basename="profilepics")
 router.register("careersections", views.CareerSectionViewSet)
-router.register("careerapplicants", views.CareerApplicantViewSet, basename="careerapplicants")
-router.register("careercategoryopenings", views.CareerCategoryViewSet, basename="careercategoryopenings")
+router.register(
+    "careerapplicants", views.CareerApplicantViewSet, basename="careerapplicants"
+)
+router.register(
+    "careercategoryopenings",
+    views.CareerCategoryViewSet,
+    basename="careercategoryopenings",
+)
 router.register("albumsections", views.AlbumSectionViewSet)
 router.register("alumiconnectsections", views.AlumiConnectSectionViewSet)
 router.register("coursewaitinglists", views.CourseWaitingListViewSet)
@@ -115,9 +125,9 @@ router.register(
 )
 router.register("applicants", views.ApplicantsViewSet, basename="applicants")
 router.register("jobcategories", views.JobCategoryViewSet, basename="jobcategories")
-router.register('jobexperiences', views.JobExperienceViewSet, basename="jobexperiences")
-router.register('jobtypes', views.JobTypeViewSet, basename="jobtypes")
-router.register('joblocations', views.JobLocationViewSet, basename="joblocations")
+router.register("jobexperiences", views.JobExperienceViewSet, basename="jobexperiences")
+router.register("jobtypes", views.JobTypeViewSet, basename="jobtypes")
+router.register("joblocations", views.JobLocationViewSet, basename="joblocations")
 
 # END JOB PORTAL REGION
 
@@ -136,12 +146,27 @@ router.register("relatedposts", views.RelatedBlogPost, basename="relatedposts")
 # END BLOG POST REGION
 
 
+# FORM API URL
+router.register("questions", views.QuestionView, basename="questions")
+router.register("topics", views.TopicViewSet,basename="topics")
+router.register("commentbuttons",views.QuestionCommentButtonView, basename="commentbuttons")
+router.register("questionbuttons",views.QuestionButtonView, basename="questionbutttons")
+router.register("relatedquestions",views.RelatedQuestionView, basename="relatedquestions")
+# END FORUM API URL
+
 # Nested routes
+questions_router = routers.NestedDefaultRouter(router, "questions", lookup="question")
+questions_router.register("comments", views.QuestionCommentView, basename="question-comments")
+
 courses_router = routers.NestedDefaultRouter(router, "courses", lookup="course")
 courses_router.register("schedules", views.ScheduleViewSet, basename="course-schedules")
 
-coursecategory_router = routers.NestedDefaultRouter(router, "coursecategories",lookup="coursecategory")
-coursecategory_router.register("courses", views.CourseClassViewSet, basename="coursecategory-courses")
+coursecategory_router = routers.NestedDefaultRouter(
+    router, "coursecategories", lookup="coursecategory"
+)
+coursecategory_router.register(
+    "courses", views.CourseClassViewSet, basename="coursecategory-courses"
+)
 
 navlink_router = routers.NestedDefaultRouter(router, "navlinks", lookup="navlink")
 navlink_router.register("items", views.NavLinkItemViewSet, basename="navlink-items")
@@ -166,6 +191,7 @@ urlpatterns = [
     path("", include(coursemanual_router.urls)),
     path("", include(coursecategory_router.urls)),
     path("", include(applicants_router.urls)),
+    path("", include(questions_router.urls)),
     # path("", include(blog_related_router.urls)),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.jwt")),

@@ -1,9 +1,10 @@
 from django.contrib.sitemaps import Sitemap
 from django.contrib.sites.shortcuts import get_current_site
+
 from api.choices import *
 from api.models import *
-from . import settings
 
+from . import settings
 
 
 class AllCourseSitemap(Sitemap):

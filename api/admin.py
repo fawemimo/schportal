@@ -45,7 +45,7 @@ class CachingPaginator(Paginator):
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ["id", "first_name", "last_name", "username", "email","user_type"]
+    list_display = ["id", "first_name", "last_name", "username", "email", "user_type"]
     list_display_links = ["id", "username", "email"]
     list_filter = ["user_type", "is_staff", "is_superuser", "is_active"]
     ordering = ["-id"]
@@ -86,7 +86,7 @@ class TopbarAdmin(admin.ModelAdmin):
 
 @admin.register(MainBanner)
 class MainBannerAdmin(admin.ModelAdmin):
-    list_display = ["title", "published","ordering"]
+    list_display = ["title", "published", "ordering"]
     list_display_links = ["title"]
     list_editable = ["published", "ordering"]
     list_filter = ["published"]
@@ -236,12 +236,17 @@ class ScheduleAdmin(admin.ModelAdmin):
         "discounted_fee_dollar",
         "program_type",
     ]
-    list_display_links = ["id","course"]
+    list_display_links = ["id", "course"]
     list_filter = ["active", "program_type", "registration_status"]
-    list_editable = ["startdate", "program_type", "active","registration_status"]
+    list_editable = ["startdate", "program_type", "active", "registration_status"]
     list_select_related = ["course"]
     autocomplete_fields = ["course"]
-    search_fields = ["course__title", "teacher__user__first_name", "teacher__user__first_name","teacher__user__username"]
+    search_fields = [
+        "course__title",
+        "teacher__user__first_name",
+        "teacher__user__first_name",
+        "teacher__user__username",
+    ]
     search_help_text = "Search for courses and teacher"
 
     def course(self, schedule: Schedule):
@@ -256,7 +261,7 @@ class ScheduleAdmin(admin.ModelAdmin):
 
 @admin.register(CourseWaitingList)
 class CourseWaitingListAdmin(admin.ModelAdmin):
-    list_display = ['course','first_name','last_name','email','mobile']
+    list_display = ["course", "first_name", "last_name", "email", "mobile"]
 
 
 @admin.register(NavLink)
@@ -539,6 +544,7 @@ class BatchAdmin(admin.ModelAdmin):
     actions = ["export_to_csv"]
     autocomplete_fields = ["students", "course"]
     list_display = [
+        "id",
         "title",
         "course",
         "program_type",
@@ -614,7 +620,7 @@ class ProjectAllocationAdmin(admin.ModelAdmin):
 @admin.register(CourseManual)
 class CourseManualAdmin(admin.ModelAdmin):
     autocomplete_fields = ["course"]
-    list_display = ["title", "manual","date_posted", "date_updated"]
+    list_display = ["title", "manual", "date_posted", "date_updated"]
     search_fields = ["title", "course__title"]
     search_help_text = "Search for course manual title and course"
     list_filter = ["date_posted", "date_updated"]
@@ -988,3 +994,39 @@ class BlogPostAdmin(admin.ModelAdmin):
 
 
 # END BLOG REGION
+
+
+# FORUM ADMIN API
+
+
+@admin.register(Topic)
+class TopicAdmin(admin.ModelAdmin):
+    list_display = ["title", "date_posted"]
+    list_filter = ["date_posted"]
+    search_fields = ["title"]
+    search_help_text = "Search for topics"
+
+
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["student", "topics"]
+    list_display = ["id","student","batch", "title", "likes", "dislikes", "date_posted"]
+    list_filter = ["date_posted"]
+    search_fields = ["title"]
+
+@admin.register(QuestionComment)
+class QuestionCommentAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["student", "question"]
+    list_display = [
+        "student",
+        "question",
+        "is_correct",
+        "likes",
+        "dislikes",
+        "date_commented",
+    ]
+    list_editable = ["is_correct"]
+    list_filter = ["is_correct","date_commented"]
+
+
+# END REGION FORUM ADMIN API

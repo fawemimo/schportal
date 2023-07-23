@@ -248,14 +248,13 @@ class ScheduleSerializer(serializers.ModelSerializer):
         return obj.discounted_fee_dollar
 
 
-
 class CourseWaitingListSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
 
     class Meta:
         model = CourseWaitingList
-        fields = ['id','course_id','first_name','last_name','email','mobile']
-    
+        fields = ["id", "course_id", "first_name", "last_name", "email", "mobile"]
+
     def validate_course_id(self, value):
         if not Course.objects.filter(id=value).exists():
             raise serializers.ValidationError(
@@ -264,27 +263,28 @@ class CourseWaitingListSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        course_id = validated_data['course_id']
+        course_id = validated_data["course_id"]
         return CourseWaitingList(course_id=course_id, **validated_data)
 
     def save(self, **kwargs):
-        course_id = self.validated_data['course_id']    
-        first_name = self.validated_data['first_name']
-        last_name = self.validated_data['last_name']
-        email = self.validated_data['email']
-        mobile = self.validated_data['mobile']
-        
+        course_id = self.validated_data["course_id"]
+        first_name = self.validated_data["first_name"]
+        last_name = self.validated_data["last_name"]
+        email = self.validated_data["email"]
+        mobile = self.validated_data["mobile"]
+
         coursewaitinglist = CourseWaitingList.objects.create(
             course_id=course_id,
             first_name=first_name,
             last_name=last_name,
             email=email,
-            mobile=mobile
+            mobile=mobile,
         )
-        
-        send_course_waiting_list(course_id,first_name,last_name,email,mobile)
+
+        send_course_waiting_list(course_id, first_name, last_name, email, mobile)
 
         return coursewaitinglist
+
 
 class AddScheduleSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
@@ -443,7 +443,7 @@ class PostCareerApplicantSerializer(serializers.ModelSerializer):
             course_study=course_study,
             degree=degree,
             salary_expectation=salary_expectation,
-            current_salary=current_salary
+            current_salary=current_salary,
         )
         send_career_applicant_email(
             career_opening,
@@ -455,7 +455,7 @@ class PostCareerApplicantSerializer(serializers.ModelSerializer):
             course_study,
             degree,
             current_salary,
-            salary_expectation
+            salary_expectation,
         )
 
         return careerapplicant
@@ -696,7 +696,14 @@ class BatchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Batch
-        fields = ["id", "program_type", "title", "course", "course_manuals"]
+        fields = [
+            "id",
+            "program_type",
+            "title",
+            "course",
+            "start_date",
+            "course_manuals",
+        ]
 
     def to_representation(self, instance):
         self.fields["course_manuals"] = CourseManualSerializer(many=True)
@@ -1836,3 +1843,234 @@ class UserCreateSerializer(serializers.ModelSerializer):
         )
         send_employer_sign_up_email(email, contact_person)
         return user
+
+
+# FORUM REGION API
+
+
+class TopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Topic
+        fields = ["id","title"]
+
+
+class QuestionCommentSerializer(serializers.ModelSerializer):
+    student = serializers.SerializerMethodField()
+    question = serializers.SerializerMethodField()
+
+    class Meta:
+        model = QuestionComment
+        fields = [
+            "id",
+            "student",
+            "question",
+            "comment",
+            "is_correct",
+            "likes",
+            "dislikes",
+            "date_commented",
+        ]
+
+    def get_student(self, obj):
+        return obj.student.full_name
+
+    def get_question(self, obj):
+        return obj.question.title
+
+
+class PostQuestionCommentSerializer(serializers.ModelSerializer):
+    student_id = serializers.IntegerField()
+    question_id = serializers.IntegerField()
+
+    class Meta:
+        model = QuestionComment
+        fields = [
+            "student_id",
+            "question_id",
+            "comment",
+            "is_correct",
+            "likes",
+            "dislikes",
+        ]
+
+    def validate_student_id(self, value):
+        if not Student.objects.filter(id=value).exists():
+            raise serializers.ValidationError(
+                "Student with the given ID does not exist"
+            )
+        return value
+
+    def validate_question_id(self, value):
+        if not Question.objects.filter(id=value).exists():
+            raise serializers.ValidationError(
+                "Question with the given ID does not exist"
+            )
+        return value
+
+    def create(self, **validated_data):
+        student_id = self.validated_data["student_id"]
+        question_id = self.validated_data["question_id"]
+        return QuestionComment.objects.create(
+            student_id=student_id, question_id=question_id, **validated_data
+        )
+
+    def save(self, **kwargs):
+        comment = self.validated_data["comment"]
+        is_correct = self.validated_data["is_correct"]
+        likes = self.validated_data["likes"]
+        dislikes = self.validated_data["dislikes"]
+        student = self.validated_data["student_id"]
+        question_id = self.validated_data["question_id"]
+
+        try:
+            comments = QuestionComment.objects.create(
+                student_id=student,
+                question_id=question_id,
+                comment=comment,
+                is_correct=is_correct,
+                likes=likes,
+                dislikes=dislikes,
+            )
+
+            comments.save()
+            return comments
+        except Exception as e:
+            print('"Error creating comments": ', e)
+
+
+class QuestionCommentButtonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionComment
+        fields = ["id", "likes", "dislikes"]
+
+
+class QuestionButtonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ["id", "likes", "dislikes"]
+
+
+class QuestionSerializer(serializers.ModelSerializer):
+    topics = TopicSerializer(many=True)
+    student = serializers.SerializerMethodField()
+    batch = BatchSerializer()
+
+    class Meta:
+        model = Question
+        fields = [
+            "id",
+            "student",
+            "batch",
+            "title",
+            "slug",
+            "description",
+            "topics",
+            "likes",
+            "dislikes",
+            "date_posted",
+            "date_changed",
+        ]
+        lookup_field = "slug"
+
+    def get_student(self, obj):
+        return obj.student.full_name
+
+
+class PostQuestionSerializer(serializers.ModelSerializer):
+    student_id = serializers.IntegerField()
+    batch_id = serializers.IntegerField()
+    topics = TopicSerializer(many=True)
+
+    class Meta:
+        model = Question
+        fields = [
+            "id",
+            "student_id",
+            "batch_id",
+            "title",
+            "description",
+            "topics",
+            "likes",
+            "dislikes",
+        ]
+        read_only_fields = ["id"]
+
+    def create(self, **validated_data):
+        student_id = self.validated_data["student_id"]
+        batch_id = self.validated_data["batch_id"]
+        topics = validated_data["topics"]
+
+        question = Qurstion.objects.create(
+            student_id=student_id, batch_id=batch_id, **validated_data
+        )
+
+        for x in topics:
+            topics = Topic.objects.filter(**x)
+            question.topics.set(topics)
+
+        return question
+
+    def validate_student_id(self, value):
+        if not Student.objects.filter(pk=value).exists():
+            raise serializers.ValidationError(
+                "Student with the given ID does not exist"
+            )
+        return value
+
+    def validate_batch_id(self, value):
+        if not Batch.objects.filter(pk=value).exists():
+            raise serializers.ValidationError("Batch with the given ID does not exist")
+        return value
+
+    def save(self, **kwargs):
+        title = self.validated_data["title"]
+        description = self.validated_data["description"]
+        likes = self.validated_data["likes"]
+        dislikes = self.validated_data["dislikes"]
+        topics = self.validated_data["topics"]
+
+        student_id = self.validated_data["student_id"]
+        batch_id = self.validated_data["batch_id"]
+
+        try:
+            question = Question.objects.create(
+                student_id=student_id,
+                batch_id=batch_id,
+                title=title,
+                description=description,
+                likes=likes,
+                dislikes=dislikes,
+            )
+
+            for x in topics:
+                topics, _ = Topic.objects.get_or_create(**x)
+                question.topics.add(topics)
+            return question
+        except Exception as e:
+            print("Error while creating a question", e)
+
+
+class RelatedQuestionSerializer(serializers.ModelSerializer):
+    questions = serializers.SerializerMethodField()
+    topic_title = serializers.CharField(max_length=255, source="title")
+
+    class Meta:
+        model = Topic
+        fields = ["id", "topic_title", "questions"]
+
+    def get_questions(self, obj):
+        return obj.question_set.filter(topics=obj.id).values(
+            "id",
+            "student",
+            "batch",
+            "title",
+            "slug",
+            "description",
+            "likes",
+            "dislikes",
+            "date_posted",
+            "date_changed",
+        )
+
+
+# END FORM REGION API

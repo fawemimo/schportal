@@ -13,6 +13,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.models import *
+
 from .emails import *
 from .exceptions import *
 from .filters import *
@@ -261,7 +262,7 @@ class ScheduleViewSet(ModelViewSet):
 class CourseWaitingListViewSet(ModelViewSet):
     http_method_names = ["get", "post"]
     serializer_class = CourseWaitingListSerializer
-    queryset = CourseWaitingList.objects.select_related('course')
+    queryset = CourseWaitingList.objects.select_related("course")
 
 
 class TopBarViewSet(ModelViewSet):
@@ -806,7 +807,7 @@ class EmployerViewSet(ModelViewSet):
 
         if company_name:
             setattr(instance, "company_name", company_name)
-        
+
         if industry:
             setattr(instance, "industry", industry)
 
@@ -1078,3 +1079,142 @@ class RelatedBlogPost(ModelViewSet):
 
 
 # END BLOG POST REGION
+
+
+# FORUM API VIEWS
+
+
+class TopicViewSet(ModelViewSet):
+    http_method_name = ["get"]
+    serializer_class = TopicSerializer
+    queryset = Topic.objects.all()
+    
+
+class QuestionView(ModelViewSet):
+    http_method_name = ["get", "post", "delete"]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = QuestionFilter
+    search_fields = ["topics__title", "title", "description"]
+    pagination_class = BasePagination
+    lookup_field = "slug"
+    lookup_value_regex = "[^/]+"
+
+    def get_permissions(self):
+        if self.request.method =="POST":
+            return [IsStudentType()]
+        return [permissions.AllowAny()]
+
+    def get_serializer_class(self):
+        if self.request.method in ["POST"]:
+            return PostQuestionSerializer
+        return QuestionSerializer
+
+    def get_queryset(self):
+        return (
+            Question.objects.select_related("student", "batch")
+            .prefetch_related("topics")
+            .order_by("-id")
+        )
+
+
+class QuestionCommentView(ModelViewSet):
+    http_method_names = ["get", "post","delete"]
+    pagination_class = BasePagination
+
+    def get_permissions(self):
+        if self.request.method =="POST":
+            return [IsStudentType()]
+        return [permissions.AllowAny()]
+
+    def get_queryset(self):
+        return (
+            QuestionComment.objects.filter(
+                question_id__slug=self.kwargs["question_slug"]
+            )
+            .select_related("question")
+            .order_by("-id")
+        )
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return PostQuestionCommentSerializer
+
+        return QuestionCommentSerializer
+
+    def get_serializer_context(self):
+        return {"student_id": self.kwargs.get("student_pk")}
+
+
+class QuestionCommentButtonView(ModelViewSet):
+    http_method_name = ["get", "post", "put", "patch", "delete"]
+    serializer_class = QuestionCommentButtonSerializer
+    permission_classes = [IsStudentType]
+
+    def get_queryset(self):
+        return (
+            QuestionComment.objects
+            .select_related("question")
+            .order_by("-id")
+        )
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        likes = request.data.get("likes", None)
+        dislikes = request.data.get("dislikes", None)
+
+        if likes:
+            setattr(instance, "likes", likes)
+
+        if dislikes:
+            setattr(instance, "dislikes", dislikes)
+
+        instance.save()
+        serializer = QuestionCommentButtonSerializer(instance)
+        return Response(serializer.data)
+
+
+
+class QuestionButtonView(ModelViewSet):
+    http_method_name = ["get", "patch", "delete"]
+    serializer_class = QuestionButtonSerializer
+    permission_classes = [IsStudentType]
+
+    def get_queryset(self):
+        return (
+            Question.objects
+            .select_related("student","batch")
+            .order_by("-id")
+            .prefetch_related("topics")
+        )
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        likes = request.data.get("likes", None)
+        dislikes = request.data.get("dislikes", None)
+
+        if likes:
+            setattr(instance, "likes", likes)
+
+        if dislikes:
+            setattr(instance, "dislikes", dislikes)
+
+        instance.save()
+        serializer = QuestionButtonSerializer(instance)
+        return Response(serializer.data)
+
+
+class RelatedQuestionView(ModelViewSet):
+    http_method_names = ["get"]
+    serializer_class = RelatedQuestionSerializer
+    permission_classes = [IsStudentType]
+
+    def get_queryset(self):
+        return Topic.objects.filter(id=self.kwargs.get("pk")).prefetch_related(
+            "question_set"
+        )
+
+
+
+
+
+# END FORUM API VIEWS
